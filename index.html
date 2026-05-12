@@ -278,6 +278,41 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    .bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(8,12,18,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 10px 0 env(safe-area-inset-bottom);
+      z-index: 100;
+    }
+    .bottom-nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px;
+      background: none;
+      color: var(--muted);
+      font-size: 0.65rem;
+      font-weight: 500;
+      transition: color .2s;
+      border: none;
+    }
+    .bottom-nav-btn.active { color: var(--accent); }
+    .bottom-nav-btn svg { width: 22px; height: 22px; }
+    @media (min-width: 601px) {
+      .bottom-nav { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav { display: none; }
+    }
+
     /* STEP ITEM */
     .step-item {
       background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
@@ -333,19 +368,19 @@
       </div>
       <div class="home-grid">
         <button class="home-button" onclick="showPage('exercises')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <span>Ejercicios</span>
         </button>
         <button class="home-button" onclick="showPage('create')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
           <span>Crear ejercicio</span>
         </button>
         <button class="home-button" onclick="showPage('data')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           <span>Datos</span>
         </button>
         <button class="home-button" onclick="showPage('config')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
           <span>Configuración</span>
         </button>
       </div>
@@ -674,11 +709,11 @@
       Ejercicios
     </button>
     <button class="bottom-nav-btn" data-page="create">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></svg>
       Crear
     </button>
     <button class="bottom-nav-btn" data-page="data">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       Datos
     </button>
     <button class="bottom-nav-btn" data-page="config">
