@@ -248,24 +248,33 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* BOTTOM NAV */
-    @media (max-width: 600px) {
-      .nav { display: none; }
-      .bottom-nav {
-        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-        background: rgba(8,12,18,0.95); backdrop-filter: blur(20px);
-        border-top: 1px solid var(--border);
-        padding: 10px 0 env(safe-area-inset-bottom); z-index: 100;
-      }
-      .bottom-nav-btn {
-        flex: 1; display: flex; flex-direction: column; align-items: center;
-        gap: 4px; padding: 6px; background: none;
-        color: var(--muted); font-size: 0.65rem; font-weight: 500; transition: color .2s;
-      }
-      .bottom-nav-btn.active { color: var(--accent); }
-      .bottom-nav-btn svg { width: 22px; height: 22px; }
+    /* STEP ITEM */
+    .step-item {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-bottom: 12px;
     }
-    @media (min-width: 601px) { .bottom-nav { display: none; } }
+    .step-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    .step-title { font-size: 0.9rem; font-weight: 600; }
+    .step-remove { color: var(--danger); cursor: pointer; font-size: 1.2rem; }
+    .node-config {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;
+    }
+    .node-checkbox { display: flex; align-items: center; gap: 8px; }
+    .node-checkbox input { margin: 0; }
+    .color-options { display: flex; flex-wrap: wrap; gap: 6px; }
+    .color-option {
+      width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
+      cursor: pointer; transition: all .2s;
+    }
+    .color-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.3); }
+    .color-red { background: #ef4444; }
+    .color-green { background: #22d3a0; }
+    .color-blue { background: #3b82f6; }
+    .color-yellow { background: #f59e0b; }
+    .color-white { background: #e8f0fb; }
+    .color-cyan { background: #06b6d4; }
   </style>
 </head>
 <body>
@@ -298,19 +307,43 @@
       </div>
 
       <div id="exerciseList">
-        <div class="ex-item" onclick="launchExercise('flash')">
-          <div class="ex-item-info">
-            <h3>Reacción Flash</h3>
-            <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
+        <!-- Ejercicios predeterminados -->
+        <div class="card">
+          <div class="card-title" onclick="toggleGroup('predeterminados')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+            Ejercicios predeterminados
+            <span id="predeterminados-arrow" style="transition:transform 0.2s;">▼</span>
           </div>
-          <span class="ex-item-arrow">›</span>
+          <div id="predeterminados-group">
+            <div class="ex-item" onclick="openExerciseConfig('flash')">
+              <div class="ex-item-info">
+                <h3>Reacción Flash</h3>
+                <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
+            <div class="ex-item" onclick="openExerciseConfig('parimpar')">
+              <div class="ex-item-info">
+                <h3>Par / Impar</h3>
+                <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
+          </div>
         </div>
-        <div class="ex-item" onclick="launchExercise('parimpar')">
-          <div class="ex-item-info">
-            <h3>Par / Impar</h3>
-            <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
+
+        <!-- Mis ejercicios -->
+        <div class="card">
+          <div class="card-title" onclick="toggleGroup('mis')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+            Mis ejercicios
+            <span id="mis-arrow" style="transition:transform 0.2s;">▼</span>
           </div>
-          <span class="ex-item-arrow">›</span>
+          <div id="mis-group" style="display:block;">
+            <!-- Exercises will be loaded here -->
+          </div>
+          <div class="btn-row" style="margin-top:16px;">
+            <button class="btn-secondary" onclick="openCreateFolderModal()">Crear carpeta</button>
+            <button class="btn-secondary" onclick="openCreateExercise()">Crear ejercicio</button>
+          </div>
         </div>
       </div>
 
@@ -348,89 +381,145 @@
     <section class="page" id="page-create">
       <div class="section-title" style="margin-bottom:16px;">Crear ejercicio</div>
 
+      <!-- Selector de modo -->
       <div class="card">
-        <div class="card-title">Reacción Flash</div>
-        <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
-        <div class="field-row">
-          <div class="field">
-            <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
-            <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
-          </div>
-          <div class="field">
-            <label>Repeticiones</label>
-            <input type="number" min="1" max="50" value="10" id="repsCount" />
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Intervalo (ms)</label>
-            <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
-          </div>
-          <div class="field">
-            <label>Timeout (ms)</label>
-            <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Forma</label>
-            <select id="stimShape">
-              <option value="circle">Círculo</option>
-              <option value="square_filled">Cuadrado</option>
-              <option value="plus">Cruz</option>
-              <option value="up">↑ Arriba</option>
-              <option value="down">↓ Abajo</option>
-              <option value="left">← Izquierda</option>
-              <option value="right">→ Derecha</option>
-              <option value="number">Número aleatorio</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Color</label>
-            <select id="stimColor">
-              <option value="green">Verde</option>
-              <option value="red">Rojo</option>
-              <option value="blue">Azul</option>
-              <option value="yellow">Amarillo</option>
-              <option value="white">Blanco</option>
-              <option value="cyan">Cian</option>
-            </select>
-          </div>
-        </div>
+        <div class="card-title">Modo</div>
         <div class="field">
-          <label>Orden</label>
-          <select id="stimOrder">
-            <option value="random">Aleatorio</option>
-            <option value="sequential">Secuencial</option>
+          <select id="createMode" onchange="switchCreateMode()">
+            <option value="rapido">MODO RÁPIDO</option>
+            <option value="avanzado">MODO AVANZADO — CONSTRUCTOR DE PASOS</option>
           </select>
-        </div>
-        <div class="btn-row">
-          <button class="btn-primary" onclick="startFlash()">Iniciar Reacción Flash</button>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Par / Impar</div>
-        <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
-        <div class="field-row">
-          <div class="field">
-            <label>Repeticiones</label>
-            <input type="number" min="1" max="50" value="10" id="piReps" />
+      <!-- MODO RÁPIDO -->
+      <div id="modoRapido">
+        <div class="card">
+          <div class="card-title">Reacción Flash</div>
+          <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
+              <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+            </div>
+            <div class="field">
+              <label>Repeticiones</label>
+              <input type="number" min="1" max="50" value="10" id="repsCount" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Intervalo (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
+            </div>
+            <div class="field">
+              <label>Timeout (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Forma</label>
+              <select id="stimShape">
+                <option value="circle">Círculo</option>
+                <option value="square_filled">Cuadrado</option>
+                <option value="plus">Cruz</option>
+                <option value="up">↑ Arriba</option>
+                <option value="down">↓ Abajo</option>
+                <option value="left">← Izquierda</option>
+                <option value="right">→ Derecha</option>
+                <option value="number">Número aleatorio</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Color</label>
+              <select id="stimColor">
+                <option value="green">Verde</option>
+                <option value="red">Rojo</option>
+                <option value="blue">Azul</option>
+                <option value="yellow">Amarillo</option>
+                <option value="white">Blanco</option>
+                <option value="cyan">Cian</option>
+              </select>
+            </div>
           </div>
           <div class="field">
-            <label>Timeout (ms)</label>
-            <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+            <label>Orden</label>
+            <select id="stimOrder">
+              <option value="random">Aleatorio</option>
+              <option value="sequential">Secuencial</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="startFlash()">Iniciar Reacción Flash</button>
           </div>
         </div>
-        <div class="field">
-          <label>Regla</label>
-          <select id="piRule">
-            <option value="pairs">Tocar pares</option>
-            <option value="odds">Tocar impares</option>
-          </select>
+
+        <div class="card">
+          <div class="card-title">Par / Impar</div>
+          <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Repeticiones</label>
+              <input type="number" min="1" max="50" value="10" id="piReps" />
+            </div>
+            <div class="field">
+              <label>Timeout (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Regla</label>
+            <select id="piRule">
+              <option value="pairs">Tocar pares</option>
+              <option value="odds">Tocar impares</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="startParImpar()">Iniciar Par/Impar</button>
+          </div>
         </div>
-        <div class="btn-row">
-          <button class="btn-primary" onclick="startParImpar()">Iniciar Par/Impar</button>
+      </div>
+
+      <!-- MODO AVANZADO -->
+      <div id="modoAvanzado" style="display:none;">
+        <div class="card">
+          <div class="card-title">Constructor de pasos</div>
+          <div class="card-sub">Define una secuencia de pasos para tu ejercicio personalizado.</div>
+          
+          <div class="field">
+            <label>Nombre del ejercicio</label>
+            <input type="text" id="exerciseName" placeholder="Ejercicio personalizado" />
+          </div>
+          
+          <div class="field">
+            <label>Descripción</label>
+            <input type="text" id="exerciseDescription" placeholder="Descripción breve" />
+          </div>
+
+          <div class="field">
+            <label>Carpeta</label>
+            <select id="exerciseFolder">
+              <option value="">Sin carpeta</option>
+            </select>
+          </div>
+
+          <div id="stepsContainer">
+            <!-- Steps will be added here -->
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-secondary" onclick="addStep()">+ Añadir paso</button>
+          </div>
+
+          <div class="field">
+            <label>Número de repeticiones del ejercicio completo</label>
+            <input type="number" min="1" max="100" value="1" id="exerciseReps" />
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveCustomExercise()">Guardar ejercicio</button>
+          </div>
         </div>
       </div>
     </section>
@@ -532,6 +621,20 @@
       <div class="modal-title">Seleccionar deportista</div>
       <div id="athleteModalList" style="margin-bottom:16px;"></div>
       <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="folderModal">
+    <div class="modal">
+      <div class="modal-title">Crear carpeta</div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Nombre de la carpeta</label>
+        <input type="text" id="folderName" placeholder="Nombre" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="createFolder()">Crear</button>
+        <button class="btn-secondary" onclick="closeFolderModal()">Cancelar</button>
+      </div>
     </div>
   </div>
 
@@ -657,6 +760,29 @@
         const isEven = val % 2 === 0;
         const wantsEven = state.session.config.rule === 'pairs';
         completeParImpar(isEven === wantsEven, data.reaction_ms >= 0 ? data.reaction_ms : null);
+      } else if (state.session.type === 'custom') {
+        const step = state.session.sequence[state.session.current];
+        let correct = false;
+        
+        if (step.correct_response === 'node-1') {
+          correct = data.node_id === step.correct_node;
+        } else if (step.correct_response === 'green') {
+          correct = Object.keys(step.nodes).includes(data.node_id.toString()) && 
+                   step.nodes[data.node_id].colors.includes('green');
+        } else if (step.correct_response === 'red') {
+          correct = Object.keys(step.nodes).includes(data.node_id.toString()) && 
+                   step.nodes[data.node_id].colors.includes('red');
+        } else if (step.correct_response === 'even') {
+          correct = step.nodes[data.node_id] && 
+                   !isNaN(step.nodes[data.node_id].shape) && 
+                   parseInt(step.nodes[data.node_id].shape) % 2 === 0;
+        } else if (step.correct_response === 'odd') {
+          correct = step.nodes[data.node_id] && 
+                   !isNaN(step.nodes[data.node_id].shape) && 
+                   parseInt(step.nodes[data.node_id].shape) % 2 !== 0;
+        }
+        
+        completeCustomStep(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else {
         completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
       }
@@ -838,14 +964,16 @@
           list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin sesiones</h3><p>Guarda una sesión para verla aquí.</p></div>`;
           return;
         }
-        list.innerHTML = sessions.map(s=>`
+        list.innerHTML = sessions.map(s=>{
+          let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : 'Ejercicio personalizado';
+          return `
           <div class="card" style="margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <strong style="font-size:0.9rem;">${s.exercise_type==='flash'?'Reacción Flash':'Par/Impar'}</strong>
+              <strong style="font-size:0.9rem;">${exerciseName}</strong>
               <span style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">${new Date(s.date).toLocaleDateString('es-ES')}</span>
             </div>
             <span style="font-size:0.78rem;color:var(--muted);">${s.notes?JSON.parse(s.notes).reps+' repeticiones':''}</span>
-          </div>`).join('');
+          </div>`}).join('');
       } catch { toast('Error cargando sesiones'); }
     }
 
@@ -918,6 +1046,26 @@
       document.getElementById('athleteName').textContent = state.athlete?.name || 'Sin deportista';
     }
 
+    function openCreateFolderModal() {
+      document.getElementById('folderName').value = '';
+      document.getElementById('folderModal').classList.add('open');
+    }
+
+    function closeFolderModal() { document.getElementById('folderModal').classList.remove('open'); }
+
+    async function createFolder() {
+      const name = document.getElementById('folderName').value.trim();
+      if (!name) { toast('Introduce un nombre'); return; }
+      try {
+        await db.post('folders', {name});
+        closeFolderModal();
+        await loadFolders();
+        toast('Carpeta creada ✓');
+      } catch(err) {
+        toast('Error creando carpeta: ' + err.message);
+      }
+    }
+
     // CONFIG
     function updateBrightness(val) {
       document.getElementById('brightnessVal').textContent = val;
@@ -930,6 +1078,367 @@
       sendBLE({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' });
     }
 
+    // EJERCICIOS
+    let exercises = [];
+    let folders = [];
+    let currentExercise = null;
+
+    async function loadExercises() {
+      try {
+        exercises = await db.get('exercises', '?order=name');
+        renderExercises();
+      } catch(err) { console.warn('Error loading exercises:', err); }
+    }
+
+    async function loadFolders() {
+      try {
+        folders = await db.get('folders', '?order=name');
+        renderFolders();
+      } catch(err) { console.warn('Error loading folders:', err); }
+    }
+
+    function renderExercises() {
+      const container = document.getElementById('mis-group');
+      if (!exercises.length) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">No tienes ejercicios guardados.</div>';
+        return;
+      }
+      
+      // Group by folder
+      const byFolder = {};
+      exercises.forEach(ex => {
+        const fid = ex.folder_id || '';
+        if (!byFolder[fid]) byFolder[fid] = [];
+        byFolder[fid].push(ex);
+      });
+
+      let html = '';
+      Object.keys(byFolder).sort((a,b) => {
+        if (!a) return -1;
+        if (!b) return 1;
+        const fa = folders.find(f=>f.id===a)?.name || '';
+        const fb = folders.find(f=>f.id===b)?.name || '';
+        return fa.localeCompare(fb);
+      }).forEach(fid => {
+        const folderName = fid ? folders.find(f=>f.id===fid)?.name || 'Sin nombre' : 'Sin carpeta';
+        html += `<div style="margin-bottom:16px;"><div style="font-size:0.85rem;color:var(--muted);margin-bottom:8px;">${folderName}</div>`;
+        byFolder[fid].forEach(ex => {
+          html += `<div class="ex-item" onclick="openExerciseConfig('custom', '${ex.id}')">
+            <div class="ex-item-info">
+              <h3>${ex.name}</h3>
+              <p>${ex.description || 'Sin descripción'}</p>
+            </div>
+            <span class="ex-item-arrow">›</span>
+          </div>`;
+        });
+        html += '</div>';
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderFolders() {
+      const select = document.getElementById('exerciseFolder');
+      select.innerHTML = '<option value="">Sin carpeta</option>' +
+        folders.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+    }
+
+    function toggleGroup(group) {
+      const el = document.getElementById(group + '-group');
+      const arrow = document.getElementById(group + '-arrow');
+      const isHidden = el.style.display === 'none';
+      el.style.display = isHidden ? 'block' : 'none';
+      arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+    }
+
+    function openExerciseConfig(type, id = null) {
+      if (type === 'custom') {
+        currentExercise = exercises.find(e => e.id === id);
+        if (!currentExercise) return;
+        // For custom exercises, show config modal or directly launch
+        launchCustomExercise(currentExercise);
+      } else {
+        // For predefined, go to create page
+        showPage('create');
+        document.getElementById('createMode').value = 'rapido';
+        switchCreateMode();
+      }
+    }
+
+    function openCreateExercise() {
+      showPage('create');
+      document.getElementById('createMode').value = 'avanzado';
+      switchCreateMode();
+    }
+
+    function switchCreateMode() {
+      const mode = document.getElementById('createMode').value;
+      document.getElementById('modoRapido').style.display = mode === 'rapido' ? 'block' : 'none';
+      document.getElementById('modoAvanzado').style.display = mode === 'avanzado' ? 'block' : 'none';
+      if (mode === 'avanzado') {
+        loadFolders();
+        if (!document.getElementById('stepsContainer').children.length) addStep();
+      }
+    }
+
+    function addStep() {
+      const container = document.getElementById('stepsContainer');
+      const stepIndex = container.children.length;
+      const stepHtml = `
+        <div class="step-item" data-step="${stepIndex}">
+          <div class="step-header">
+            <div class="step-title">Paso ${stepIndex + 1}</div>
+            <span class="step-remove" onclick="removeStep(${stepIndex})">×</span>
+          </div>
+          
+          <div class="field" style="margin-bottom:12px;">
+            <label>Nodos que se activan</label>
+            <div class="node-config">
+              ${[1,2,3,4,5,6].map(n => `
+                <label class="node-checkbox">
+                  <input type="checkbox" data-node="${n}" onchange="updateStepNodes(${stepIndex})">
+                  Nodo ${n}
+                </label>
+              `).join('')}
+            </div>
+          </div>
+          
+          <div id="nodeConfigs-${stepIndex}" style="margin-bottom:12px;">
+            <!-- Node configs will be added here -->
+          </div>
+          
+          <div class="field-row">
+            <div class="field">
+              <label>Respuesta correcta</label>
+              <select class="correctResponse" data-step="${stepIndex}" onchange="updateCorrectResponse(${stepIndex})">
+                <option value="node-1">Nodo específico</option>
+                <option value="green">El verde</option>
+                <option value="red">El rojo</option>
+                <option value="even">Número par</option>
+                <option value="odd">Número impar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Nodo correcto</label>
+              <select class="correctNode" data-step="${stepIndex}" style="display:none;">
+                ${[1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          
+          <div class="field-row">
+            <div class="field">
+              <label>Tiempo de exposición (ms)</label>
+              <input type="number" class="exposureTime" data-step="${stepIndex}" min="100" max="10000" value="1000">
+            </div>
+            <div class="field">
+              <label>Delay antes del siguiente (ms)</label>
+              <input type="number" class="delayTime" data-step="${stepIndex}" min="0" max="10000" value="500">
+            </div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', stepHtml);
+      updateCorrectResponse(stepIndex);
+    }
+
+    function removeStep(index) {
+      const container = document.getElementById('stepsContainer');
+      const step = container.querySelector(`[data-step="${index}"]`);
+      if (step) step.remove();
+      // Renumber remaining steps
+      Array.from(container.children).forEach((el, i) => {
+        el.setAttribute('data-step', i);
+        el.querySelector('.step-title').textContent = `Paso ${i + 1}`;
+        el.querySelector('.step-remove').setAttribute('onclick', `removeStep(${i})`);
+      });
+    }
+
+    function updateStepNodes(stepIndex) {
+      const step = document.querySelector(`[data-step="${stepIndex}"]`);
+      const checkedNodes = Array.from(step.querySelectorAll('input[data-node]:checked')).map(cb => parseInt(cb.getAttribute('data-node')));
+      const configContainer = document.getElementById(`nodeConfigs-${stepIndex}`);
+      
+      configContainer.innerHTML = checkedNodes.map(node => `
+        <div style="margin-bottom:12px;padding:12px;border:1px solid var(--border);border-radius:8px;">
+          <div style="font-size:0.85rem;color:var(--muted);margin-bottom:8px;">Nodo ${node}</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Forma</label>
+              <select class="nodeShape" data-node="${node}" data-step="${stepIndex}">
+                <option value="circle">Círculo</option>
+                <option value="square_filled">Cuadrado</option>
+                <option value="plus">Cruz</option>
+                <option value="up">↑ Arriba</option>
+                <option value="down">↓ Abajo</option>
+                <option value="left">← Izquierda</option>
+                <option value="right">→ Derecha</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Color</label>
+              <div class="color-options">
+                ${['red','green','blue','yellow','white','cyan'].map(color => `
+                  <div class="color-option color-${color}" data-color="${color}" data-node="${node}" data-step="${stepIndex}" onclick="toggleColor(${stepIndex}, ${node}, '${color}')"></div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleColor(stepIndex, node, color) {
+      const option = document.querySelector(`[data-step="${stepIndex}"][data-node="${node}"][data-color="${color}"]`);
+      option.classList.toggle('selected');
+    }
+
+    function updateCorrectResponse(stepIndex) {
+      const select = document.querySelector(`.correctResponse[data-step="${stepIndex}"]`);
+      const nodeSelect = document.querySelector(`.correctNode[data-step="${stepIndex}"]`);
+      if (select.value === 'node-1') {
+        nodeSelect.style.display = 'block';
+      } else {
+        nodeSelect.style.display = 'none';
+      }
+    }
+
+    async function saveCustomExercise() {
+      const name = document.getElementById('exerciseName').value.trim();
+      const description = document.getElementById('exerciseDescription').value.trim();
+      const folderId = document.getElementById('exerciseFolder').value;
+      const reps = parseInt(document.getElementById('exerciseReps').value);
+      
+      if (!name) { toast('Introduce un nombre para el ejercicio'); return; }
+      
+      const steps = [];
+      const container = document.getElementById('stepsContainer');
+      Array.from(container.children).forEach((stepEl, stepIndex) => {
+        const checkedNodes = Array.from(stepEl.querySelectorAll('input[data-node]:checked')).map(cb => parseInt(cb.getAttribute('data-node')));
+        const nodes = {};
+        
+        checkedNodes.forEach(node => {
+          const shape = stepEl.querySelector(`.nodeShape[data-node="${node}"][data-step="${stepIndex}"]`).value;
+          const colors = Array.from(stepEl.querySelectorAll(`[data-step="${stepIndex}"][data-node="${node}"].selected`)).map(el => el.getAttribute('data-color'));
+          nodes[node] = { shape, colors: colors.length ? colors : ['white'] };
+        });
+        
+        const correctResponse = stepEl.querySelector('.correctResponse').value;
+        const correctNode = correctResponse === 'node-1' ? parseInt(stepEl.querySelector('.correctNode').value) : null;
+        const exposureTime = parseInt(stepEl.querySelector('.exposureTime').value);
+        const delayTime = parseInt(stepEl.querySelector('.delayTime').value);
+        
+        steps.push({
+          nodes,
+          correct_response: correctResponse,
+          correct_node: correctNode,
+          exposure_time: exposureTime,
+          delay: delayTime
+        });
+      });
+      
+      if (!steps.length) { toast('Añade al menos un paso'); return; }
+      
+      try {
+        await db.post('exercises', {
+          name,
+          description,
+          steps: JSON.stringify(steps),
+          folder_id: folderId || null
+        });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+        showPage('exercises');
+      } catch(err) {
+        toast('Error guardando ejercicio: ' + err.message);
+      }
+    }
+
+    function launchCustomExercise(exercise) {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      
+      const steps = JSON.parse(exercise.steps);
+      const totalReps = steps.length; // Each step is one "repetition"
+      
+      state.session = {
+        active: true,
+        type: 'custom',
+        history: [],
+        current: 0,
+        total: totalReps,
+        sequence: steps,
+        timeoutId: null,
+        waiting: false,
+        config: { steps, reps: 1 }, // reps is 1 since steps define the sequence
+        nodeValues: {}
+      };
+      
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextCustomStep, 600);
+    }
+
+    function nextCustomStep() {
+      if (!state.session.active) return;
+      
+      const { sequence, current } = state.session;
+      const step = sequence[current];
+      
+      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      document.getElementById('liveHint').textContent = 'Observa los estímulos';
+      document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+      
+      // Send stimuli for all nodes in this step
+      Object.keys(step.nodes).forEach(nodeId => {
+        const node = step.nodes[nodeId];
+        const shape = node.shape;
+        const color = node.colors[Math.floor(Math.random() * node.colors.length)];
+        sendBLE({ cmd: 'show', node_id: parseInt(nodeId), shape, color });
+      });
+      
+      state.session.waiting = true;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completeCustomStep(null, false);
+      }, step.exposure_time);
+    }
+
+    function completeCustomStep(reactionMs, correct) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd: 'off' });
+      
+      const step = state.session.sequence[state.session.current];
+      state.session.history.push({
+        repetition: state.session.current + 1,
+        node_id: null,
+        shape: 'custom',
+        color: null,
+        reaction_ms: reactionMs,
+        result: correct ? 'ok' : 'miss'
+      });
+      
+      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta';
+      updateLiveStats();
+      
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextCustomStep, state.session.sequence[state.session.current - 1].delay);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
     // NAVEGACIÓN
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -937,11 +1446,18 @@
       document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===pageId));
     }
 
-    function launchExercise(type) { showPage('create'); }
+    function launchExercise(type) { 
+      if (type === 'flash' || type === 'parimpar') {
+        showPage('create');
+        document.getElementById('createMode').value = 'rapido';
+        switchCreateMode();
+      }
+    }
 
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
     document.getElementById('btBtn').addEventListener('click', connectBLE);
     document.getElementById('athleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAthleteModal(); });
+    document.getElementById('folderModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeFolderModal(); });
 
     // TOAST
     let toastTimer;
@@ -955,6 +1471,8 @@
 
     // INIT
     loadAthletes();
+    loadExercises();
+    loadFolders();
   </script>
 </body>
 </html>
