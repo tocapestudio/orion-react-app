@@ -389,6 +389,7 @@
     <!-- EJERCICIOS -->
     <section class="page" id="page-exercises">
       <div class="section-header">
+        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
         <div class="section-title">Ejercicios</div>
         <div class="athlete-pill" id="athletePill" onclick="openAthleteModal()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -401,9 +402,9 @@
         <div class="card">
           <div class="card-title" onclick="toggleGroup('predeterminados')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
             Ejercicios predeterminados
-            <span id="predeterminados-arrow" style="transition:transform 0.2s;">▼</span>
+            <span id="predeterminados-arrow" style="transition:transform 0.2s;transform:rotate(-90deg);">▼</span>
           </div>
-          <div id="predeterminados-group">
+          <div id="predeterminados-group" style="display:none;">
             <div class="ex-item" onclick="openExerciseConfig('flash')">
               <div class="ex-item-info">
                 <h3>Reacción Flash</h3>
@@ -425,9 +426,9 @@
         <div class="card">
           <div class="card-title" onclick="toggleGroup('mis')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
             Mis ejercicios
-            <span id="mis-arrow" style="transition:transform 0.2s;">▼</span>
+            <span id="mis-arrow" style="transition:transform 0.2s;transform:rotate(-90deg);">▼</span>
           </div>
-          <div id="mis-group" style="display:block;">
+          <div id="mis-group" style="display:none;">
             <!-- Exercises will be loaded here -->
           </div>
           <div class="btn-row" style="margin-top:16px;">
@@ -469,7 +470,7 @@
 
     <!-- CREAR EJERCICIO -->
     <section class="page" id="page-create">
-      <div class="section-title" style="margin-bottom:16px;">Crear ejercicio</div>
+      <div class="section-title" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;"><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button>Crear ejercicio</div>
 
       <!-- Selector de modo -->
       <div class="card">
@@ -541,7 +542,8 @@
             </select>
           </div>
           <div class="btn-row">
-            <button class="btn-primary" onclick="startFlash()">Iniciar Reacción Flash</button>
+            <button class="btn-primary" onclick="saveFlashConfig()">Guardar configuración</button>
+            <button class="btn-secondary" onclick="startFlash()">Iniciar</button>
           </div>
         </div>
 
@@ -566,7 +568,8 @@
             </select>
           </div>
           <div class="btn-row">
-            <button class="btn-primary" onclick="startParImpar()">Iniciar Par/Impar</button>
+            <button class="btn-primary" onclick="saveParImparConfig()">Guardar configuración</button>
+            <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
           </div>
         </div>
       </div>
@@ -617,6 +620,7 @@
     <!-- DATOS -->
     <section class="page" id="page-data">
       <div class="section-header">
+        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
         <div class="section-title">Datos guardados</div>
         <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="loadSessions()">↻ Actualizar</button>
       </div>
@@ -636,11 +640,18 @@
         </div>
         <button class="btn-secondary" onclick="addAthleteFromData()">Añadir deportista</button>
       </div>
-      <div class="field">
-        <label>Filtrar por deportista</label>
-        <select id="filterAthlete" onchange="loadSessions()">
-          <option value="">Todos</option>
-        </select>
+      <div class="card">
+        <div class="card-title">Filtrar sesiones</div>
+        <div class="field">
+          <label>Buscar por nombre del deportista</label>
+          <input type="text" id="athleteSearchInput" placeholder="Escribe un nombre..." oninput="filterSessionsByName()" />
+        </div>
+        <div class="field">
+          <label>O selecciona de la lista</label>
+          <select id="filterAthlete" onchange="loadSessions()">
+            <option value="">Todos</option>
+          </select>
+        </div>
       </div>
       <div id="sessionsList">
         <div class="empty">
@@ -653,7 +664,10 @@
 
     <!-- CONFIGURACIÓN -->
     <section class="page" id="page-config">
-      <div class="section-title" style="margin-bottom:16px;">Configuración</div>
+      <div class="section-header">
+        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
+        <div class="section-title">Configuración</div>
+      </div>
 
       <div class="card">
         <div class="card-title">Nodos conectados</div>
@@ -1060,19 +1074,39 @@
     }
 
     // DATOS
-    async function loadSessions() {
+    let allSessions = [];
+
+    async function loadSessionsInternal() {
       const aid = document.getElementById('filterAthlete').value;
-      const f   = aid ? `?athlete_id=eq.${aid}&order=date.desc` : '?order=date.desc';
+      const f = aid ? `?athlete_id=eq.${aid}&order=date.desc` : '?order=date.desc';
       try {
-        const sessions = await db.get('sessions', f);
-        const list = document.getElementById('sessionsList');
-        if (!sessions.length) {
-          list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin sesiones</h3><p>Guarda una sesión para verla aquí.</p></div>`;
-          return;
-        }
-        list.innerHTML = sessions.map(s=>{
-          let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : 'Ejercicio personalizado';
-          return `
+        allSessions = await db.get('sessions', f);
+        renderSessions(allSessions);
+      } catch { toast('Error cargando sesiones'); }
+    }
+
+    function filterSessionsByName() {
+      const searchInput = document.getElementById('athleteSearchInput').value.toLowerCase();
+      if (!searchInput) {
+        loadSessionsInternal();
+        return;
+      }
+      const filtered = allSessions.filter(s => {
+        const athlete = state.athletes.find(a => a.id === s.athlete_id);
+        return athlete && athlete.name.toLowerCase().includes(searchInput);
+      });
+      renderSessions(filtered);
+    }
+
+    function renderSessions(sessions) {
+      const list = document.getElementById('sessionsList');
+      if (!sessions.length) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin sesiones</h3><p>Guarda una sesión para verla aquí.</p></div>`;
+        return;
+      }
+      list.innerHTML = sessions.map(s=>{
+        let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : 'Ejercicio personalizado';
+        return `
           <div class="card" style="margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
               <strong style="font-size:0.9rem;">${exerciseName}</strong>
@@ -1080,7 +1114,11 @@
             </div>
             <span style="font-size:0.78rem;color:var(--muted);">${s.notes?JSON.parse(s.notes).reps+' repeticiones':''}</span>
           </div>`}).join('');
-      } catch { toast('Error cargando sesiones'); }
+    }
+
+    function loadSessions() {
+      document.getElementById('athleteSearchInput').value = '';
+      loadSessionsInternal();
     }
 
     // DEPORTISTAS
@@ -1560,10 +1598,77 @@
     }
 
     // NAVEGACIÓN
+    let navHistory = [];
+    
+    function goBack() {
+      if (navHistory.length > 1) {
+        navHistory.pop(); // Remove current
+        showPage(navHistory[navHistory.length - 1]);
+      } else {
+        showPage('home');
+      }
+    }
+    
     function showPage(pageId) {
+      navHistory.push(pageId);
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
       document.getElementById('page-'+pageId)?.classList.add('active');
       document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===pageId));
+    }
+
+    async function saveFlashConfig() {
+      const name = `Reacción Flash - ${new Date().toLocaleDateString()}`;
+      const numNodes = parseInt(document.getElementById('nodesCount').value);
+      const reps = parseInt(document.getElementById('repsCount').value);
+      const order = document.getElementById('stimOrder').value;
+      const shape = document.getElementById('stimShape').value;
+      const color = document.getElementById('stimColor').value;
+      const interval = parseInt(document.getElementById('stimInterval').value);
+      const timeout = parseInt(document.getElementById('stimTimeout').value);
+      
+      const steps = Array.from({length: reps}, (_,i) => {
+        const nodeId = order === 'sequential' ? (i % numNodes) + 1 : Math.floor(Math.random() * numNodes) + 1;
+        const stepNodes = {};
+        stepNodes[nodeId] = { shape, colors: [color] };
+        return {
+          nodes: stepNodes,
+          correct_response: 'node-1',
+          correct_node: nodeId,
+          exposure_time: timeout,
+          delay: interval
+        };
+      });
+      
+      try {
+        await db.post('exercises', { name, description: 'Configuración rápida - Reacción Flash', steps: JSON.stringify(steps), folder_id: null });
+        toast('Configuración guardada ✓');
+        await loadExercises();
+      } catch(err) {
+        toast('Error: ' + err.message);
+      }
+    }
+
+    async function saveParImparConfig() {
+      const name = `Par/Impar - ${new Date().toLocaleDateString()}`;
+      const reps = parseInt(document.getElementById('piReps').value);
+      const timeout = parseInt(document.getElementById('piTimeout').value);
+      const rule = document.getElementById('piRule').value;
+      
+      const steps = Array.from({length: reps}, () => ({
+        nodes: { 1: { shape: 'circle', colors: ['red', 'green', 'blue', 'yellow'] }, 2: { shape: 'circle', colors: ['red', 'green', 'blue', 'yellow'] }},
+        correct_response: rule === 'pairs' ? 'even' : 'odd',
+        correct_node: null,
+        exposure_time: timeout,
+        delay: 700
+      }));
+      
+      try {
+        await db.post('exercises', { name, description: 'Configuración rápida - Par/Impar', steps: JSON.stringify(steps), folder_id: null });
+        toast('Configuración guardada ✓');
+        await loadExercises();
+      } catch(err) {
+        toast('Error: ' + err.message);
+      }
     }
 
     function launchExercise(type) { 
