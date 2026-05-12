@@ -210,6 +210,36 @@
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
 
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .home-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 130px;
+      padding: 18px;
+      border-radius: 20px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-align: center;
+      cursor: pointer;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .home-button:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .home-button svg { width: 32px; height: 32px; stroke: currentColor; }
+    .home-button span { display: block; font-size: 0.95rem; font-weight: 600; }
+
     /* ATHLETE PILL */
     .athlete-pill {
       display: flex; align-items: center; gap: 8px; padding: 8px 14px;
@@ -288,7 +318,7 @@
   </header>
 
   <nav class="nav">
-    <button class="nav-btn active" data-page="exercises">Ejercicios</button>
+    <button class="nav-btn" data-page="exercises">Ejercicios</button>
     <button class="nav-btn" data-page="create">Crear ejercicio</button>
     <button class="nav-btn" data-page="data">Datos</button>
     <button class="nav-btn" data-page="config">Configuración</button>
@@ -296,8 +326,33 @@
 
   <main class="main">
 
+    <!-- PANTALLA INICIAL -->
+    <section class="page active" id="page-home">
+      <div class="section-header">
+        <div class="section-title">Bienvenido a Orion React</div>
+      </div>
+      <div class="home-grid">
+        <button class="home-button" onclick="showPage('exercises')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <span>Ejercicios</span>
+        </button>
+        <button class="home-button" onclick="showPage('create')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+          <span>Crear ejercicio</span>
+        </button>
+        <button class="home-button" onclick="showPage('data')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <span>Datos</span>
+        </button>
+        <button class="home-button" onclick="showPage('config')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          <span>Configuración</span>
+        </button>
+      </div>
+    </section>
+
     <!-- EJERCICIOS -->
-    <section class="page active" id="page-exercises">
+    <section class="page" id="page-exercises">
       <div class="section-header">
         <div class="section-title">Ejercicios</div>
         <div class="athlete-pill" id="athletePill" onclick="openAthleteModal()">
@@ -530,6 +585,22 @@
         <div class="section-title">Datos guardados</div>
         <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="loadSessions()">↻ Actualizar</button>
       </div>
+      <div class="card">
+        <div class="card-title">Deportistas</div>
+        <div class="card-sub">Gestiona los perfiles directamente desde Datos.</div>
+        <div id="athletesListData" style="margin-bottom:14px;"></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Nombre</label>
+            <input type="text" id="newAthleteNameData" placeholder="Nombre" />
+          </div>
+          <div class="field">
+            <label>Deporte</label>
+            <input type="text" id="newAthleteSportData" placeholder="Fútbol, pádel..." />
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addAthleteFromData()">Añadir deportista</button>
+      </div>
       <div class="field">
         <label>Filtrar por deportista</label>
         <select id="filterAthlete" onchange="loadSessions()">
@@ -598,7 +669,7 @@
   </main>
 
   <nav class="bottom-nav">
-    <button class="bottom-nav-btn active" data-page="exercises">
+    <button class="bottom-nav-btn" data-page="exercises">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       Ejercicios
     </button>
@@ -988,15 +1059,16 @@
 
     function renderAthletes() {
       const list = document.getElementById('athletesList');
-      if (!state.athletes.length) {
-        list.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin deportistas añadidos.</div>`;
-        return;
-      }
-      list.innerHTML = state.athletes.map(a=>`
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-          <div><div style="font-size:0.9rem;font-weight:500;">${a.name}</div><div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div></div>
-          <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
-        </div>`).join('');
+      const listData = document.getElementById('athletesListData');
+      const html = !state.athletes.length
+        ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin deportistas añadidos.</div>`
+        : state.athletes.map(a=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div><div style="font-size:0.9rem;font-weight:500;">${a.name}</div><div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div></div>
+            <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
+          </div>`).join('');
+      list.innerHTML = html;
+      if (listData) listData.innerHTML = html;
     }
 
     async function addAthlete() {
@@ -1007,6 +1079,19 @@
         await db.post('athletes', {name, sport});
         document.getElementById('newAthleteName').value  = '';
         document.getElementById('newAthleteSport').value = '';
+        await loadAthletes();
+        toast('Deportista añadido ✓');
+      } catch(err) { toast('Error: '+err.message); }
+    }
+
+    async function addAthleteFromData() {
+      const name  = document.getElementById('newAthleteNameData').value.trim();
+      const sport = document.getElementById('newAthleteSportData').value.trim();
+      if (!name) { toast('Introduce un nombre'); return; }
+      try {
+        await db.post('athletes', {name, sport});
+        document.getElementById('newAthleteNameData').value  = '';
+        document.getElementById('newAthleteSportData').value = '';
         await loadAthletes();
         toast('Deportista añadido ✓');
       } catch(err) { toast('Error: '+err.message); }
