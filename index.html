@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#080c12" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Orion React</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+    :root {
+      --bg:        #080c12;
+      --bg2:       #0d1420;
+      --bg3:       #111d2e;
+      --border:    rgba(99,179,255,0.10);
+      --border2:   rgba(99,179,255,0.18);
+      --text:      #e8f0fb;
+      --muted:     #5a7a9a;
+      --accent:    #3b82f6;
+      --accent2:   #06b6d4;
+      --success:   #22d3a0;
+      --warning:   #f59e0b;
+      --danger:    #ef4444;
+      --glow:      0 0 40px rgba(59,130,246,0.15);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); overscroll-behavior: none; }
+    body {
+      background-image:
+        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(59,130,246,0.12), transparent),
+        radial-gradient(ellipse 50% 30% at 90% 80%, rgba(6,182,212,0.06), transparent);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    button { font: inherit; border: none; cursor: pointer; }
+    input, select { font: inherit; }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      background: rgba(8,12,18,0.85); backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(120deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo span { font-weight: 700; -webkit-text-fill-color: var(--muted); }
+    .bt-status {
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+      border-radius: 999px; border: 1px solid var(--border2); background: var(--bg2);
+      font-size: 0.82rem; font-family: 'DM Mono', monospace; color: var(--muted);
+      cursor: pointer; transition: all .2s;
+    }
+    .bt-status:hover { border-color: var(--accent); color: var(--text); }
+    .bt-status.connected { border-color: var(--success); color: var(--success); }
+    .bt-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background .3s; }
+    .bt-status.connected .bt-dot { background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* NAV */
+    .nav {
+      display: flex; gap: 4px; padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,12,18,0.7); backdrop-filter: blur(12px);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      padding: 8px 16px; border-radius: 10px; background: transparent;
+      color: var(--muted); font-size: 0.85rem; font-weight: 500;
+      white-space: nowrap; transition: all .2s; border: 1px solid transparent;
+    }
+    .nav-btn:hover { color: var(--text); background: var(--bg3); }
+    .nav-btn.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+
+    /* MAIN */
+    .main { flex: 1; padding: 20px 16px 100px; max-width: 680px; margin: 0 auto; width: 100%; }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+    /* CARDS */
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+
+    /* EXERCISE LIST */
+    .ex-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; border-radius: 14px; background: var(--bg3);
+      border: 1px solid var(--border); margin-bottom: 10px; cursor: pointer; transition: all .2s;
+    }
+    .ex-item:hover { border-color: var(--accent); box-shadow: var(--glow); }
+    .ex-item-info h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 3px; }
+    .ex-item-info p { font-size: 0.78rem; color: var(--muted); }
+    .ex-item-arrow { color: var(--muted); font-size: 1.2rem; }
+
+    /* BUTTONS */
+    .btn-primary {
+      padding: 14px 24px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-weight: 600; font-size: 0.95rem;
+      transition: all .2s; box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(59,130,246,0.35); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      padding: 12px 20px; border-radius: 14px; background: var(--bg3);
+      color: var(--text); font-weight: 500; font-size: 0.9rem;
+      border: 1px solid var(--border2); transition: all .2s;
+    }
+    .btn-secondary:hover { background: var(--bg2); border-color: var(--accent); }
+    .btn-danger {
+      padding: 12px 20px; border-radius: 14px;
+      background: rgba(239,68,68,0.1); color: var(--danger);
+      font-weight: 500; border: 1px solid rgba(239,68,68,0.2); transition: all .2s;
+    }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+    /* FIELDS */
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+    .field input, .field select {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid var(--border2); background: var(--bg3);
+      color: var(--text); font-size: 0.9rem; transition: border-color .2s;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+    .field select option { background: var(--bg2); }
+    .field input[type=range] { padding: 0; height: 36px; accent-color: var(--accent); }
+    .field-row { display: flex; gap: 10px; }
+    .field-row .field { flex: 1; }
+    .slider-val { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--accent); float: right; }
+
+    /* TOGGLE */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border: none; }
+    .toggle-label { font-size: 0.9rem; }
+    .toggle-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .toggle {
+      width: 44px; height: 24px; border-radius: 999px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle.on { background: var(--accent); border-color: var(--accent); }
+    .toggle::after {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform .2s;
+    }
+    .toggle.on::after { transform: translateX(20px); }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+    .stat-tile { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; }
+    .stat-tile .val { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+    .stat-tile .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* LIVE */
+    .live-display {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 14px;
+      position: relative; overflow: hidden;
+    }
+    .live-display::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.08), transparent);
+      pointer-events: none;
+    }
+    .live-node { font-family: 'Syne', sans-serif; font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .live-time { font-family: 'DM Mono', monospace; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
+    .live-hint { font-size: 0.82rem; color: var(--muted); }
+
+    /* NODE CHIPS */
+    .nodes-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .node-chip {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border-radius: 10px; background: var(--bg3); border: 1px solid var(--border);
+      font-size: 0.82rem; font-family: 'DM Mono', monospace; transition: all .2s;
+    }
+    .node-chip.connected { border-color: var(--success); color: var(--success); }
+    .node-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+    .node-chip.connected .node-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+    /* HISTORY */
+    .history { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .history th { color: var(--muted); font-weight: 500; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .history td { padding: 10px; border-bottom: 1px solid var(--border); }
+    .history tr:last-child td { border: none; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge.ok { background: rgba(34,211,160,0.12); color: var(--success); }
+    .badge.miss { background: rgba(239,68,68,0.12); color: var(--danger); }
+
+    /* SECTION HEADER */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
+
+    /* ATHLETE PILL */
+    .athlete-pill {
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+      border-radius: 10px; background: var(--bg3); border: 1px solid var(--border2);
+      font-size: 0.82rem; cursor: pointer; transition: all .2s;
+    }
+    .athlete-pill:hover { border-color: var(--accent); }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+    .empty h3 { font-size: 1rem; margin-bottom: 6px; color: var(--text); opacity: 0.6; }
+    .empty p { font-size: 0.85rem; line-height: 1.6; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px); z-index: 200;
+      display: none; align-items: flex-end; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border2); border-radius: 24px;
+      padding: 24px; width: 100%; max-width: 480px; animation: slideUp .25s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:none;opacity:1} }
+    .modal-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 10px 18px; font-size: 0.85rem;
+      opacity: 0; transition: all .3s; z-index: 300; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* BOTTOM NAV */
+    @media (max-width: 600px) {
+      .nav { display: none; }
+      .bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(8,12,18,0.95); backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        padding: 10px 0 env(safe-area-inset-bottom); z-index: 100;
+      }
+      .bottom-nav-btn {
+        flex: 1; display: flex; flex-direction: column; align-items: center;
+        gap: 4px; padding: 6px; background: none;
+        color: var(--muted); font-size: 0.65rem; font-weight: 500; transition: color .2s;
+      }
+      .bottom-nav-btn.active { color: var(--accent); }
+      .bottom-nav-btn svg { width: 22px; height: 22px; }
+    }
+    @media (min-width: 601px) { .bottom-nav { display: none; } }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="logo">ORION <span>REACT</span></div>
+    <button class="bt-status" id="btBtn">
+      <span class="bt-dot" id="btDot"></span>
+      <span id="btText">Conectar nodo</span>
+    </button>
+  </header>
+
+  <nav class="nav">
+    <button class="nav-btn active" data-page="exercises">Ejercicios</button>
+    <button class="nav-btn" data-page="create">Crear ejercicio</button>
+    <button class="nav-btn" data-page="data">Datos</button>
+    <button class="nav-btn" data-page="config">Configuración</button>
+  </nav>
+
+  <main class="main">
+
+    <!-- EJERCICIOS -->
+    <section class="page active" id="page-exercises">
+      <div class="section-header">
+        <div class="section-title">Ejercicios</div>
+        <div class="athlete-pill" id="athletePill" onclick="openAthleteModal()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span id="athleteName">Sin deportista</span>
+        </div>
+      </div>
+
+      <div id="exerciseList">
+        <div class="ex-item" onclick="launchExercise('flash')">
+          <div class="ex-item-info">
+            <h3>Reacción Flash</h3>
+            <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
+          </div>
+          <span class="ex-item-arrow">›</span>
+        </div>
+        <div class="ex-item" onclick="launchExercise('parimpar')">
+          <div class="ex-item-info">
+            <h3>Par / Impar</h3>
+            <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
+          </div>
+          <span class="ex-item-arrow">›</span>
+        </div>
+      </div>
+
+      <div id="activeSession" style="display:none;">
+        <div class="live-display">
+          <div class="live-node" id="liveNode">--</div>
+          <div class="live-time" id="liveTime">-- ms</div>
+          <div class="live-hint" id="liveHint">Preparando...</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media ms</span></div>
+          <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor ms</span></div>
+          <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl">Progreso</span></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-danger" onclick="stopSession()">Detener sesión</button>
+        </div>
+      </div>
+
+      <div id="sessionSummary" style="display:none;">
+        <div class="card">
+          <div class="card-title">Sesión completada</div>
+          <div class="card-sub" id="summaryText"></div>
+          <div class="stats-row" id="summaryStats"></div>
+          <div id="summaryTable"></div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveSession()">Guardar en la nube</button>
+            <button class="btn-secondary" onclick="discardSession()">Descartar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREAR EJERCICIO -->
+    <section class="page" id="page-create">
+      <div class="section-title" style="margin-bottom:16px;">Crear ejercicio</div>
+
+      <div class="card">
+        <div class="card-title">Reacción Flash</div>
+        <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
+            <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+          </div>
+          <div class="field">
+            <label>Repeticiones</label>
+            <input type="number" min="1" max="50" value="10" id="repsCount" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Intervalo (ms)</label>
+            <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
+          </div>
+          <div class="field">
+            <label>Timeout (ms)</label>
+            <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Forma</label>
+            <select id="stimShape">
+              <option value="circle">Círculo</option>
+              <option value="square_filled">Cuadrado</option>
+              <option value="plus">Cruz</option>
+              <option value="up">↑ Arriba</option>
+              <option value="down">↓ Abajo</option>
+              <option value="left">← Izquierda</option>
+              <option value="right">→ Derecha</option>
+              <option value="number">Número aleatorio</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Color</label>
+            <select id="stimColor">
+              <option value="green">Verde</option>
+              <option value="red">Rojo</option>
+              <option value="blue">Azul</option>
+              <option value="yellow">Amarillo</option>
+              <option value="white">Blanco</option>
+              <option value="cyan">Cian</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Orden</label>
+          <select id="stimOrder">
+            <option value="random">Aleatorio</option>
+            <option value="sequential">Secuencial</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="startFlash()">Iniciar Reacción Flash</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Par / Impar</div>
+        <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Repeticiones</label>
+            <input type="number" min="1" max="50" value="10" id="piReps" />
+          </div>
+          <div class="field">
+            <label>Timeout (ms)</label>
+            <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Regla</label>
+          <select id="piRule">
+            <option value="pairs">Tocar pares</option>
+            <option value="odds">Tocar impares</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="startParImpar()">Iniciar Par/Impar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATOS -->
+    <section class="page" id="page-data">
+      <div class="section-header">
+        <div class="section-title">Datos guardados</div>
+        <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="loadSessions()">↻ Actualizar</button>
+      </div>
+      <div class="field">
+        <label>Filtrar por deportista</label>
+        <select id="filterAthlete" onchange="loadSessions()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+      <div id="sessionsList">
+        <div class="empty">
+          <div class="empty-icon">📊</div>
+          <h3>Sin datos todavía</h3>
+          <p>Las sesiones guardadas aparecerán aquí.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIGURACIÓN -->
+    <section class="page" id="page-config">
+      <div class="section-title" style="margin-bottom:16px;">Configuración</div>
+
+      <div class="card">
+        <div class="card-title">Nodos conectados</div>
+        <div class="card-sub">Estado en tiempo real de los nodos BLE.</div>
+        <div class="nodes-grid" id="nodesGrid">
+          <div class="node-chip"><span class="node-dot"></span>Sin nodos</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Intensidad lumínica</div>
+        <div class="card-sub">Ajusta el brillo de la matriz LED.</div>
+        <div class="field">
+          <label>Brillo <span class="slider-val" id="brightnessVal">64</span></label>
+          <input type="range" min="10" max="255" value="64" id="brightnessSlider" oninput="updateBrightness(this.value)" />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Buzzer</div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Buzzer del nodo</div>
+            <div class="toggle-sub">Feedback sonoro en cada estímulo</div>
+          </div>
+          <div class="toggle on" id="buzzerToggle" onclick="toggleBuzzer()"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Deportistas</div>
+        <div class="card-sub">Gestiona los perfiles para guardar datos por deportista.</div>
+        <div id="athletesList" style="margin-bottom:14px;"></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Nombre</label>
+            <input type="text" id="newAthleteName" placeholder="Nombre" />
+          </div>
+          <div class="field">
+            <label>Deporte</label>
+            <input type="text" id="newAthleteSport" placeholder="Fútbol, pádel..." />
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="addAthlete()">Añadir deportista</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="bottom-nav-btn active" data-page="exercises">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      Ejercicios
+    </button>
+    <button class="bottom-nav-btn" data-page="create">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+      Crear
+    </button>
+    <button class="bottom-nav-btn" data-page="data">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Datos
+    </button>
+    <button class="bottom-nav-btn" data-page="config">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      Config
+    </button>
+  </nav>
+
+  <div class="modal-overlay" id="athleteModal">
+    <div class="modal">
+      <div class="modal-title">Seleccionar deportista</div>
+      <div id="athleteModalList" style="margin-bottom:16px;"></div>
+      <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // SUPABASE
+    const SUPABASE_URL = 'https://twalryzcwxzcfqubvwji.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_wjdjMN60g-Yy1r_479aPPA_6rqA2zTU';
+
+    const db = {
+      async query(table, method='GET', body=null, filters='') {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${filters}`, {
+          method,
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': method === 'POST' ? 'return=representation' : ''
+          },
+          body: body ? JSON.stringify(body) : null
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return method === 'DELETE' ? null : res.json();
+      },
+      get:    (t, f='')  => db.query(t,'GET',null,f),
+      post:   (t, b)     => db.query(t,'POST',b),
+      delete: (t, f)     => db.query(t,'DELETE',null,f),
+    };
+
+    // ESTADO
+    const state = {
+      bt: { device:null, cmdChar:null, connected:false },
+      athlete: null,
+      athletes: [],
+      buzzerOn: true,
+      session: { active:false, type:null, history:[], current:0, total:0, sequence:[], timeoutId:null, waiting:false, config:{}, nodeValues:{} }
+    };
+
+    // BLE UUIDs — deben coincidir con el firmware BLE del ESP32
+    const BLE_SERVICE  = '12345678-1234-1234-1234-123456789abc';
+    const BLE_CMD_CHAR = '12345678-1234-1234-1234-123456789001';
+    const BLE_EVT_CHAR = '12345678-1234-1234-1234-123456789002';
+
+    // BLE CONEXIÓN
+    async function connectBLE() {
+      if (state.bt.connected) { disconnectBLE(); return; }
+      if (!navigator.bluetooth) { toast('Web Bluetooth no disponible. Usa Chrome en Android.'); return; }
+      try {
+        toast('Buscando nodo...');
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'OrionNode' }],
+          optionalServices: [BLE_SERVICE]
+        });
+        state.bt.device = device;
+        device.addEventListener('gattserverdisconnected', onBLEDisconnected);
+        const server  = await device.gatt.connect();
+        const service = await server.getPrimaryService(BLE_SERVICE);
+        const cmdChar = await service.getCharacteristic(BLE_CMD_CHAR);
+        const evtChar = await service.getCharacteristic(BLE_EVT_CHAR);
+        await evtChar.startNotifications();
+        evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
+        state.bt.cmdChar   = cmdChar;
+        state.bt.connected = true;
+        updateBTUI(true);
+        updateNodesGrid();
+        toast('Nodo conectado ✓');
+      } catch(err) {
+        if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
+        updateBTUI(false);
+      }
+    }
+
+    function disconnectBLE() {
+      state.bt.device?.gatt.disconnect();
+      state.bt.connected = false;
+      updateBTUI(false);
+      updateNodesGrid();
+    }
+
+    function onBLEDisconnected() {
+      state.bt.connected = false;
+      updateBTUI(false);
+      updateNodesGrid();
+      toast('Nodo desconectado');
+    }
+
+    function onBLEMessage(event) {
+      try {
+        const data = JSON.parse(new TextDecoder().decode(event.target.value));
+        if (data.reaction_ms != null) onReactionReceived(data);
+      } catch {}
+    }
+
+    async function sendBLE(payload) {
+      if (!state.bt.connected || !state.bt.cmdChar) return;
+      try {
+        await state.bt.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify(payload)));
+      } catch(e) { console.warn('BLE write:', e); }
+    }
+
+    function updateBTUI(connected) {
+      const btn = document.getElementById('btBtn');
+      btn.className = 'bt-status' + (connected ? ' connected' : '');
+      document.getElementById('btText').textContent = connected
+        ? (state.bt.device?.name || 'Nodo conectado')
+        : 'Conectar nodo';
+    }
+
+    function updateNodesGrid() {
+      const grid = document.getElementById('nodesGrid');
+      grid.innerHTML = state.bt.connected
+        ? `<div class="node-chip connected"><span class="node-dot"></span>${state.bt.device?.name || 'OrionNode'} · Nodo 1</div>`
+        : `<div class="node-chip"><span class="node-dot"></span>Sin nodos</div>`;
+    }
+
+    // EVENTOS DEL NODO
+    function onReactionReceived(data) {
+      if (!state.session.active || !state.session.waiting) return;
+      if (state.session.type === 'parimpar') {
+        const val = state.session.nodeValues[data.node_id];
+        if (val == null) return;
+        const isEven = val % 2 === 0;
+        const wantsEven = state.session.config.rule === 'pairs';
+        completeParImpar(isEven === wantsEven, data.reaction_ms >= 0 ? data.reaction_ms : null);
+      } else {
+        completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
+      }
+    }
+
+    // FLASH
+    function startFlash() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const nodes    = parseInt(document.getElementById('nodesCount').value);
+      const reps     = parseInt(document.getElementById('repsCount').value);
+      const order    = document.getElementById('stimOrder').value;
+      const shape    = document.getElementById('stimShape').value;
+      const color    = document.getElementById('stimColor').value;
+      const interval = parseInt(document.getElementById('stimInterval').value);
+      const timeout  = parseInt(document.getElementById('stimTimeout').value);
+      const sequence = Array.from({length: reps}, (_,i) =>
+        order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
+      );
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,timeout} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextStimulus, 600);
+    }
+
+    function nextStimulus() {
+      if (!state.session.active) return;
+      const { sequence, current, config } = state.session;
+      const nodeId = sequence[current];
+      const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
+      document.getElementById('liveNode').textContent     = `Nodo ${nodeId}`;
+      document.getElementById('liveTime').textContent     = '-- ms';
+      document.getElementById('liveHint').textContent     = 'Reacciona al ver el estímulo';
+      document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
+      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color });
+      state.session.waiting = true;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completeStimulus(null, false);
+      }, config.timeout);
+    }
+
+    function completeStimulus(reactionMs, ok) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      state.session.history.push({ repetition:state.session.current+1, node_id:state.session.sequence[state.session.current], shape:state.session.config.shape, color:state.session.config.color, reaction_ms:reactionMs, result:ok?'ok':'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs+' ms' : '—';
+      document.getElementById('liveHint').textContent = ok ? '✓ Reacción registrada' : 'Sin respuesta';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextStimulus, state.session.config.interval);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
+    // PAR/IMPAR
+    function startParImpar() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const reps    = parseInt(document.getElementById('piReps').value);
+      const timeout = parseInt(document.getElementById('piTimeout').value);
+      const rule    = document.getElementById('piRule').value;
+      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,timeout,rule}, nodeValues:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextParImpar, 600);
+    }
+
+    function nextParImpar() {
+      if (!state.session.active) return;
+      const even = 2*(Math.floor(Math.random()*9)+1);
+      const odd  = 2*(Math.floor(Math.random()*9)+1)-1;
+      const n1even = Math.random() < 0.5;
+      const v1 = n1even ? even : odd;
+      const v2 = n1even ? odd  : even;
+      state.session.nodeValues = {1:v1, 2:v2};
+      const colors = ['red','green','blue','yellow'];
+      document.getElementById('liveNode').textContent     = `${v1} · ${v2}`;
+      document.getElementById('liveHint').textContent     = state.session.config.rule === 'pairs' ? 'Toca el PAR' : 'Toca el IMPAR';
+      document.getElementById('statProgress').textContent = `${state.session.current+1}/${state.session.total}`;
+      sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:colors[Math.floor(Math.random()*4)] });
+      setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:colors[Math.floor(Math.random()*4)] }), 120);
+      state.session.waiting = true;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completeParImpar(false, null);
+      }, state.session.config.timeout);
+    }
+
+    function completeParImpar(correct, reactionMs) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      state.session.history.push({ repetition:state.session.current+1, node_id:null, shape:'parimpar', color:null, reaction_ms:reactionMs, result:correct?'ok':'miss' });
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextParImpar, 700);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
+    // SESIÓN
+    function showActiveSession() {
+      document.getElementById('activeSession').style.display  = 'block';
+      document.getElementById('exerciseList').style.display   = 'none';
+      document.getElementById('sessionSummary').style.display = 'none';
+    }
+
+    function stopSession() {
+      clearTimeout(state.session.timeoutId);
+      state.session.active = state.session.waiting = false;
+      sendBLE({ cmd:'off' });
+      endSession();
+    }
+
+    function endSession() {
+      state.session.active = false;
+      sendBLE({ cmd:'off' });
+      document.getElementById('activeSession').style.display = 'none';
+      showSummary();
+    }
+
+    function updateLiveStats() {
+      const rs = state.session.history.filter(h=>h.reaction_ms!==null).map(h=>h.reaction_ms);
+      if (rs.length) {
+        document.getElementById('statAvg').textContent  = Math.round(rs.reduce((a,b)=>a+b,0)/rs.length);
+        document.getElementById('statBest').textContent = Math.min(...rs);
+      }
+    }
+
+    function showSummary() {
+      const h  = state.session.history;
+      const rs = h.filter(x=>x.reaction_ms!==null).map(x=>x.reaction_ms);
+      const avg  = rs.length ? Math.round(rs.reduce((a,b)=>a+b,0)/rs.length) : '--';
+      const best = rs.length ? Math.min(...rs) : '--';
+      const hits = h.filter(x=>x.result==='ok').length;
+      document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg} ms`;
+      document.getElementById('summaryStats').innerHTML = `
+        <div class="stat-tile"><span class="val">${avg}</span><span class="lbl">Media ms</span></div>
+        <div class="stat-tile"><span class="val">${best}</span><span class="lbl">Mejor ms</span></div>
+        <div class="stat-tile"><span class="val">${hits}/${h.length}</span><span class="lbl">Aciertos</span></div>`;
+      document.getElementById('summaryTable').innerHTML = `
+        <table class="history">
+          <thead><tr><th>#</th><th>Nodo</th><th>Resultado</th><th>Tiempo</th></tr></thead>
+          <tbody>${h.map(r=>`<tr><td>${r.repetition}</td><td>${r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${r.reaction_ms!==null?r.reaction_ms+' ms':'—'}</td></tr>`).join('')}</tbody>
+        </table>`;
+      document.getElementById('sessionSummary').style.display = 'block';
+      document.getElementById('exerciseList').style.display   = 'none';
+    }
+
+    async function saveSession() {
+      try {
+        toast('Guardando...');
+        const rows = await db.post('sessions', { athlete_id:state.athlete?.id||null, exercise_type:state.session.type, notes:JSON.stringify(state.session.config) });
+        const sid  = rows[0].id;
+        for (const r of state.session.history) await db.post('results', { session_id:sid, ...r });
+        toast('Sesión guardada ✓');
+        discardSession();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    function discardSession() {
+      document.getElementById('sessionSummary').style.display = 'none';
+      document.getElementById('exerciseList').style.display   = 'block';
+      state.session = { active:false, history:[], current:0, total:0, sequence:[], waiting:false, config:{}, nodeValues:{} };
+    }
+
+    // DATOS
+    async function loadSessions() {
+      const aid = document.getElementById('filterAthlete').value;
+      const f   = aid ? `?athlete_id=eq.${aid}&order=date.desc` : '?order=date.desc';
+      try {
+        const sessions = await db.get('sessions', f);
+        const list = document.getElementById('sessionsList');
+        if (!sessions.length) {
+          list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin sesiones</h3><p>Guarda una sesión para verla aquí.</p></div>`;
+          return;
+        }
+        list.innerHTML = sessions.map(s=>`
+          <div class="card" style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <strong style="font-size:0.9rem;">${s.exercise_type==='flash'?'Reacción Flash':'Par/Impar'}</strong>
+              <span style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">${new Date(s.date).toLocaleDateString('es-ES')}</span>
+            </div>
+            <span style="font-size:0.78rem;color:var(--muted);">${s.notes?JSON.parse(s.notes).reps+' repeticiones':''}</span>
+          </div>`).join('');
+      } catch { toast('Error cargando sesiones'); }
+    }
+
+    // DEPORTISTAS
+    async function loadAthletes() {
+      try {
+        state.athletes = await db.get('athletes','?order=name');
+        renderAthletes();
+        updateAthleteFilter();
+      } catch {}
+    }
+
+    function renderAthletes() {
+      const list = document.getElementById('athletesList');
+      if (!state.athletes.length) {
+        list.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin deportistas añadidos.</div>`;
+        return;
+      }
+      list.innerHTML = state.athletes.map(a=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:0.9rem;font-weight:500;">${a.name}</div><div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div></div>
+          <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
+        </div>`).join('');
+    }
+
+    async function addAthlete() {
+      const name  = document.getElementById('newAthleteName').value.trim();
+      const sport = document.getElementById('newAthleteSport').value.trim();
+      if (!name) { toast('Introduce un nombre'); return; }
+      try {
+        await db.post('athletes', {name, sport});
+        document.getElementById('newAthleteName').value  = '';
+        document.getElementById('newAthleteSport').value = '';
+        await loadAthletes();
+        toast('Deportista añadido ✓');
+      } catch(err) { toast('Error: '+err.message); }
+    }
+
+    async function deleteAthlete(id) {
+      try {
+        await db.delete('athletes',`?id=eq.${id}`);
+        if (state.athlete?.id===id) { state.athlete=null; updateAthletePill(); }
+        await loadAthletes();
+      } catch {}
+    }
+
+    function updateAthleteFilter() {
+      document.getElementById('filterAthlete').innerHTML =
+        '<option value="">Todos</option>' +
+        state.athletes.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+    }
+
+    function openAthleteModal() {
+      const list = document.getElementById('athleteModalList');
+      list.innerHTML = !state.athletes.length
+        ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Añade deportistas en Configuración.</div>`
+        : state.athletes.map(a=>`<div class="ex-item" onclick="selectAthlete('${a.id}','${a.name}')"><div class="ex-item-info"><h3>${a.name}</h3><p>${a.sport||''}</p></div><span class="ex-item-arrow">›</span></div>`).join('');
+      document.getElementById('athleteModal').classList.add('open');
+    }
+
+    function closeAthleteModal() { document.getElementById('athleteModal').classList.remove('open'); }
+
+    function selectAthlete(id, name) {
+      state.athlete = {id, name};
+      updateAthletePill();
+      closeAthleteModal();
+    }
+
+    function updateAthletePill() {
+      document.getElementById('athleteName').textContent = state.athlete?.name || 'Sin deportista';
+    }
+
+    // CONFIG
+    function updateBrightness(val) {
+      document.getElementById('brightnessVal').textContent = val;
+      sendBLE({ cmd:'brightness', value:String(val) });
+    }
+
+    function toggleBuzzer() {
+      state.buzzerOn = !state.buzzerOn;
+      document.getElementById('buzzerToggle').className = 'toggle' + (state.buzzerOn ? ' on' : '');
+      sendBLE({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' });
+    }
+
+    // NAVEGACIÓN
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('page-'+pageId)?.classList.add('active');
+      document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===pageId));
+    }
+
+    function launchExercise(type) { showPage('create'); }
+
+    document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
+    document.getElementById('btBtn').addEventListener('click', connectBLE);
+    document.getElementById('athleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAthleteModal(); });
+
+    // TOAST
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>el.classList.remove('show'), 2800);
+    }
+
+    // INIT
+    loadAthletes();
+  </script>
+</body>
+</html>

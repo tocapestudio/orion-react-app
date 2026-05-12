@@ -1,0 +1,17 @@
+{
+  "name": "Orion React",
+  "short_name": "Orion React",
+  "description": "Sistema de entrenamiento de reacción visual",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080c12",
+  "theme_color": "#080c12",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
