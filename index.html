@@ -10,7 +10,7 @@
   <title>Orion React</title>
   <link rel="manifest" href="manifest.json" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap');
 
     :root {
       --bg:        #080c12;
@@ -26,7 +26,7 @@
       --warning:   #f59e0b;
       --danger:    #ef4444;
       --glow:      0 0 40px rgba(59,130,246,0.15);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -485,91 +485,121 @@
 
       <!-- MODO RÁPIDO -->
       <div id="modoRapido">
-        <div class="card">
-          <div class="card-title">Reacción Flash</div>
-          <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
-          <div class="field-row">
-            <div class="field">
-              <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
-              <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+        <!-- Lista de tipos -->
+        <div id="quickModeList">
+          <div class="ex-item" onclick="expandQuickForm('flash')">
+            <div class="ex-item-info">
+              <h3>Reacción Flash</h3>
+              <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
             </div>
-            <div class="field">
-              <label>Repeticiones</label>
-              <input type="number" min="1" max="50" value="10" id="repsCount" />
-            </div>
+            <span class="ex-item-arrow">›</span>
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Intervalo (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
+          <div class="ex-item" onclick="expandQuickForm('parimpar')">
+            <div class="ex-item-info">
+              <h3>Par / Impar</h3>
+              <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
             </div>
-            <div class="field">
-              <label>Timeout (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Forma</label>
-              <select id="stimShape">
-                <option value="circle">Círculo</option>
-                <option value="square_filled">Cuadrado</option>
-                <option value="plus">Cruz</option>
-                <option value="up">↑ Arriba</option>
-                <option value="down">↓ Abajo</option>
-                <option value="left">← Izquierda</option>
-                <option value="right">→ Derecha</option>
-                <option value="number">Número aleatorio</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Color</label>
-              <select id="stimColor">
-                <option value="green">Verde</option>
-                <option value="red">Rojo</option>
-                <option value="blue">Azul</option>
-                <option value="yellow">Amarillo</option>
-                <option value="white">Blanco</option>
-                <option value="cyan">Cian</option>
-              </select>
-            </div>
-          </div>
-          <div class="field">
-            <label>Orden</label>
-            <select id="stimOrder">
-              <option value="random">Aleatorio</option>
-              <option value="sequential">Secuencial</option>
-            </select>
-          </div>
-          <div class="btn-row">
-            <button class="btn-primary" onclick="saveFlashConfig()">Guardar configuración</button>
-            <button class="btn-secondary" onclick="startFlash()">Iniciar</button>
+            <span class="ex-item-arrow">›</span>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">Par / Impar</div>
-          <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
-          <div class="field-row">
-            <div class="field">
-              <label>Repeticiones</label>
-              <input type="number" min="1" max="50" value="10" id="piReps" />
+        <!-- Formulario Flash -->
+        <div id="quickFormFlash" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
+              <div class="card-title" style="margin:0;">Reacción Flash</div>
+            </div>
+            <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
+                <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="repsCount" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Intervalo (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
+              </div>
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Forma</label>
+                <select id="stimShape">
+                  <option value="circle">Círculo</option>
+                  <option value="square_filled">Cuadrado</option>
+                  <option value="plus">Cruz</option>
+                  <option value="up">↑ Arriba</option>
+                  <option value="down">↓ Abajo</option>
+                  <option value="left">← Izquierda</option>
+                  <option value="right">→ Derecha</option>
+                  <option value="number">Número aleatorio</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Color</label>
+                <select id="stimColor">
+                  <option value="green">Verde</option>
+                  <option value="red">Rojo</option>
+                  <option value="blue">Azul</option>
+                  <option value="yellow">Amarillo</option>
+                  <option value="white">Blanco</option>
+                  <option value="cyan">Cian</option>
+                </select>
+              </div>
             </div>
             <div class="field">
-              <label>Timeout (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+              <label>Orden</label>
+              <select id="stimOrder">
+                <option value="random">Aleatorio</option>
+                <option value="sequential">Secuencial</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveFlashConfig()">Guardar configuración</button>
+              <button class="btn-secondary" onclick="startFlash()">Iniciar</button>
             </div>
           </div>
-          <div class="field">
-            <label>Regla</label>
-            <select id="piRule">
-              <option value="pairs">Tocar pares</option>
-              <option value="odds">Tocar impares</option>
-            </select>
-          </div>
-          <div class="btn-row">
-            <button class="btn-primary" onclick="saveParImparConfig()">Guardar configuración</button>
-            <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
+        </div>
+
+        <!-- Formulario Par/Impar -->
+        <div id="quickFormParImpar" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
+              <div class="card-title" style="margin:0;">Par / Impar</div>
+            </div>
+            <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="piReps" />
+              </div>
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Regla</label>
+              <select id="piRule">
+                <option value="pairs">Tocar pares</option>
+                <option value="odds">Tocar impares</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveParImparConfig()">Guardar configuración</button>
+              <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1313,13 +1343,12 @@
       if (type === 'custom') {
         currentExercise = exercises.find(e => e.id === id);
         if (!currentExercise) return;
-        // For custom exercises, show config modal or directly launch
         launchCustomExercise(currentExercise);
       } else {
-        // For predefined, go to create page
         showPage('create');
         document.getElementById('createMode').value = 'rapido';
         switchCreateMode();
+        expandQuickForm(type);
       }
     }
 
@@ -1333,10 +1362,23 @@
       const mode = document.getElementById('createMode').value;
       document.getElementById('modoRapido').style.display = mode === 'rapido' ? 'block' : 'none';
       document.getElementById('modoAvanzado').style.display = mode === 'avanzado' ? 'block' : 'none';
+      if (mode === 'rapido') collapseQuickForm();
       if (mode === 'avanzado') {
         loadFolders();
         if (!document.getElementById('stepsContainer').children.length) addStep();
       }
+    }
+
+    function expandQuickForm(type) {
+      document.getElementById('quickModeList').style.display = 'none';
+      document.getElementById('quickFormFlash').style.display = type === 'flash' ? 'block' : 'none';
+      document.getElementById('quickFormParImpar').style.display = type === 'parimpar' ? 'block' : 'none';
+    }
+
+    function collapseQuickForm() {
+      document.getElementById('quickModeList').style.display = 'block';
+      document.getElementById('quickFormFlash').style.display = 'none';
+      document.getElementById('quickFormParImpar').style.display = 'none';
     }
 
     function addStep() {
