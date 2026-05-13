@@ -438,6 +438,106 @@
         </div>
       </div>
 
+      <!-- CONFIG PREDETERMINADOS (inline en ejercicios) -->
+      <div id="exercisePresetConfig" style="display:none;">
+        <!-- Flash -->
+        <div id="exFlashConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Reacción Flash</div>
+            </div>
+            <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos <span class="slider-val" id="exNodesVal">3</span></label>
+                <input type="range" min="1" max="6" value="3" id="exNodesCount" oninput="document.getElementById('exNodesVal').textContent=this.value" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="exRepsCount" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Intervalo (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="1200" id="exStimInterval" />
+              </div>
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="2000" id="exStimTimeout" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Forma</label>
+                <select id="exStimShape">
+                  <option value="circle">Círculo</option>
+                  <option value="square_filled">Cuadrado</option>
+                  <option value="plus">Cruz</option>
+                  <option value="up">↑ Arriba</option>
+                  <option value="down">↓ Abajo</option>
+                  <option value="left">← Izquierda</option>
+                  <option value="right">→ Derecha</option>
+                  <option value="number">Número aleatorio</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Color</label>
+                <select id="exStimColor">
+                  <option value="green">Verde</option>
+                  <option value="red">Rojo</option>
+                  <option value="blue">Azul</option>
+                  <option value="yellow">Amarillo</option>
+                  <option value="white">Blanco</option>
+                  <option value="cyan">Cian</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Orden</label>
+              <select id="exStimOrder">
+                <option value="random">Aleatorio</option>
+                <option value="sequential">Secuencial</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startFlashEx()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+        <!-- ParImpar -->
+        <div id="exParImparConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Par / Impar</div>
+            </div>
+            <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="exPiReps" />
+              </div>
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="2500" id="exPiTimeout" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Regla</label>
+              <select id="exPiRule">
+                <option value="pairs">Tocar pares</option>
+                <option value="odds">Tocar impares</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startParImparEx()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="activeSession" style="display:none;">
         <div class="live-display">
           <div class="live-node" id="liveNode">--</div>
@@ -1345,11 +1445,47 @@
         if (!currentExercise) return;
         launchCustomExercise(currentExercise);
       } else {
-        showPage('create');
-        document.getElementById('createMode').value = 'rapido';
-        switchCreateMode();
-        expandQuickForm(type);
+        document.getElementById('exerciseList').style.display = 'none';
+        document.getElementById('exercisePresetConfig').style.display = 'block';
+        document.getElementById('exFlashConfig').style.display = type === 'flash' ? 'block' : 'none';
+        document.getElementById('exParImparConfig').style.display = type === 'parimpar' ? 'block' : 'none';
       }
+    }
+
+    function closePresetConfig() {
+      document.getElementById('exercisePresetConfig').style.display = 'none';
+      document.getElementById('exFlashConfig').style.display = 'none';
+      document.getElementById('exParImparConfig').style.display = 'none';
+      document.getElementById('exerciseList').style.display = 'block';
+    }
+
+    function startFlashEx() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const nodes    = parseInt(document.getElementById('exNodesCount').value);
+      const reps     = parseInt(document.getElementById('exRepsCount').value);
+      const order    = document.getElementById('exStimOrder').value;
+      const shape    = document.getElementById('exStimShape').value;
+      const color    = document.getElementById('exStimColor').value;
+      const interval = parseInt(document.getElementById('exStimInterval').value);
+      const timeout  = parseInt(document.getElementById('exStimTimeout').value);
+      const sequence = Array.from({length: reps}, (_,i) =>
+        order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
+      );
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,timeout} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextStimulus, 600);
+    }
+
+    function startParImparEx() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const reps    = parseInt(document.getElementById('exPiReps').value);
+      const timeout = parseInt(document.getElementById('exPiTimeout').value);
+      const rule    = document.getElementById('exPiRule').value;
+      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,timeout,rule}, nodeValues:{} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextParImpar, 600);
     }
 
     function openCreateExercise() {
@@ -1641,21 +1777,26 @@
 
     // NAVEGACIÓN
     let navHistory = [];
-    
-    function goBack() {
-      if (navHistory.length > 1) {
-        navHistory.pop(); // Remove current
-        showPage(navHistory[navHistory.length - 1]);
-      } else {
-        showPage('home');
-      }
-    }
-    
-    function showPage(pageId) {
-      navHistory.push(pageId);
+
+    function navigateTo(pageId) {
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
       document.getElementById('page-'+pageId)?.classList.add('active');
       document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active', b.dataset.page===pageId));
+    }
+
+    function showPage(pageId) {
+      navHistory.push(pageId);
+      navigateTo(pageId);
+    }
+
+    function goBack() {
+      if (navHistory.length > 1) {
+        navHistory.pop();
+        navigateTo(navHistory[navHistory.length - 1]);
+      } else {
+        navHistory = ['home'];
+        navigateTo('home');
+      }
     }
 
     async function saveFlashConfig() {

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Select-Object -First 60)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\paula\\\\Documents\\\\DEVELOPER TocapeStudio\\\\DISPOSITIVO LUCES\\\\Orion React APP\" -Recurse | ForEach-Object { $_.FullName } | Select-Object -First 80)"
+    ]
+  }
+}
