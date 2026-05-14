@@ -53,7 +53,9 @@
       font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
       letter-spacing: -0.02em;
       background: linear-gradient(120deg, #fff 30%, var(--accent2));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .logo span { font-weight: 700; -webkit-text-fill-color: var(--muted); }
     .bt-status {
@@ -601,6 +603,13 @@
             </div>
             <span class="ex-item-arrow">›</span>
           </div>
+          <div class="ex-item" onclick="expandQuickForm('stroop')">
+            <div class="ex-item-info">
+              <h3>Stroop</h3>
+              <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
+            </div>
+            <span class="ex-item-arrow">›</span>
+          </div>
         </div>
 
         <!-- Formulario Flash -->
@@ -699,6 +708,57 @@
             <div class="btn-row">
               <button class="btn-primary" onclick="saveParImparConfig()">Guardar configuración</button>
               <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario Stroop -->
+        <div id="quickFormStroop" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
+              <div class="card-title" style="margin:0;">Stroop</div>
+            </div>
+            <div class="card-sub">Elige si la respuesta está en el nombre del color o en el color de la tinta.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos <span class="slider-val" id="stroopNodesVal">3</span></label>
+                <input type="range" min="2" max="6" value="3" id="stroopNodesCount" oninput="document.getElementById('stroopNodesVal').textContent=this.value" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="stroopReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Resolver por</label>
+                <select id="stroopRule">
+                  <option value="named">Apagar el color nombrado</option>
+                  <option value="ink">Apagar el color de la tinta</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Reactivación</label>
+                <select id="stroopResetMode">
+                  <option value="different">Colores distintos cada vez</option>
+                  <option value="same">Siempre el mismo esquema</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="stroopTimeout" />
+              </div>
+              <div class="field">
+                <label>Delay entre rondas (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="800" id="stroopInterval" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveStroopConfig()">Guardar configuración</button>
+              <button class="btn-secondary" onclick="startStroop()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1033,6 +1093,10 @@
         }
         
         completeCustomStep(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
+      } else if (state.session.type === 'stroop') {
+        const step = state.session.sequence[state.session.current];
+        const correct = data.node_id === step.correct_node;
+        completeStroop(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else {
         completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
       }
@@ -1090,7 +1154,109 @@
       }
     }
 
-    // PAR/IMPAR
+    function getSpanishColorName(color) {
+      return {
+        red: 'ROJO',
+        green: 'VERDE',
+        blue: 'AZUL',
+        yellow: 'AMARILLO',
+        cyan: 'CÍAN',
+        white: 'BLANCO'
+      }[color] || color.toUpperCase();
+    }
+
+    function buildStroopStep(nodesCount, resolveBy, timeout, delay) {
+      const colors = ['red','green','blue','yellow'];
+      const targetColor = colors[Math.floor(Math.random() * colors.length)];
+      const nodeIds = Array.from({ length: nodesCount }, (_,i) => i + 1);
+      const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+      const nodes = {};
+      nodeIds.forEach(id => {
+        let word;
+        let ink;
+        if (id === correctNode) {
+          if (resolveBy === 'named') {
+            word = targetColor;
+            ink = colors.filter(c => c !== targetColor)[Math.floor(Math.random() * (colors.length - 1))];
+          } else {
+            ink = targetColor;
+            word = colors.filter(c => c !== targetColor)[Math.floor(Math.random() * (colors.length - 1))];
+          }
+        } else {
+          do {
+            word = colors[Math.floor(Math.random() * colors.length)];
+            ink = colors[Math.floor(Math.random() * colors.length)];
+          } while (word === ink || (resolveBy === 'named' && word === targetColor) || (resolveBy === 'ink' && ink === targetColor));
+        }
+        nodes[id] = { shape: getSpanishColorName(word), colors: [ink], rawWord: word };
+      });
+      return {
+        nodes,
+        correct_response: resolveBy === 'named' ? 'stroop-named' : 'stroop-ink',
+        correct_node: correctNode,
+        target_color: targetColor,
+        exposure_time: timeout,
+        delay: delay
+      };
+    }
+
+    function startStroop() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
+      const reps = parseInt(document.getElementById('stroopReps').value);
+      const resolveBy = document.getElementById('stroopRule').value;
+      const resetMode = document.getElementById('stroopResetMode').value;
+      const timeout = parseInt(document.getElementById('stroopTimeout').value);
+      const interval = parseInt(document.getElementById('stroopInterval').value);
+      const sequence = [];
+      if (resetMode === 'same') {
+        const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
+        for (let i = 0; i < reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
+      } else {
+        for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      }
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,resetMode}, nodeValues:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextStroop, 600);
+    }
+
+    function nextStroop() {
+      if (!state.session.active) return;
+      const { sequence, current } = state.session;
+      const step = sequence[current];
+      const nodeIds = Object.keys(step.nodes).map(Number);
+      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      const action = step.correct_response === 'stroop-named' ? 'Apaga el color nombrado' : 'Apaga el color de la tinta';
+      document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(step.target_color)}`;
+      document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+      nodeIds.forEach(nodeId => {
+        const node = step.nodes[nodeId];
+        sendBLE({ cmd: 'show', node_id: nodeId, shape: node.shape, color: node.colors[0] });
+      });
+      state.session.waiting = true;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completeStroop(false, null);
+      }, step.exposure_time);
+    }
+
+    function completeStroop(correct, reactionMs) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      const step = state.session.sequence[state.session.current];
+      state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:'stroop', color:step.target_color, reaction_ms:reactionMs, result:correct ? 'ok' : 'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextStroop, step.delay);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
     function startParImpar() {
       if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('piReps').value);
@@ -1509,12 +1675,14 @@
       document.getElementById('quickModeList').style.display = 'none';
       document.getElementById('quickFormFlash').style.display = type === 'flash' ? 'block' : 'none';
       document.getElementById('quickFormParImpar').style.display = type === 'parimpar' ? 'block' : 'none';
+      document.getElementById('quickFormStroop').style.display = type === 'stroop' ? 'block' : 'none';
     }
 
     function collapseQuickForm() {
       document.getElementById('quickModeList').style.display = 'block';
       document.getElementById('quickFormFlash').style.display = 'none';
       document.getElementById('quickFormParImpar').style.display = 'none';
+      document.getElementById('quickFormStroop').style.display = 'none';
     }
 
     function addStep() {
@@ -1559,6 +1727,12 @@
               <select class="correctNode" data-step="${stepIndex}" style="display:none;">
                 ${[1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`).join('')}
               </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Repeticiones del paso</label>
+              <input type="number" class="stepRepeat" data-step="${stepIndex}" min="1" max="20" value="1">
             </div>
           </div>
           
@@ -1670,16 +1844,19 @@
         
         const correctResponse = stepEl.querySelector('.correctResponse').value;
         const correctNode = correctResponse === 'node-1' ? parseInt(stepEl.querySelector('.correctNode').value) : null;
+        const repeatCount = parseInt(stepEl.querySelector('.stepRepeat').value) || 1;
         const exposureTime = parseInt(stepEl.querySelector('.exposureTime').value);
         const delayTime = parseInt(stepEl.querySelector('.delayTime').value);
         
-        steps.push({
-          nodes,
-          correct_response: correctResponse,
-          correct_node: correctNode,
-          exposure_time: exposureTime,
-          delay: delayTime
-        });
+        for (let rep = 0; rep < repeatCount; rep++) {
+          steps.push({
+            nodes,
+            correct_response: correctResponse,
+            correct_node: correctNode,
+            exposure_time: exposureTime,
+            delay: delayTime
+          });
+        }
       });
       
       if (!steps.length) { toast('Añade al menos un paso'); return; }
@@ -1847,6 +2024,31 @@
       
       try {
         await db.post('exercises', { name, description: 'Configuración rápida - Par/Impar', steps: JSON.stringify(steps), folder_id: null });
+        toast('Configuración guardada ✓');
+        await loadExercises();
+      } catch(err) {
+        toast('Error: ' + err.message);
+      }
+    }
+
+    async function saveStroopConfig() {
+      const name = `Stroop - ${new Date().toLocaleDateString()}`;
+      const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
+      const reps = parseInt(document.getElementById('stroopReps').value);
+      const resolveBy = document.getElementById('stroopRule').value;
+      const resetMode = document.getElementById('stroopResetMode').value;
+      const timeout = parseInt(document.getElementById('stroopTimeout').value);
+      const delay = parseInt(document.getElementById('stroopInterval').value);
+      const description = `Stroop ${resolveBy === 'named' ? 'color nombrado' : 'color de tinta'} · ${resetMode === 'different' ? 'cambia cada vez' : 'mismo esquema'}`;
+      const steps = [];
+      if (resetMode === 'same') {
+        const step = buildStroopStep(nodesCount, resolveBy, timeout, delay);
+        for (let i = 0; i < reps; i++) steps.push(JSON.parse(JSON.stringify(step)));
+      } else {
+        for (let i = 0; i < reps; i++) steps.push(buildStroopStep(nodesCount, resolveBy, timeout, delay));
+      }
+      try {
+        await db.post('exercises', { name, description: `Configuración rápida - ${description}`, steps: JSON.stringify(steps), folder_id: null });
         toast('Configuración guardada ✓');
         await loadExercises();
       } catch(err) {
