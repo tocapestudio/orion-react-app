@@ -87,7 +87,7 @@
     .nav-btn.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
 
     /* MAIN */
-    .main { flex: 1; padding: 20px 16px 100px; max-width: 680px; margin: 0 auto; width: 100%; }
+    .main { flex: 1; padding: 20px 16px calc(130px + env(safe-area-inset-bottom)); max-width: 680px; margin: 0 auto; width: 100%; }
 
     /* PAGES */
     .page { display: none; }
@@ -216,6 +216,23 @@
     .node-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
     .node-chip.connected .node-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
 
+    /* NODE CARD */
+    .node-card {
+      display: flex; flex-direction: column; gap: 8px;
+      padding: 14px; border-radius: 14px; background: var(--bg3);
+      border: 1px solid var(--border); min-width: 140px;
+    }
+    .node-card-header { display: flex; align-items: center; justify-content: space-between; }
+    .node-id { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+    .node-status { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .node-battery { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
+    .battery-bar {
+      flex: 1; height: 4px; border-radius: 2px; background: var(--border2); overflow: hidden;
+    }
+    .battery-fill { height: 100%; background: var(--success); transition: background .2s; }
+    .battery-fill.warning { background: var(--warning); }
+    .battery-fill.critical { background: var(--danger); }
+
     /* HISTORY */
     .history { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .history th { color: var(--muted); font-weight: 500; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -227,7 +244,16 @@
 
     /* SECTION HEADER */
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
     .home-grid {
       display: grid;
@@ -1093,18 +1119,19 @@
 
       <div class="card">
         <div class="card-title">Nodos conectados</div>
-        <div class="card-sub">Estado en tiempo real de los nodos BLE.</div>
-        <div class="nodes-grid" id="nodesGrid">
-          <div class="node-chip"><span class="node-dot"></span>Sin nodos</div>
+        <div class="card-sub">Estado en tiempo real de los nodos BLE y batería.</div>
+        <div id="nodesGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+          <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
         </div>
+        <button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button>
       </div>
 
       <div class="card">
         <div class="card-title">Intensidad lumínica</div>
-        <div class="card-sub">Ajusta el brillo de la matriz LED.</div>
+        <div class="card-sub">Ajusta el brillo de la matriz LED. Todos los nodos mostrarán el nivel actual.</div>
         <div class="field">
           <label>Brillo <span class="slider-val" id="brightnessVal">64</span></label>
-          <input type="range" min="10" max="255" value="64" id="brightnessSlider" oninput="updateBrightness(this.value)" />
+          <input type="range" min="10" max="255" value="64" id="brightnessSlider" oninput="updateBrightnessPreview(this.value)" onchange="updateBrightness(this.value)" />
         </div>
       </div>
 
@@ -1209,7 +1236,8 @@
 
     // ESTADO
     const state = {
-      bt: { device:null, cmdChar:null, connected:false },
+      bt: { device:null, cmdChar:null, evtChar:null, connected:false },
+      nodes: {}, // {nodeId: {name, battery, lastUpdate}}
       athlete: null,
       athletes: [],
       buzzerOn: true,
@@ -1259,6 +1287,7 @@
 
     function onBLEDisconnected() {
       state.bt.connected = false;
+      state.nodes = {};
       updateBTUI(false);
       updateNodesGrid();
       toast('Nodo desconectado');
@@ -1267,6 +1296,17 @@
     function onBLEMessage(event) {
       try {
         const data = JSON.parse(new TextDecoder().decode(event.target.value));
+        
+        // Actualizar información de batería
+        if (data.battery != null) {
+          const nodeId = data.node_id || 1;
+          if (!state.nodes[nodeId]) state.nodes[nodeId] = {};
+          state.nodes[nodeId].battery = data.battery;
+          state.nodes[nodeId].lastUpdate = Date.now();
+          updateNodesGrid();
+        }
+        
+        // Reacciones y eventos de sesión
         if (data.reaction_ms != null) onReactionReceived(data);
       } catch {}
     }
@@ -1288,9 +1328,34 @@
 
     function updateNodesGrid() {
       const grid = document.getElementById('nodesGrid');
-      grid.innerHTML = state.bt.connected
-        ? `<div class="node-chip connected"><span class="node-dot"></span>${state.bt.device?.name || 'OrionNode'} · Nodo 1</div>`
-        : `<div class="node-chip"><span class="node-dot"></span>Sin nodos</div>`;
+      
+      if (!state.bt.connected || Object.keys(state.nodes).length === 0) {
+        grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>';
+        return;
+      }
+      
+      grid.innerHTML = Object.entries(state.nodes).map(([nodeId, node]) => {
+        const battery = node.battery || 0;
+        const batteryPercent = Math.round((battery / 4095) * 100);
+        let batteryColor = 'success';
+        if (batteryPercent < 25) batteryColor = 'danger';
+        else if (batteryPercent < 50) batteryColor = 'warning';
+        
+        return `
+          <div class="node-card">
+            <div class="node-card-header">
+              <div class="node-id">Node ${nodeId}</div>
+              <div class="node-status"></div>
+            </div>
+            <div class="node-battery">
+              <div class="battery-bar">
+                <div class="battery-fill ${batteryColor === 'success' ? '' : batteryColor}" style="width:${batteryPercent}%"></div>
+              </div>
+              <span>${batteryPercent}%</span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // EVENTOS DEL NODO
@@ -1852,9 +1917,26 @@
     }
 
     // CONFIG
+    function updateBrightnessPreview(val) {
+      document.getElementById('brightnessVal').textContent = val;
+      // Envía el brillo a todos los nodos para que se vea la previa
+      sendBLE({ cmd:'brightness', value:String(val), preview:true });
+    }
+
     function updateBrightness(val) {
       document.getElementById('brightnessVal').textContent = val;
+      // Aplica el brillo final a todos los nodos
       sendBLE({ cmd:'brightness', value:String(val) });
+    }
+
+    function identifyNodes() {
+      if (!state.bt.connected) {
+        toast('No hay nodos conectados');
+        return;
+      }
+      // Envía comando para que los nodos muestren su número
+      sendBLE({ cmd:'identify' });
+      toast('Identificando nodos...');
     }
 
     function toggleBuzzer() {
