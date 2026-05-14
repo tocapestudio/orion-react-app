@@ -421,6 +421,13 @@
               </div>
               <span class="ex-item-arrow">›</span>
             </div>
+            <div class="ex-item" onclick="openExerciseConfig('stroop')">
+              <div class="ex-item-info">
+                <h3>Stroop</h3>
+                <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
           </div>
         </div>
 
@@ -535,6 +542,54 @@
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startParImparEx()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+        <div id="exStroopConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Stroop</div>
+            </div>
+            <div class="card-sub">Elige si el ejercicio se resuelve por el color nombrado o por el color de la tinta.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos</label>
+                <input type="number" min="2" max="6" value="3" id="exStroopNodesCount" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="exStroopReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Resolver por</label>
+                <select id="exStroopRule">
+                  <option value="named">Apagar color nombrado</option>
+                  <option value="ink">Apagar color de la tinta</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Reactivación</label>
+                <select id="exStroopResetMode">
+                  <option value="different">Colores distintos cada vez</option>
+                  <option value="same">Siempre mismo esquema</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="exStroopTimeout" />
+              </div>
+              <div class="field">
+                <label>Delay entre rondas (ms)</label>
+                <input type="number" min="300" max="5000" step="100" value="800" id="exStroopInterval" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startStroopEx()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1615,6 +1670,7 @@
         document.getElementById('exercisePresetConfig').style.display = 'block';
         document.getElementById('exFlashConfig').style.display = type === 'flash' ? 'block' : 'none';
         document.getElementById('exParImparConfig').style.display = type === 'parimpar' ? 'block' : 'none';
+        document.getElementById('exStroopConfig').style.display = type === 'stroop' ? 'block' : 'none';
       }
     }
 
@@ -1622,6 +1678,7 @@
       document.getElementById('exercisePresetConfig').style.display = 'none';
       document.getElementById('exFlashConfig').style.display = 'none';
       document.getElementById('exParImparConfig').style.display = 'none';
+      document.getElementById('exStroopConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
     }
 
@@ -1652,6 +1709,27 @@
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
+    }
+
+    function startStroopEx() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
+      const reps = parseInt(document.getElementById('exStroopReps').value);
+      const resolveBy = document.getElementById('exStroopRule').value;
+      const resetMode = document.getElementById('exStroopResetMode').value;
+      const timeout = parseInt(document.getElementById('exStroopTimeout').value);
+      const interval = parseInt(document.getElementById('exStroopInterval').value);
+      const sequence = [];
+      if (resetMode === 'same') {
+        const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
+        for (let i = 0; i < reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
+      } else {
+        for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      }
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,resetMode,interval}, nodeValues:{} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextStroop, 600);
     }
 
     function openCreateExercise() {
