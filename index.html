@@ -130,6 +130,23 @@
       background: rgba(239,68,68,0.1); color: var(--danger);
       font-weight: 500; border: 1px solid rgba(239,68,68,0.2); transition: all .2s;
     }
+    .btn-home {
+      padding: 10px 16px; border-radius: 14px;
+      background: #dbeafe;
+      color: #1e3a8a;
+      border: 1px solid #93c5fd;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .btn-home:hover {
+      background: #bfdbfe;
+      border-color: #60a5fa;
+      transform: translateY(-1px);
+    }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 
     /* FIELDS */
@@ -391,7 +408,7 @@
     <!-- EJERCICIOS -->
     <section class="page" id="page-exercises">
       <div class="section-header">
-        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
+        <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
         <div class="section-title">Ejercicios</div>
         <div class="athlete-pill" id="athletePill" onclick="openAthleteModal()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -425,6 +442,13 @@
               <div class="ex-item-info">
                 <h3>Stroop</h3>
                 <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
+            <div class="ex-item" onclick="openExerciseConfig('chrono')">
+              <div class="ex-item-info">
+                <h3>Chrono</h3>
+                <p>Tiempo de sprint y reacción · Inicio y final · 3 modos</p>
               </div>
               <span class="ex-item-arrow">›</span>
             </div>
@@ -593,6 +617,79 @@
             </div>
           </div>
         </div>
+        <div id="exChronoConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Chrono</div>
+            </div>
+            <div class="card-sub">Tiempo de inicio y final con 3 modos de cronómetro.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Modo</label>
+                <select id="exChronoMode">
+                  <option value="mode1">Modo 1 — Buzzer a final</option>
+                  <option value="mode2">Modo 2 — Paso a inicio</option>
+                  <option value="mode3">Modo 3 — Reacción + sprint</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="5" id="exChronoReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodo de inicio</label>
+                <select id="exChronoStartNode">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Nodo final</label>
+                <select id="exChronoEndNode">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Delay aleatorio entre repeticiones (ms)</label>
+                <input type="number" min="0" max="10000" step="100" value="800" id="exChronoDelay" />
+              </div>
+              <div class="field">
+                <label>Activación final</label>
+                <select id="exChronoFinalMode">
+                  <option value="touch">touch</option>
+                  <option value="proximity">proximity</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Retraso verde mínimo (ms)</label>
+                <input type="number" min="1000" max="5000" step="100" value="1000" id="exChronoGreenMin" />
+              </div>
+              <div class="field">
+                <label>Retraso verde máximo (ms)</label>
+                <input type="number" min="1000" max="5000" step="100" value="3000" id="exChronoGreenMax" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startChronoEx()">Iniciar</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="activeSession" style="display:none;">
@@ -627,7 +724,7 @@
 
     <!-- CREAR EJERCICIO -->
     <section class="page" id="page-create">
-      <div class="section-title" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;"><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button>Crear ejercicio</div>
+      <div class="section-title" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;"><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button>Crear ejercicio</div>
 
       <!-- Selector de modo -->
       <div class="card">
@@ -662,6 +759,13 @@
             <div class="ex-item-info">
               <h3>Stroop</h3>
               <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
+            </div>
+            <span class="ex-item-arrow">›</span>
+          </div>
+          <div class="ex-item" onclick="expandQuickForm('chrono')">
+            <div class="ex-item-info">
+              <h3>Chrono</h3>
+              <p>Inicio/Final · Buzzer, activación o reacción + sprint</p>
             </div>
             <span class="ex-item-arrow">›</span>
           </div>
@@ -817,6 +921,79 @@
             </div>
           </div>
         </div>
+        <div id="quickFormChrono" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
+              <div class="card-title" style="margin:0;">Chrono</div>
+            </div>
+            <div class="card-sub">Cronómetro de inicio y final con buzzer, activación o reacción + sprint.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Modo</label>
+                <select id="chronoMode">
+                  <option value="mode1">Modo 1 — Buzzer a final</option>
+                  <option value="mode2">Modo 2 — Paso a inicio</option>
+                  <option value="mode3">Modo 3 — Reacción + sprint</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="5" id="chronoReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodo de inicio</label>
+                <select id="chronoStartNode">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Nodo final</label>
+                <select id="chronoEndNode">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Delay aleatorio entre repeticiones (ms)</label>
+                <input type="number" min="0" max="10000" step="100" value="800" id="chronoDelay" />
+              </div>
+              <div class="field">
+                <label>Activación final</label>
+                <select id="chronoFinalMode">
+                  <option value="touch">touch</option>
+                  <option value="proximity">proximity</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Retraso verde mínimo (ms)</label>
+                <input type="number" min="1000" max="5000" step="100" value="1000" id="chronoGreenMin" />
+              </div>
+              <div class="field">
+                <label>Retraso verde máximo (ms)</label>
+                <input type="number" min="1000" max="5000" step="100" value="3000" id="chronoGreenMax" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startChrono()">Iniciar</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- MODO AVANZADO -->
@@ -865,7 +1042,7 @@
     <!-- DATOS -->
     <section class="page" id="page-data">
       <div class="section-header">
-        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
+        <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
         <div class="section-title">Datos guardados</div>
         <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="loadSessions()">↻ Actualizar</button>
       </div>
@@ -910,7 +1087,7 @@
     <!-- CONFIGURACIÓN -->
     <section class="page" id="page-config">
       <div class="section-header">
-        <div><button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="goBack()">← Volver</button></div>
+        <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
         <div class="section-title">Configuración</div>
       </div>
 
@@ -1152,6 +1329,8 @@
         const step = state.session.sequence[state.session.current];
         const correct = data.node_id === step.correct_node;
         completeStroop(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
+      } else if (state.session.type === 'chrono') {
+        handleChronoReaction(data);
       } else {
         completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
       }
@@ -1204,6 +1383,96 @@
       state.session.current++;
       if (state.session.current < state.session.total) {
         setTimeout(nextStimulus, state.session.config.interval);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
+    function nextChrono() {
+      if (!state.session.active) return;
+      const { config, current, total, chrono } = state.session;
+      document.getElementById('statProgress').textContent = `${current+1}/${total}`;
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      if (config.mode === 'mode1') {
+        document.getElementById('liveNode').textContent = `Nodo ${config.endNode}`;
+        document.getElementById('liveHint').textContent = 'Toca el nodo final cuando aparezca';
+        sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red' });
+        state.session.waiting = true;
+        state.session.chrono = { phase:'end', startTouchTs: null, startShowTs: Date.now() };
+        state.session.timeoutId = setTimeout(() => {
+          if (!state.session.waiting) return;
+          completeChrono(false, null, null);
+        }, config.delay || 5000);
+      } else {
+        const delay = config.mode === 'mode3'
+          ? Math.floor(Math.random() * (config.greenMax - config.greenMin + 1)) + config.greenMin
+          : 0;
+        state.session.chrono = { phase:'start', startShowTs: null, stepStartTs: null };
+        document.getElementById('liveNode').textContent = `Inicio ${config.startNode}`;
+        document.getElementById('liveHint').textContent = 'Toca el nodo de inicio para comenzar';
+        state.session.timeoutId = setTimeout(() => {
+          sendBLE({ cmd:'show', node_id:config.startNode, shape:'circle', color:'green' });
+          state.session.waiting = true;
+          state.session.chrono.startShowTs = Date.now();
+        }, delay);
+      }
+    }
+
+    function handleChronoReaction(data) {
+      if (!state.session.active || !state.session.waiting) return;
+      const config = state.session.config;
+      const chrono = state.session.chrono || {};
+      if (config.mode === 'mode1' && chrono.phase === 'end') {
+        if (data.node_id !== config.endNode) return;
+        completeChrono(true, data.reaction_ms >= 0 ? data.reaction_ms : null, null);
+      } else if (config.mode === 'mode2' || config.mode === 'mode3') {
+        if (chrono.phase === 'start') {
+          if (data.node_id !== config.startNode) return;
+          state.session.waiting = false;
+          clearTimeout(state.session.timeoutId);
+          state.session.chrono = { phase:'end', startTouchTs: Date.now() };
+          sendBLE({ cmd:'off' });
+          document.getElementById('liveNode').textContent = `Final ${config.endNode}`;
+          document.getElementById('liveHint').textContent = 'Toca el nodo final ahora';
+          setTimeout(() => {
+            sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red' });
+            state.session.waiting = true;
+            state.session.timeoutId = setTimeout(() => {
+              if (!state.session.waiting) return;
+              completeChrono(false, null, null);
+            }, config.delay || 5000);
+          }, 300);
+        } else if (chrono.phase === 'end') {
+          if (data.node_id !== config.endNode) return;
+          const sprintMs = state.session.chrono.startTouchTs ? Date.now() - state.session.chrono.startTouchTs : null;
+          completeChrono(true, data.reaction_ms >= 0 ? data.reaction_ms : null, sprintMs);
+        }
+      }
+    }
+
+    function completeChrono(ok, endReactionMs, sprintMs) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      const rep = state.session.current + 1;
+      const entry = {
+        repetition: rep,
+        node_id: state.session.config.endNode,
+        start_node: state.session.config.startNode,
+        end_node: state.session.config.endNode,
+        start_reaction_ms: state.session.chrono.startTouchTs ? Math.round(state.session.chrono.startTouchTs - state.session.chrono.startShowTs) : null,
+        end_reaction_ms: endReactionMs,
+        sprint_ms: sprintMs,
+        result: ok ? 'ok' : 'miss'
+      };
+      state.session.history.push(entry);
+      document.getElementById('liveTime').textContent = endReactionMs !== null ? endReactionMs + ' ms' : '—';
+      document.getElementById('liveHint').textContent = ok ? '✓ Crono registrado' : 'Sin respuesta';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextChrono, state.session.config.delay || 600);
       } else {
         setTimeout(endSession, 800);
       }
@@ -1380,7 +1649,9 @@
     }
 
     function updateLiveStats() {
-      const rs = state.session.history.filter(h=>h.reaction_ms!==null).map(h=>h.reaction_ms);
+      const rs = state.session.history
+        .map(h => h.end_reaction_ms != null ? h.end_reaction_ms : h.reaction_ms)
+        .filter(x => x != null);
       if (rs.length) {
         document.getElementById('statAvg').textContent  = Math.round(rs.reduce((a,b)=>a+b,0)/rs.length);
         document.getElementById('statBest').textContent = Math.min(...rs);
@@ -1389,19 +1660,24 @@
 
     function showSummary() {
       const h  = state.session.history;
-      const rs = h.filter(x=>x.reaction_ms!==null).map(x=>x.reaction_ms);
+      const rs = h.map(x=> x.end_reaction_ms != null ? x.end_reaction_ms : x.reaction_ms).filter(x=>x!=null);
       const avg  = rs.length ? Math.round(rs.reduce((a,b)=>a+b,0)/rs.length) : '--';
       const best = rs.length ? Math.min(...rs) : '--';
       const hits = h.filter(x=>x.result==='ok').length;
+      const sprintValues = h.filter(x=>x.sprint_ms!=null).map(x=>x.sprint_ms);
+      const avgSprint = sprintValues.length ? Math.round(sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length) : '--';
       document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg} ms`;
       document.getElementById('summaryStats').innerHTML = `
         <div class="stat-tile"><span class="val">${avg}</span><span class="lbl">Media ms</span></div>
         <div class="stat-tile"><span class="val">${best}</span><span class="lbl">Mejor ms</span></div>
-        <div class="stat-tile"><span class="val">${hits}/${h.length}</span><span class="lbl">Aciertos</span></div>`;
+        <div class="stat-tile"><span class="val">${avgSprint}</span><span class="lbl">Media sprint</span></div>`;
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
-          <thead><tr><th>#</th><th>Nodo</th><th>Resultado</th><th>Tiempo</th></tr></thead>
-          <tbody>${h.map(r=>`<tr><td>${r.repetition}</td><td>${r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${r.reaction_ms!==null?r.reaction_ms+' ms':'—'}</td></tr>`).join('')}</tbody>
+          <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
+          <tbody>${h.map(r=>{
+            const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : '—'));
+            return `<tr><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time!== '—' ? time+' ms' : '—'}</td></tr>`;
+          }).join('')}</tbody>
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
@@ -1671,6 +1947,7 @@
         document.getElementById('exFlashConfig').style.display = type === 'flash' ? 'block' : 'none';
         document.getElementById('exParImparConfig').style.display = type === 'parimpar' ? 'block' : 'none';
         document.getElementById('exStroopConfig').style.display = type === 'stroop' ? 'block' : 'none';
+        document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
       }
     }
 
@@ -1679,6 +1956,7 @@
       document.getElementById('exFlashConfig').style.display = 'none';
       document.getElementById('exParImparConfig').style.display = 'none';
       document.getElementById('exStroopConfig').style.display = 'none';
+      document.getElementById('exChronoConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
     }
 
@@ -1732,6 +2010,42 @@
       setTimeout(nextStroop, 600);
     }
 
+    function startChronoEx() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const mode = document.getElementById('exChronoMode').value;
+      const startNode = parseInt(document.getElementById('exChronoStartNode').value);
+      const endNode = parseInt(document.getElementById('exChronoEndNode').value);
+      const reps = parseInt(document.getElementById('exChronoReps').value);
+      const delay = parseInt(document.getElementById('exChronoDelay').value);
+      const finalMode = document.getElementById('exChronoFinalMode').value;
+      const greenMin = parseInt(document.getElementById('exChronoGreenMin').value);
+      const greenMax = parseInt(document.getElementById('exChronoGreenMax').value);
+      if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
+      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax}, chrono:{} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextChrono, 600);
+    }
+
+    function startChrono() {
+      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      const mode = document.getElementById('chronoMode').value;
+      const startNode = parseInt(document.getElementById('chronoStartNode').value);
+      const endNode = parseInt(document.getElementById('chronoEndNode').value);
+      const reps = parseInt(document.getElementById('chronoReps').value);
+      const delay = parseInt(document.getElementById('chronoDelay').value);
+      const finalMode = document.getElementById('chronoFinalMode').value;
+      const greenMin = parseInt(document.getElementById('chronoGreenMin').value);
+      const greenMax = parseInt(document.getElementById('chronoGreenMax').value);
+      if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
+      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax}, chrono:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextChrono, 600);
+    }
+
     function openCreateExercise() {
       showPage('create');
       document.getElementById('createMode').value = 'avanzado';
@@ -1754,6 +2068,7 @@
       document.getElementById('quickFormFlash').style.display = type === 'flash' ? 'block' : 'none';
       document.getElementById('quickFormParImpar').style.display = type === 'parimpar' ? 'block' : 'none';
       document.getElementById('quickFormStroop').style.display = type === 'stroop' ? 'block' : 'none';
+      document.getElementById('quickFormChrono').style.display = type === 'chrono' ? 'block' : 'none';
     }
 
     function collapseQuickForm() {
@@ -1761,6 +2076,7 @@
       document.getElementById('quickFormFlash').style.display = 'none';
       document.getElementById('quickFormParImpar').style.display = 'none';
       document.getElementById('quickFormStroop').style.display = 'none';
+      document.getElementById('quickFormChrono').style.display = 'none';
     }
 
     function addStep() {
