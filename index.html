@@ -2234,17 +2234,16 @@
           <div class="field-row">
             <div class="field">
               <label>Respuesta correcta</label>
-              <select class="correctResponse" data-step="${stepIndex}" onchange="updateCorrectResponse(${stepIndex})">
-                <option value="node-1">Nodo específico</option>
-                <option value="green">El verde</option>
-                <option value="red">El rojo</option>
-                <option value="even">Número par</option>
-                <option value="odd">Número impar</option>
+              <select class="correctResponseType" data-step="${stepIndex}" onchange="updateCorrectResponse(${stepIndex})">
+                <option value="node">Nodo específico</option>
+                <option value="color">Color</option>
+                <option value="number">Número</option>
+                <option value="shape">Forma</option>
               </select>
             </div>
             <div class="field">
-              <label>Nodo correcto</label>
-              <select class="correctNode" data-step="${stepIndex}" style="display:none;">
+              <label class="correctResponseLabel">Nodo correcto</label>
+              <select class="correctResponseValue" data-step="${stepIndex}">
                 ${[1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`).join('')}
               </select>
             </div>
@@ -2279,6 +2278,7 @@
       // Renumber remaining steps
       Array.from(container.children).forEach((el, i) => {
         el.setAttribute('data-step', i);
+        el.querySelectorAll('[data-step]').forEach(child => child.setAttribute('data-step', i));
         el.querySelector('.step-title').textContent = `Paso ${i + 1}`;
         el.querySelector('.step-remove').setAttribute('onclick', `removeStep(${i})`);
       });
@@ -2333,13 +2333,45 @@
     }
 
     function updateCorrectResponse(stepIndex) {
-      const select = document.querySelector(`.correctResponse[data-step="${stepIndex}"]`);
-      const nodeSelect = document.querySelector(`.correctNode[data-step="${stepIndex}"]`);
-      if (select.value === 'node-1') {
-        nodeSelect.style.display = 'block';
-      } else {
-        nodeSelect.style.display = 'none';
+      const step = document.querySelector(`[data-step="${stepIndex}"]`);
+      const typeSelect = step.querySelector(`.correctResponseType[data-step="${stepIndex}"]`);
+      const valueSelect = step.querySelector(`.correctResponseValue[data-step="${stepIndex}"]`);
+      const valueLabel = step.querySelector('.correctResponseLabel');
+      const type = typeSelect.value;
+      let options = [];
+      let labelText = 'Valor correcto';
+
+      if (type === 'node') {
+        labelText = 'Nodo correcto';
+        options = [1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`);
+      } else if (type === 'color') {
+        labelText = 'Color correcto';
+        options = [
+          { value: 'green', label: 'Verde' },
+          { value: 'red', label: 'Rojo' },
+          { value: 'blue', label: 'Azul' },
+          { value: 'yellow', label: 'Amarillo' },
+          { value: 'white', label: 'Blanco' },
+          { value: 'cyan', label: 'Cian' }
+        ].map(opt => `<option value="${opt.value}">${opt.label}</option>`);
+      } else if (type === 'number') {
+        labelText = 'Número correcto';
+        options = [0,1,2,3,4,5,6,7,8,9].map(n => `<option value="${n}">${n}</option>`);
+      } else if (type === 'shape') {
+        labelText = 'Forma correcta';
+        options = [
+          { value: 'circle', label: 'Círculo' },
+          { value: 'square_filled', label: 'Cuadrado' },
+          { value: 'plus', label: 'Cruz' },
+          { value: 'up', label: '↑ Arriba' },
+          { value: 'down', label: '↓ Abajo' },
+          { value: 'left', label: '← Izquierda' },
+          { value: 'right', label: '→ Derecha' }
+        ].map(opt => `<option value="${opt.value}">${opt.label}</option>`);
       }
+
+      valueSelect.innerHTML = options.join('');
+      if (valueLabel) valueLabel.textContent = labelText;
     }
 
     async function saveCustomExercise() {
@@ -2362,15 +2394,25 @@
           nodes[node] = { shape, colors: colors.length ? colors : ['white'] };
         });
         
-        const correctResponse = stepEl.querySelector('.correctResponse').value;
-        const correctNode = correctResponse === 'node-1' ? parseInt(stepEl.querySelector('.correctNode').value) : null;
+        const correctResponseType = stepEl.querySelector('.correctResponseType').value;
+        const correctResponseValue = stepEl.querySelector('.correctResponseValue').value;
         const repeatCount = parseInt(stepEl.querySelector('.stepRepeat').value) || 1;
         const exposureTime = parseInt(stepEl.querySelector('.exposureTime').value);
         const delayTime = parseInt(stepEl.querySelector('.delayTime').value);
+        const correctNode = correctResponseType === 'node' ? parseInt(correctResponseValue) : null;
+        const correctResponse = correctResponseType === 'node'
+          ? 'node-1'
+          : correctResponseType === 'color'
+            ? correctResponseValue
+            : correctResponseType === 'number'
+              ? 'number'
+              : 'shape';
         
         for (let rep = 0; rep < repeatCount; rep++) {
           steps.push({
             nodes,
+            correct_response_type: correctResponseType,
+            correct_response_value: correctResponseValue,
             correct_response: correctResponse,
             correct_node: correctNode,
             exposure_time: exposureTime,
