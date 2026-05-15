@@ -201,6 +201,24 @@
       background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.08), transparent);
       pointer-events: none;
     }
+    .stroop-stimulus {
+      display: none;
+      margin: 16px 0 0;
+      padding: 24px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 3rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
     .live-node { font-family: 'Syne', sans-serif; font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 8px; }
     .live-time { font-family: 'DM Mono', monospace; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
     .live-hint { font-size: 0.82rem; color: var(--muted); }
@@ -723,6 +741,7 @@
           <div class="live-node" id="liveNode">--</div>
           <div class="live-time" id="liveTime">-- ms</div>
           <div class="live-hint" id="liveHint">Preparando...</div>
+          <div class="stroop-stimulus" id="stroopScreen"></div>
         </div>
         <div class="stats-row">
           <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media ms</span></div>
@@ -1585,8 +1604,25 @@
         correct_node: correctNode,
         target_color: targetColor,
         exposure_time: timeout,
-        delay: delay
+        delay: delay,
+        screen: {
+          word: getSpanishColorName(nodes[correctNode].rawWord),
+          ink: nodes[correctNode].colors[0]
+        }
       };
+    }
+
+    function updateStroopScreen(screen) {
+      const el = document.getElementById('stroopScreen');
+      if (!el) return;
+      if (screen) {
+        el.textContent = screen.word;
+        el.style.color = screen.ink;
+        el.style.display = 'flex';
+      } else {
+        el.textContent = '';
+        el.style.display = 'none';
+      }
     }
 
     function startStroop() {
@@ -1619,6 +1655,7 @@
       const action = step.correct_response === 'stroop-named' ? 'Apaga el color nombrado' : 'Apaga el color de la tinta';
       document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(step.target_color)}`;
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+      updateStroopScreen(step.screen);
       nodeIds.forEach(nodeId => {
         const node = step.nodes[nodeId];
         sendBLE({ cmd: 'show', node_id: nodeId, shape: node.shape, color: node.colors[0] });
@@ -1635,6 +1672,7 @@
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
       const step = state.session.sequence[state.session.current];
+      updateStroopScreen(null);
       state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:'stroop', color:step.target_color, reaction_ms:reactionMs, result:correct ? 'ok' : 'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
@@ -1697,6 +1735,12 @@
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
+      if (state.session && state.session.type === 'stroop') {
+        const step = state.session.sequence[state.session.current];
+        updateStroopScreen(step ? step.screen : null);
+      } else {
+        updateStroopScreen(null);
+      }
     }
 
     function stopSession() {
