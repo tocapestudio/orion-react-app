@@ -1255,7 +1255,7 @@
 
     // ESTADO
     const state = {
-      bt: { device:null, cmdChar:null, evtChar:null, connected:false },
+      bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
       nodes: {}, // {nodeId: {name, battery, lastUpdate}}
       athlete: null,
       athletes: [],
@@ -1270,58 +1270,78 @@
 
     // BLE CONEXIÓN
     async function connectBLE() {
-      if (state.bt.connected) { disconnectBLE(); return; }
       if (!navigator.bluetooth) { toast('Web Bluetooth no disponible. Usa Chrome en Android.'); return; }
+      if (state.bleNodes.length >= 8) { toast('Máximo 8 nodos permitidos'); return; }
       try {
         toast('Buscando nodo...');
         const device = await navigator.bluetooth.requestDevice({
           filters: [{ name: 'OrionNode' }],
           optionalServices: [BLE_SERVICE]
         });
-        state.bt.device = device;
-        device.addEventListener('gattserverdisconnected', onBLEDisconnected);
+        device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
         const server  = await device.gatt.connect();
         const service = await server.getPrimaryService(BLE_SERVICE);
         const cmdChar = await service.getCharacteristic(BLE_CMD_CHAR);
         const evtChar = await service.getCharacteristic(BLE_EVT_CHAR);
         await evtChar.startNotifications();
         evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
-        state.bt.cmdChar   = cmdChar;
-        state.bt.connected = true;
-        updateBTUI(true);
+        state.bleNodes.push({ device, cmdChar, evtChar, nodeId: null, battery: 0, lastUpdate: Date.now() });
+        updateBTUI();
         updateNodesGrid();
         toast('Nodo conectado ✓');
       } catch(err) {
         if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
-        updateBTUI(false);
       }
     }
 
-    function disconnectBLE() {
-      state.bt.device?.gatt.disconnect();
-      state.bt.connected = false;
-      updateBTUI(false);
+    function disconnectBLE(device = null) {
+      if (device) {
+        // Desconectar un nodo específico
+        const index = state.bleNodes.findIndex(n => n.device === device);
+        if (index !== -1) {
+          state.bleNodes[index].device?.gatt.disconnect();
+          state.bleNodes.splice(index, 1);
+        }
+      } else {
+        // Desconectar todos los nodos
+        state.bleNodes.forEach(n => n.device?.gatt.disconnect());
+        state.bleNodes = [];
+      }
+      state.nodes = {};
+      updateBTUI();
       updateNodesGrid();
+      if (!device) toast('Todos los nodos desconectados');
     }
 
-    function onBLEDisconnected() {
-      state.bt.connected = false;
-      state.nodes = {};
-      updateBTUI(false);
+    function onBLEDisconnected(device) {
+      const index = state.bleNodes.findIndex(n => n.device === device);
+      if (index !== -1) {
+        state.bleNodes.splice(index, 1);
+      }
+      updateBTUI();
       updateNodesGrid();
+      if (state.bleNodes.length === 0) state.nodes = {};
       toast('Nodo desconectado');
     }
 
     function onBLEMessage(event) {
       try {
         const data = JSON.parse(new TextDecoder().decode(event.target.value));
+        const bleNode = state.bleNodes.find(n => n.evtChar === event.target);
         
         // Actualizar información de batería
         if (data.battery != null) {
           const nodeId = data.node_id || 1;
+          if (bleNode) bleNode.nodeId = nodeId;
           if (!state.nodes[nodeId]) state.nodes[nodeId] = {};
           state.nodes[nodeId].battery = data.battery;
           state.nodes[nodeId].lastUpdate = Date.now();
+          // También actualizar en bleNodes
+          const bn = state.bleNodes.find(n => n.nodeId === nodeId);
+          if (bn) {
+            bn.battery = data.battery;
+            bn.lastUpdate = Date.now();
+          }
           updateNodesGrid();
         }
         
@@ -1331,30 +1351,42 @@
     }
 
     async function sendBLE(payload) {
-      if (!state.bt.connected || !state.bt.cmdChar) return;
-      try {
-        await state.bt.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify(payload)));
-      } catch(e) { console.warn('BLE write:', e); }
+      // Si el payload incluye node_id, enviar solo a ese nodo
+      // Si no, enviar a todos los nodos conectados
+      const targetNodeId = payload.node_id;
+      const targetnodes = targetNodeId 
+        ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
+        : state.bleNodes;
+      
+      for (const bleNode of targetnodes) {
+        if (!bleNode.cmdChar) continue;
+        try {
+          await bleNode.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify(payload)));
+        } catch(e) { console.warn('BLE write to node', bleNode.nodeId, ':', e); }
+      }
     }
 
-    function updateBTUI(connected) {
+    function updateBTUI() {
       const btn = document.getElementById('btBtn');
-      btn.className = 'bt-status' + (connected ? ' connected' : '');
-      document.getElementById('btText').textContent = connected
-        ? (state.bt.device?.name || 'Nodo conectado')
+      const hasConnected = state.bleNodes.length > 0;
+      btn.className = 'bt-status' + (hasConnected ? ' connected' : '');
+      const countText = state.bleNodes.length > 0 ? ` (${state.bleNodes.length})` : '';
+      document.getElementById('btText').textContent = hasConnected
+        ? `${state.bleNodes.length} nodo${state.bleNodes.length === 1 ? '' : 's'} conectado${state.bleNodes.length === 1 ? '' : 's'}`
         : 'Conectar nodo';
     }
 
     function updateNodesGrid() {
       const grid = document.getElementById('nodesGrid');
       
-      if (!state.bt.connected || Object.keys(state.nodes).length === 0) {
+      if (state.bleNodes.length === 0) {
         grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>';
         return;
       }
       
-      grid.innerHTML = Object.entries(state.nodes).map(([nodeId, node]) => {
-        const battery = node.battery || 0;
+      grid.innerHTML = state.bleNodes.map((bleNode) => {
+        const nodeId = bleNode.nodeId || '?';
+        const battery = bleNode.battery || 0;
         const batteryPercent = Math.round((battery / 4095) * 100);
         let batteryColor = 'success';
         if (batteryPercent < 25) batteryColor = 'danger';
@@ -1422,7 +1454,7 @@
 
     // FLASH
     function startFlash() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('nodesCount').value);
       const reps     = parseInt(document.getElementById('repsCount').value);
       const order    = document.getElementById('stimOrder').value;
@@ -1626,7 +1658,7 @@
     }
 
     function startStroop() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
@@ -1685,7 +1717,7 @@
       }
     }
     function startParImpar() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('piReps').value);
       const timeout = parseInt(document.getElementById('piTimeout').value);
       const rule    = document.getElementById('piRule').value;
@@ -1974,7 +2006,7 @@
     }
 
     function identifyNodes() {
-      if (!state.bt.connected) {
+      if (state.bleNodes.length === 0) {
         toast('No hay nodos conectados');
         return;
       }
@@ -2087,7 +2119,7 @@
     }
 
     function startFlashEx() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('exNodesCount').value);
       const reps     = parseInt(document.getElementById('exRepsCount').value);
       const order    = document.getElementById('exStimOrder').value;
@@ -2105,7 +2137,7 @@
     }
 
     function startParImparEx() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('exPiReps').value);
       const timeout = parseInt(document.getElementById('exPiTimeout').value);
       const rule    = document.getElementById('exPiRule').value;
@@ -2116,7 +2148,7 @@
     }
 
     function startStroopEx() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
@@ -2137,7 +2169,7 @@
     }
 
     function startChronoEx() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const mode = document.getElementById('exChronoMode').value;
       const startNode = parseInt(document.getElementById('exChronoStartNode').value);
       const endNode = parseInt(document.getElementById('exChronoEndNode').value);
@@ -2155,7 +2187,7 @@
     }
 
     function startChrono() {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const mode = document.getElementById('chronoMode').value;
       const startNode = parseInt(document.getElementById('chronoStartNode').value);
       const endNode = parseInt(document.getElementById('chronoEndNode').value);
@@ -2439,7 +2471,7 @@
     }
 
     function launchCustomExercise(exercise) {
-      if (!state.bt.connected) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       
       const steps = JSON.parse(exercise.steps);
       const totalReps = steps.length; // Each step is one "repetition"
