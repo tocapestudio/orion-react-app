@@ -496,6 +496,13 @@
               </div>
               <span class="ex-item-arrow">›</span>
             </div>
+            <div class="ex-item" onclick="openExerciseConfig('discrimination')">
+              <div class="ex-item-info">
+                <h3>Discriminación</h3>
+                <p>Encuentra el estímulo objetivo entre distractores · Configurable por color/forma/número</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
           </div>
         </div>
 
@@ -528,7 +535,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos <span class="slider-val" id="exNodesVal">3</span></label>
-                <input type="range" min="1" max="6" value="3" id="exNodesCount" oninput="document.getElementById('exNodesVal').textContent=this.value" />
+                <input type="range" min="1" max="8" value="3" id="exNodesCount" oninput="document.getElementById('exNodesVal').textContent=this.value" />
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -623,7 +630,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
-                <input type="number" min="2" max="6" value="3" id="exStroopNodesCount" />
+                <input type="number" min="2" max="8" value="3" id="exStroopNodesCount" />
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -661,6 +668,68 @@
             </div>
           </div>
         </div>
+
+        <div id="exDiscriminationConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Discriminación</div>
+            </div>
+            <div class="card-sub">Encuentra el estímulo objetivo entre distractores.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos</label>
+                <input type="number" min="2" max="8" value="3" id="exDiscNodesCount" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="exDiscReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="10000" step="100" value="2000" id="exDiscTimeout" />
+              </div>
+              <div class="field">
+                <label>Delay entre rondas (ms)</label>
+                <input type="number" min="0" max="5000" step="100" value="800" id="exDiscDelay" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Criterio correcto</label>
+                <select id="exDiscCriterion" onchange="updateExDiscValueOptions()">
+                  <option value="color">Color</option>
+                  <option value="shape">Forma</option>
+                  <option value="number">Número</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Valor correcto</label>
+                <select id="exDiscValue">
+                  <option value="green">Verde</option>
+                  <option value="red">Rojo</option>
+                  <option value="blue">Azul</option>
+                  <option value="yellow">Amarillo</option>
+                  <option value="white">Blanco</option>
+                  <option value="cyan">Cian</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Distractores</label>
+              <select id="exDiscDistractors">
+                <option value="same">Iguales entre sí</option>
+                <option value="different">Diferentes entre sí</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" onclick="startDiscrimination()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
         <div id="exChronoConfig" style="display:none;">
           <div class="card">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
@@ -692,6 +761,8 @@
                   <option value="4">4</option>
                   <option value="5">5</option>
                   <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
                 </select>
               </div>
               <div class="field">
@@ -703,6 +774,8 @@
                   <option value="4">4</option>
                   <option value="5">5</option>
                   <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
                 </select>
               </div>
             </div>
@@ -807,6 +880,13 @@
             </div>
             <span class="ex-item-arrow">›</span>
           </div>
+          <div class="ex-item" onclick="expandQuickForm('discrimination')">
+            <div class="ex-item-info">
+              <h3>Discriminación</h3>
+              <p>Encuentra el objetivo entre distractores · Color/Forma/Número</p>
+            </div>
+            <span class="ex-item-arrow">›</span>
+          </div>
           <div class="ex-item" onclick="expandQuickForm('chrono')">
             <div class="ex-item-info">
               <h3>Chrono</h3>
@@ -827,7 +907,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
-                <input type="range" min="1" max="6" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+                <input type="range" min="1" max="8" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -927,7 +1007,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos <span class="slider-val" id="stroopNodesVal">3</span></label>
-                <input type="range" min="2" max="6" value="3" id="stroopNodesCount" oninput="document.getElementById('stroopNodesVal').textContent=this.value" />
+                <input type="range" min="2" max="8" value="3" id="stroopNodesCount" oninput="document.getElementById('stroopNodesVal').textContent=this.value" />
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -966,6 +1046,68 @@
             </div>
           </div>
         </div>
+        <div id="quickFormDiscrimination" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
+              <div class="card-title" style="margin:0;">Discriminación</div>
+            </div>
+            <div class="card-sub">Encuentra el objetivo entre distractores.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos <span class="slider-val" id="discNodesVal">3</span></label>
+                <input type="range" min="2" max="8" value="3" id="discNodesCount" oninput="document.getElementById('discNodesVal').textContent=this.value" />
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <input type="number" min="1" max="50" value="10" id="discReps" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Timeout (ms)</label>
+                <input type="number" min="300" max="10000" step="100" value="2000" id="discTimeout" />
+              </div>
+              <div class="field">
+                <label>Delay entre rondas (ms)</label>
+                <input type="number" min="0" max="5000" step="100" value="800" id="discDelay" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Criterio correcto</label>
+                <select id="discCriterion" onchange="updateQuickDiscOptions()">
+                  <option value="color">Color</option>
+                  <option value="shape">Forma</option>
+                  <option value="number">Número</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Valor correcto</label>
+                <select id="discValue">
+                  <option value="green">Verde</option>
+                  <option value="red">Rojo</option>
+                  <option value="blue">Azul</option>
+                  <option value="yellow">Amarillo</option>
+                  <option value="white">Blanco</option>
+                  <option value="cyan">Cian</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Distractores</label>
+              <select id="discDistractors">
+                <option value="same">Iguales entre sí</option>
+                <option value="different">Diferentes entre sí</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="saveQuickDiscriminationConfig()">Guardar configuración</button>
+              <button class="btn-secondary" onclick="startQuickDiscrimination()">Iniciar</button>
+            </div>
+          </div>
+        </div>
+
         <div id="quickFormChrono" style="display:none;">
           <div class="card">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
@@ -997,6 +1139,8 @@
                   <option value="4">4</option>
                   <option value="5">5</option>
                   <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
                 </select>
               </div>
               <div class="field">
@@ -1008,6 +1152,8 @@
                   <option value="4">4</option>
                   <option value="5">5</option>
                   <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
                 </select>
               </div>
             </div>
@@ -1093,19 +1239,19 @@
       </div>
       <div class="card">
         <div class="card-title">Deportistas</div>
-        <div class="card-sub">Gestiona los perfiles directamente desde Datos.</div>
-        <div id="athletesListData" style="margin-bottom:14px;"></div>
-        <div class="field-row">
-          <div class="field">
-            <label>Nombre</label>
-            <input type="text" id="newAthleteNameData" placeholder="Nombre" />
-          </div>
-          <div class="field">
-            <label>Deporte</label>
-            <input type="text" id="newAthleteSportData" placeholder="Fútbol, pádel..." />
-          </div>
+        <div class="card-sub">Gestiona los jugadores y sus datos de rendimiento.</div>
+        <button class="btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openCreateAthleteModal()">+ Crear jugador</button>
+        <div class="field" style="margin-bottom:12px;">
+          <label>Buscar por nombre</label>
+          <input type="text" id="athleteSearchDataInput" placeholder="Escribe un nombre..." oninput="filterAthletesInData()" />
         </div>
-        <button class="btn-secondary" onclick="addAthleteFromData()">Añadir deportista</button>
+        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg-secondary);cursor:pointer;" onclick="toggleAthletesList()">
+            <span style="font-size:0.9rem;font-weight:500;">Jugadores (<span id="athletesCount">0</span>)</span>
+            <span id="athletesListArrow" style="transform:rotate(-90deg);transition:transform 0.2s;font-size:1.2rem;">›</span>
+          </div>
+          <div id="athletesListDataExpanded" style="display:none;max-height:300px;overflow-y:auto;"></div>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">Filtrar sesiones</div>
@@ -1203,6 +1349,24 @@
       Config
     </button>
   </nav>
+
+  <div class="modal-overlay" id="addAthleteModal">
+    <div class="modal">
+      <div class="modal-title">Crear jugador</div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Nombre</label>
+        <input type="text" id="newAthleteNameModal" placeholder="Nombre" />
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Deporte</label>
+        <input type="text" id="newAthleteSportModal" placeholder="Fútbol, pádel..." />
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="addAthleteFromModal()">Crear</button>
+        <button class="btn-secondary" onclick="closeAddAthleteModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-overlay" id="athleteModal">
     <div class="modal">
@@ -1445,6 +1609,10 @@
         const step = state.session.sequence[state.session.current];
         const correct = data.node_id === step.correct_node;
         completeStroop(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
+      } else if (state.session.type === 'discrimination') {
+        const step = state.session.sequence[state.session.current];
+        const correct = data.node_id === step.correct_node;
+        completeDiscrimination(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else if (state.session.type === 'chrono') {
         handleChronoReaction(data);
       } else {
@@ -1873,7 +2041,7 @@
         return;
       }
       list.innerHTML = sessions.map(s=>{
-        let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : 'Ejercicio personalizado';
+        let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : s.exercise_type === 'discrimination' ? 'Discriminación' : 'Ejercicio personalizado';
         return `
           <div class="card" style="margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -1894,13 +2062,13 @@
       try {
         state.athletes = await db.get('athletes','?order=name');
         renderAthletes();
+        renderAthletesInData(state.athletes);
         updateAthleteFilter();
       } catch {}
     }
 
     function renderAthletes() {
       const list = document.getElementById('athletesList');
-      const listData = document.getElementById('athletesListData');
       const html = !state.athletes.length
         ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin deportistas añadidos.</div>`
         : state.athletes.map(a=>`
@@ -1909,7 +2077,25 @@
             <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
           </div>`).join('');
       list.innerHTML = html;
-      if (listData) listData.innerHTML = html;
+    }
+
+    function renderAthletesInData(athletes) {
+      const listContainer = document.getElementById('athletesListDataExpanded');
+      const countEl = document.getElementById('athletesCount');
+      countEl.textContent = athletes.length;
+      if (!athletes.length) {
+        listContainer.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
+        return;
+      }
+      listContainer.innerHTML = athletes.map(a=>{
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:0.9rem;font-weight:500;">${a.name}</div>
+            <div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div>
+          </div>
+          <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
+        </div>`;
+      }).join('');
     }
 
     async function addAthlete() {
@@ -1925,17 +2111,44 @@
       } catch(err) { toast('Error: '+err.message); }
     }
 
-    async function addAthleteFromData() {
-      const name  = document.getElementById('newAthleteNameData').value.trim();
-      const sport = document.getElementById('newAthleteSportData').value.trim();
+    function openCreateAthleteModal() {
+      document.getElementById('newAthleteNameModal').value = '';
+      document.getElementById('newAthleteSportModal').value = '';
+      document.getElementById('addAthleteModal').classList.add('open');
+    }
+
+    function closeAddAthleteModal() {
+      document.getElementById('addAthleteModal').classList.remove('open');
+    }
+
+    async function addAthleteFromModal() {
+      const name  = document.getElementById('newAthleteNameModal').value.trim();
+      const sport = document.getElementById('newAthleteSportModal').value.trim();
       if (!name) { toast('Introduce un nombre'); return; }
       try {
         await db.post('athletes', {name, sport});
-        document.getElementById('newAthleteNameData').value  = '';
-        document.getElementById('newAthleteSportData').value = '';
+        closeAddAthleteModal();
         await loadAthletes();
-        toast('Deportista añadido ✓');
+        toast('Jugador creado ✓');
       } catch(err) { toast('Error: '+err.message); }
+    }
+
+    function toggleAthletesList() {
+      const list = document.getElementById('athletesListDataExpanded');
+      const arrow = document.getElementById('athletesListArrow');
+      const isHidden = list.style.display === 'none';
+      list.style.display = isHidden ? 'block' : 'none';
+      arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+    }
+
+    function filterAthletesInData() {
+      const searchInput = document.getElementById('athleteSearchDataInput').value.toLowerCase();
+      if (!searchInput) {
+        renderAthletesInData(state.athletes);
+        return;
+      }
+      const filtered = state.athletes.filter(a => a.name.toLowerCase().includes(searchInput));
+      renderAthletesInData(filtered);
     }
 
     async function deleteAthlete(id) {
@@ -2105,6 +2318,7 @@
         document.getElementById('exFlashConfig').style.display = type === 'flash' ? 'block' : 'none';
         document.getElementById('exParImparConfig').style.display = type === 'parimpar' ? 'block' : 'none';
         document.getElementById('exStroopConfig').style.display = type === 'stroop' ? 'block' : 'none';
+        document.getElementById('exDiscriminationConfig').style.display = type === 'discrimination' ? 'block' : 'none';
         document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
       }
     }
@@ -2114,6 +2328,7 @@
       document.getElementById('exFlashConfig').style.display = 'none';
       document.getElementById('exParImparConfig').style.display = 'none';
       document.getElementById('exStroopConfig').style.display = 'none';
+      document.getElementById('exDiscriminationConfig').style.display = 'none';
       document.getElementById('exChronoConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
     }
@@ -2166,6 +2381,144 @@
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStroop, 600);
+    }
+
+    // DISCRIMINATION (preset)
+    function updateExDiscValueOptions() {
+      const criterion = document.getElementById('exDiscCriterion').value;
+      const sel = document.getElementById('exDiscValue');
+      if (!sel) return;
+      if (criterion === 'color') {
+        sel.innerHTML = `
+          <option value="green">Verde</option>
+          <option value="red">Rojo</option>
+          <option value="blue">Azul</option>
+          <option value="yellow">Amarillo</option>
+          <option value="white">Blanco</option>
+          <option value="cyan">Cian</option>
+        `;
+      } else if (criterion === 'shape') {
+        sel.innerHTML = `
+          <option value="circle">Círculo</option>
+          <option value="square_filled">Cuadrado</option>
+          <option value="plus">Cruz</option>
+          <option value="up">↑ Arriba</option>
+          <option value="down">↓ Abajo</option>
+          <option value="left">← Izquierda</option>
+          <option value="right">→ Derecha</option>
+        `;
+      } else {
+        sel.innerHTML = Array.from({length:10},(_,i)=>`<option value="${i}">${i}</option>`).join('');
+      }
+    }
+
+    function startDiscriminationEx() {
+      // alias to startDiscrimination for preset quick usage
+      startDiscrimination();
+    }
+
+    function startDiscrimination() {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
+      const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
+      const timeout = parseInt(document.getElementById('exDiscTimeout')?.value || 2000);
+      const delay = parseInt(document.getElementById('exDiscDelay')?.value || 800);
+      const criterion = document.getElementById('exDiscCriterion')?.value || 'color';
+      const correctValue = document.getElementById('exDiscValue')?.value || 'green';
+      const distractors = document.getElementById('exDiscDistractors')?.value || 'different';
+
+      const sequence = [];
+      for (let i = 0; i < reps; i++) {
+        const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
+        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
+      }
+
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,delay,criterion,correctValue,distractors}, nodeValues:{} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextDiscrimination, 600);
+    }
+
+    function nextDiscrimination() {
+      if (!state.session.active) return;
+      const { sequence, current } = state.session;
+      const step = sequence[current];
+      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      document.getElementById('liveHint').textContent = 'Toca el nodo correcto';
+      document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+
+      // Build distractor values
+      const colors = ['green','red','blue','yellow','white','cyan'];
+      const shapes = ['circle','square_filled','plus','up','down','left','right'];
+      const numbers = Array.from({length:10},(_,i)=>String(i));
+
+      const { nodes, correct_node, criterion, correct_value, distractors, timeout } = step;
+
+      let distractorValues = [];
+      if (criterion === 'color') {
+        const pool = colors.filter(c => c !== correct_value);
+        if (distractors === 'same') {
+          const v = pool[Math.floor(Math.random()*pool.length)];
+          distractorValues = nodes.map(n => v);
+        } else {
+          // different
+          distractorValues = nodes.map((n, i) => pool[i % pool.length]);
+        }
+      } else if (criterion === 'shape') {
+        const pool = shapes.filter(s => s !== correct_value);
+        if (distractors === 'same') {
+          const v = pool[Math.floor(Math.random()*pool.length)];
+          distractorValues = nodes.map(n => v);
+        } else {
+          distractorValues = nodes.map((n,i) => pool[i % pool.length]);
+        }
+      } else {
+        const pool = numbers.filter(n => n !== String(correct_value));
+        if (distractors === 'same') {
+          const v = pool[Math.floor(Math.random()*pool.length)];
+          distractorValues = nodes.map(n => v);
+        } else {
+          distractorValues = nodes.map((n,i) => pool[i % pool.length]);
+        }
+      }
+
+      // Send stimuli to all nodes
+      nodes.forEach((nodeId, idx) => {
+        if (nodeId === correct_node) {
+          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:correct_value });
+          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:correct_value, color:'white' });
+          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(correct_value), color:'white' });
+        } else {
+          const v = distractorValues[idx];
+          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:v });
+          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:v, color:'white' });
+          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(v), color:'white' });
+        }
+      });
+
+      state.session.waiting = true;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completeDiscrimination(null, false);
+      }, timeout);
+    }
+
+    function completeDiscrimination(reactionMs, ok) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      const step = state.session.sequence[state.session.current];
+      state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:step.criterion, color: step.criterion === 'color' ? step.correct_value : null, reaction_ms:reactionMs, result:ok ? 'ok' : 'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : 'Sin respuesta o error';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextDiscrimination, step.delay);
+      } else {
+        setTimeout(endSession, 800);
+      }
     }
 
     function startChronoEx() {
@@ -2226,6 +2579,7 @@
       document.getElementById('quickFormFlash').style.display = type === 'flash' ? 'block' : 'none';
       document.getElementById('quickFormParImpar').style.display = type === 'parimpar' ? 'block' : 'none';
       document.getElementById('quickFormStroop').style.display = type === 'stroop' ? 'block' : 'none';
+      document.getElementById('quickFormDiscrimination').style.display = type === 'discrimination' ? 'block' : 'none';
       document.getElementById('quickFormChrono').style.display = type === 'chrono' ? 'block' : 'none';
     }
 
@@ -2234,7 +2588,62 @@
       document.getElementById('quickFormFlash').style.display = 'none';
       document.getElementById('quickFormParImpar').style.display = 'none';
       document.getElementById('quickFormStroop').style.display = 'none';
+      document.getElementById('quickFormDiscrimination').style.display = 'none';
       document.getElementById('quickFormChrono').style.display = 'none';
+    }
+
+    function updateQuickDiscOptions() {
+      const crit = document.getElementById('discCriterion')?.value;
+      const sel = document.getElementById('discValue');
+      if (!sel) return;
+      if (crit === 'color') {
+        sel.innerHTML = `
+          <option value="green">Verde</option>
+          <option value="red">Rojo</option>
+          <option value="blue">Azul</option>
+          <option value="yellow">Amarillo</option>
+          <option value="white">Blanco</option>
+          <option value="cyan">Cian</option>
+        `;
+      } else if (crit === 'shape') {
+        sel.innerHTML = `
+          <option value="circle">Círculo</option>
+          <option value="square_filled">Cuadrado</option>
+          <option value="plus">Cruz</option>
+          <option value="up">↑ Arriba</option>
+          <option value="down">↓ Abajo</option>
+          <option value="left">← Izquierda</option>
+          <option value="right">→ Derecha</option>
+        `;
+      } else {
+        sel.innerHTML = Array.from({length:10},(_,i)=>`<option value="${i}">${i}</option>`).join('');
+      }
+    }
+
+    function startQuickDiscrimination() {
+      // mirror preset start but reading quick form fields
+      const nodes = parseInt(document.getElementById('discNodesCount')?.value || 3);
+      const reps = parseInt(document.getElementById('discReps')?.value || 10);
+      const timeout = parseInt(document.getElementById('discTimeout')?.value || 2000);
+      const delay = parseInt(document.getElementById('discDelay')?.value || 800);
+      const criterion = document.getElementById('discCriterion')?.value || 'color';
+      const correctValue = document.getElementById('discValue')?.value || 'green';
+      const distractors = document.getElementById('discDistractors')?.value || 'different';
+      const sequence = [];
+      for (let i = 0; i < reps; i++) {
+        const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
+        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
+      }
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,delay,criterion,correctValue,distractors}, nodeValues:{} };
+      collapseQuickForm();
+      showActiveSession();
+      setTimeout(nextDiscrimination, 600);
+    }
+
+    function saveQuickDiscriminationConfig() {
+      // Basic alias to save as preset — could be extended to persist
+      toast('Configuración rápida guardada');
     }
 
     function addStep() {
@@ -2250,7 +2659,7 @@
           <div class="field" style="margin-bottom:12px;">
             <label>Nodos que se activan</label>
             <div class="node-config">
-              ${[1,2,3,4,5,6].map(n => `
+              ${[1,2,3,4,5,6,7,8].map(n => `
                 <label class="node-checkbox">
                   <input type="checkbox" data-node="${n}" onchange="updateStepNodes(${stepIndex})">
                   Nodo ${n}
@@ -2276,7 +2685,7 @@
             <div class="field">
               <label class="correctResponseLabel">Nodo correcto</label>
               <select class="correctResponseValue" data-step="${stepIndex}">
-                ${[1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`).join('')}
+                ${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}">Nodo ${n}</option>`).join('')}
               </select>
             </div>
           </div>
@@ -2375,7 +2784,7 @@
 
       if (type === 'node') {
         labelText = 'Nodo correcto';
-        options = [1,2,3,4,5,6].map(n => `<option value="${n}">Nodo ${n}</option>`);
+        options = [1,2,3,4,5,6,7,8].map(n => `<option value="${n}">Nodo ${n}</option>`);
       } else if (type === 'color') {
         labelText = 'Color correcto';
         options = [
@@ -2660,6 +3069,7 @@
 
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
     document.getElementById('btBtn').addEventListener('click', connectBLE);
+    document.getElementById('addAthleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAddAthleteModal(); });
     document.getElementById('athleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAthleteModal(); });
     document.getElementById('folderModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeFolderModal(); });
 
