@@ -1894,7 +1894,7 @@
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeStimulus(null, false);
-      }, config.timeout);
+      }, Math.max(config.timeout, config.duration));
     }
 
     function completeStimulus(reactionMs, ok) {
