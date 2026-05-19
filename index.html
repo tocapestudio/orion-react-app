@@ -407,8 +407,28 @@
 </head>
 <body>
 
-            
-        </button>
+  <header class="topbar">
+    <div class="logo">ORION <span>REACT</span></div>
+    <button class="bt-status" id="btBtn">
+      <span class="bt-dot" id="btDot"></span>
+      <span id="btText">Conectar nodo</span>
+    </button>
+  </header>
+
+  <nav class="nav">
+    <button class="nav-btn" data-page="exercises">Ejercicios</button>
+    <button class="nav-btn" data-page="create">Crear</button>
+    <button class="nav-btn" data-page="data">Datos</button>
+    <button class="nav-btn" data-page="config">Configuración</button>
+  </nav>
+
+  <main class="main">
+    <section class="page" id="page-home">
+      <div class="section-header">
+        <div class="section-title">Inicio</div>
+      </div>
+      <div class="home-grid">
+
         <button class="home-button" onclick="showPage('data')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           <span>Datos</span>
