@@ -548,10 +548,15 @@
                 <input type="number" min="300" max="5000" step="100" value="1200" id="exStimInterval" />
               </div>
               <div class="field">
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2000" id="exStimDuration" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
                 <label>Timeout (ms)</label>
                 <input type="number" min="300" max="5000" step="100" value="2000" id="exStimTimeout" />
               </div>
-            </div>
             <div class="field-row">
               <div class="field">
                 <label>Forma</label>
@@ -604,9 +609,13 @@
                 <input type="number" min="1" max="50" value="10" id="exPiReps" />
               </div>
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2500" id="exPiTimeout" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="exPiDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Timeout (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="2500" id="exPiTimeout" />
             </div>
             <div class="field">
               <label>Regla</label>
@@ -659,9 +668,13 @@
                 <input type="number" min="500" max="10000" step="100" value="2500" id="exStroopTimeout" />
               </div>
               <div class="field">
-                <label>Delay entre rondas (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="800" id="exStroopInterval" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="exStroopDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Delay entre rondas (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="800" id="exStroopInterval" />
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startStroopEx()">Iniciar</button>
@@ -692,9 +705,13 @@
                 <input type="number" min="300" max="10000" step="100" value="2000" id="exDiscTimeout" />
               </div>
               <div class="field">
-                <label>Delay entre rondas (ms)</label>
-                <input type="number" min="0" max="5000" step="100" value="800" id="exDiscDelay" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2000" id="exDiscDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Delay entre rondas (ms)</label>
+              <input type="number" min="0" max="5000" step="100" value="800" id="exDiscDelay" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -783,6 +800,16 @@
               <div class="field">
                 <label>Delay aleatorio entre repeticiones (ms)</label>
                 <input type="number" min="0" max="10000" step="100" value="800" id="exChronoDelay" />
+              </div>
+              <div class="field">
+                <label>Duración estímulo inicio (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="3000" id="exChronoStartDuration" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Duración estímulo final (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="3000" id="exChronoEndDuration" />
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -920,10 +947,15 @@
                 <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
               </div>
               <div class="field">
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2000" id="stimDuration" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
                 <label>Timeout (ms)</label>
                 <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
               </div>
-            </div>
             <div class="field-row">
               <div class="field">
                 <label>Forma</label>
@@ -978,9 +1010,13 @@
                 <input type="number" min="1" max="50" value="10" id="piReps" />
               </div>
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="piDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Timeout (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
             </div>
             <div class="field">
               <label>Regla</label>
@@ -1036,9 +1072,13 @@
                 <input type="number" min="500" max="10000" step="100" value="2500" id="stroopTimeout" />
               </div>
               <div class="field">
-                <label>Delay entre rondas (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="800" id="stroopInterval" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2500" id="stroopDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Delay entre rondas (ms)</label>
+              <input type="number" min="300" max="5000" step="100" value="800" id="stroopInterval" />
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveStroopConfig()">Guardar configuración</button>
@@ -1069,9 +1109,13 @@
                 <input type="number" min="300" max="10000" step="100" value="2000" id="discTimeout" />
               </div>
               <div class="field">
-                <label>Delay entre rondas (ms)</label>
-                <input type="number" min="0" max="5000" step="100" value="800" id="discDelay" />
+                <label>Duración del estímulo (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="2000" id="discDuration" />
               </div>
+            </div>
+            <div class="field">
+              <label>Delay entre rondas (ms)</label>
+              <input type="number" min="0" max="5000" step="100" value="800" id="discDelay" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -1161,6 +1205,16 @@
               <div class="field">
                 <label>Delay aleatorio entre repeticiones (ms)</label>
                 <input type="number" min="0" max="10000" step="100" value="800" id="chronoDelay" />
+              </div>
+              <div class="field">
+                <label>Duración estímulo inicio (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="3000" id="chronoStartDuration" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Duración estímulo final (ms)</label>
+                <input type="number" min="500" max="10000" step="100" value="3000" id="chronoEndDuration" />
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -1287,6 +1341,22 @@
         <div class="card-sub">Estado en tiempo real de los nodos BLE y batería.</div>
         <div id="nodesGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
           <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div class="field" style="margin-bottom:12px;">
+            <label>Conectar múltiples nodos</label>
+            <div style="display:flex;gap:10px;">
+              <input type="number" min="1" max="8" value="1" id="connectCount" style="flex:1;" />
+              <button class="btn-primary" onclick="connectMultiple()" style="flex:1;">Conectar</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+          <button class="btn-secondary" onclick="connectBLE()" style="flex:1;min-width:160px;">Buscar nodo</button>
+          <button class="btn-danger" onclick="disconnectBLE()" style="flex:1;min-width:160px;">Desconectar todos</button>
+        </div>
+        <div id="selectDisconnectRow" style="display:none;margin-bottom:12px;">
+          <button class="btn-danger" onclick="disconnectSelected()" style="width:100%;">Desconectar seleccionados</button>
         </div>
         <button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button>
       </div>
@@ -1421,6 +1491,7 @@
     const state = {
       bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
       nodes: {}, // {nodeId: {name, battery, lastUpdate}}
+      selectedNodes: new Set(), // indices of selected nodes for bulk disconnect
       athlete: null,
       athletes: [],
       buzzerOn: true,
@@ -1471,10 +1542,79 @@
         state.bleNodes.forEach(n => n.device?.gatt.disconnect());
         state.bleNodes = [];
       }
-      state.nodes = {};
+      if (state.bleNodes.length === 0) state.nodes = {};
       updateBTUI();
       updateNodesGrid();
       if (!device) toast('Todos los nodos desconectados');
+    }
+
+    function disconnectBLEByIndex(index) {
+      if (index < 0 || index >= state.bleNodes.length) return;
+      disconnectBLE(state.bleNodes[index].device);
+    }
+
+    async function connectMultiple() {
+      const count = parseInt(document.getElementById('connectCount').value) || 1;
+      const toConnect = Math.max(1, Math.min(count, 8 - state.bleNodes.length));
+      let connected = 0;
+      
+      for (let i = 0; i < toConnect; i++) {
+        try {
+          if (!navigator.bluetooth) break;
+          toast(`Buscando nodo ${connected + 1}/${toConnect}...`);
+          const device = await navigator.bluetooth.requestDevice({
+            filters: [{ name: 'OrionNode' }],
+            optionalServices: [BLE_SERVICE]
+          });
+          device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
+          const server  = await device.gatt.connect();
+          const service = await server.getPrimaryService(BLE_SERVICE);
+          const cmdChar = await service.getCharacteristic(BLE_CMD_CHAR);
+          const evtChar = await service.getCharacteristic(BLE_EVT_CHAR);
+          await evtChar.startNotifications();
+          evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
+          state.bleNodes.push({ device, cmdChar, evtChar, nodeId: null, battery: 0, lastUpdate: Date.now() });
+          connected++;
+          updateBTUI();
+          updateNodesGrid();
+          await new Promise(r => setTimeout(r, 600));
+        } catch(err) {
+          if (err.name !== 'NotFoundError' && err.name !== 'AbortError') console.warn(err);
+          break;
+        }
+      }
+      toast(`${connected} nodo${connected === 1 ? '' : 's'} conectado${connected === 1 ? '' : 's'} ✓`);
+    }
+
+    function toggleNodeSelection(index) {
+      if (state.selectedNodes.has(index)) {
+        state.selectedNodes.delete(index);
+      } else {
+        state.selectedNodes.add(index);
+      }
+      updateNodesGrid();
+      updateSelectDisconnectUI();
+    }
+
+    function updateSelectDisconnectUI() {
+      const row = document.getElementById('selectDisconnectRow');
+      if (state.selectedNodes.size > 0) {
+        row.style.display = 'block';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+
+    function disconnectSelected() {
+      const indices = Array.from(state.selectedNodes).sort((a, b) => b - a);
+      indices.forEach(idx => {
+        if (idx < state.bleNodes.length) {
+          disconnectBLE(state.bleNodes[idx].device);
+        }
+      });
+      state.selectedNodes.clear();
+      updateSelectDisconnectUI();
+      toast('Nodos desconectados');
     }
 
     function onBLEDisconnected(device) {
@@ -1484,6 +1624,7 @@
       }
       updateBTUI();
       updateNodesGrid();
+      updateSelectDisconnectUI();
       if (state.bleNodes.length === 0) state.nodes = {};
       toast('Nodo desconectado');
     }
@@ -1548,18 +1689,28 @@
         return;
       }
       
-      grid.innerHTML = state.bleNodes.map((bleNode) => {
+      grid.innerHTML = state.bleNodes.map((bleNode, index) => {
         const nodeId = bleNode.nodeId || '?';
         const battery = bleNode.battery || 0;
         const batteryPercent = Math.round((battery / 4095) * 100);
+        const deviceName = bleNode.device?.name || 'OrionNode';
+        const isSelected = state.selectedNodes.has(index);
         let batteryColor = 'success';
         if (batteryPercent < 25) batteryColor = 'danger';
         else if (batteryPercent < 50) batteryColor = 'warning';
         
         return `
-          <div class="node-card">
+          <div class="node-card" style="${isSelected ? 'border-color:var(--accent);background:rgba(59,130,246,0.05);' : ''}">
             <div class="node-card-header">
-              <div class="node-id">Node ${nodeId}</div>
+              <div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleNodeSelection(${index})" style="margin:0;" />
+                  <div>
+                    <div class="node-id">Node ${nodeId}</div>
+                    <div class="node-sub">${deviceName}</div>
+                  </div>
+                </div>
+              </div>
               <div class="node-status"></div>
             </div>
             <div class="node-battery">
@@ -1568,6 +1719,7 @@
               </div>
               <span>${batteryPercent}%</span>
             </div>
+            <button class="btn-secondary" style="width:100%;margin-top:12px;" onclick="disconnectBLEByIndex(${index})">Desconectar</button>
           </div>
         `;
       }).join('');
@@ -1629,11 +1781,12 @@
       const shape    = document.getElementById('stimShape').value;
       const color    = document.getElementById('stimColor').value;
       const interval = parseInt(document.getElementById('stimInterval').value);
+      const duration = parseInt(document.getElementById('stimDuration').value);
       const timeout  = parseInt(document.getElementById('stimTimeout').value);
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,timeout} };
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -1648,7 +1801,7 @@
       document.getElementById('liveTime').textContent     = '-- ms';
       document.getElementById('liveHint').textContent     = 'Reacciona al ver el estímulo';
       document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
-      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color });
+      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration });
       state.session.waiting = true;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
@@ -1681,7 +1834,7 @@
       if (config.mode === 'mode1') {
         document.getElementById('liveNode').textContent = `Nodo ${config.endNode}`;
         document.getElementById('liveHint').textContent = 'Toca el nodo final cuando aparezca';
-        sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red' });
+        sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration });
         state.session.waiting = true;
         state.session.chrono = { phase:'end', startTouchTs: null, startShowTs: Date.now() };
         state.session.timeoutId = setTimeout(() => {
@@ -1696,7 +1849,7 @@
         document.getElementById('liveNode').textContent = `Inicio ${config.startNode}`;
         document.getElementById('liveHint').textContent = 'Toca el nodo de inicio para comenzar';
         state.session.timeoutId = setTimeout(() => {
-          sendBLE({ cmd:'show', node_id:config.startNode, shape:'circle', color:'green' });
+          sendBLE({ cmd:'show', node_id:config.startNode, shape:'circle', color:'green', duration:config.startDuration });
           state.session.waiting = true;
           state.session.chrono.startShowTs = Date.now();
         }, delay);
@@ -1720,7 +1873,7 @@
           document.getElementById('liveNode').textContent = `Final ${config.endNode}`;
           document.getElementById('liveHint').textContent = 'Toca el nodo final ahora';
           setTimeout(() => {
-            sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red' });
+            sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration });
             state.session.waiting = true;
             state.session.timeoutId = setTimeout(() => {
               if (!state.session.waiting) return;
@@ -1832,6 +1985,7 @@
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
       const timeout = parseInt(document.getElementById('stroopTimeout').value);
+      const duration = parseInt(document.getElementById('stroopDuration').value);
       const interval = parseInt(document.getElementById('stroopInterval').value);
       const sequence = [];
       if (resetMode === 'same') {
@@ -1840,7 +1994,7 @@
       } else {
         for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
       }
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,resetMode}, nodeValues:{} };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,resetMode,duration}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -1858,7 +2012,7 @@
       updateStroopScreen(step.screen);
       nodeIds.forEach(nodeId => {
         const node = step.nodes[nodeId];
-        sendBLE({ cmd: 'show', node_id: nodeId, shape: node.shape, color: node.colors[0] });
+        sendBLE({ cmd: 'show', node_id: nodeId, shape: node.shape, color: node.colors[0], duration: state.session.config.duration });
       });
       state.session.waiting = true;
       state.session.timeoutId = setTimeout(() => {
@@ -1887,9 +2041,10 @@
     function startParImpar() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('piReps').value);
+      const duration = parseInt(document.getElementById('piDuration').value);
       const timeout = parseInt(document.getElementById('piTimeout').value);
       const rule    = document.getElementById('piRule').value;
-      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,timeout,rule}, nodeValues:{} };
+      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -1907,8 +2062,8 @@
       document.getElementById('liveNode').textContent     = `${v1} · ${v2}`;
       document.getElementById('liveHint').textContent     = state.session.config.rule === 'pairs' ? 'Toca el PAR' : 'Toca el IMPAR';
       document.getElementById('statProgress').textContent = `${state.session.current+1}/${state.session.total}`;
-      sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:colors[Math.floor(Math.random()*4)] });
-      setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:colors[Math.floor(Math.random()*4)] }), 120);
+      sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration });
+      setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration }), 120);
       state.session.waiting = true;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
@@ -2341,11 +2496,12 @@
       const shape    = document.getElementById('exStimShape').value;
       const color    = document.getElementById('exStimColor').value;
       const interval = parseInt(document.getElementById('exStimInterval').value);
+      const duration = parseInt(document.getElementById('exStimDuration').value);
       const timeout  = parseInt(document.getElementById('exStimTimeout').value);
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,timeout} };
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -2354,9 +2510,10 @@
     function startParImparEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('exPiReps').value);
+      const duration = parseInt(document.getElementById('exPiDuration').value);
       const timeout = parseInt(document.getElementById('exPiTimeout').value);
       const rule    = document.getElementById('exPiRule').value;
-      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,timeout,rule}, nodeValues:{} };
+      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -2369,6 +2526,7 @@
       const resolveBy = document.getElementById('exStroopRule').value;
       const resetMode = document.getElementById('exStroopResetMode').value;
       const timeout = parseInt(document.getElementById('exStroopTimeout').value);
+      const duration = parseInt(document.getElementById('exStroopDuration').value);
       const interval = parseInt(document.getElementById('exStroopInterval').value);
       const sequence = [];
       if (resetMode === 'same') {
@@ -2377,7 +2535,7 @@
       } else {
         for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
       }
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,resetMode,interval}, nodeValues:{} };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,resetMode,duration,interval}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -2422,6 +2580,7 @@
       const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
       const timeout = parseInt(document.getElementById('exDiscTimeout')?.value || 2000);
+      const duration = parseInt(document.getElementById('exDiscDuration')?.value || 2000);
       const delay = parseInt(document.getElementById('exDiscDelay')?.value || 800);
       const criterion = document.getElementById('exDiscCriterion')?.value || 'color';
       const correctValue = document.getElementById('exDiscValue')?.value || 'green';
@@ -2434,7 +2593,7 @@
         sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
       }
 
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,delay,criterion,correctValue,distractors}, nodeValues:{} };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -2486,14 +2645,14 @@
       // Send stimuli to all nodes
       nodes.forEach((nodeId, idx) => {
         if (nodeId === correct_node) {
-          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:correct_value });
-          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:correct_value, color:'white' });
-          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(correct_value), color:'white' });
+          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:correct_value, duration:state.session.config.duration });
+          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:correct_value, color:'white', duration:state.session.config.duration });
+          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(correct_value), color:'white', duration:state.session.config.duration });
         } else {
           const v = distractorValues[idx];
-          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:v });
-          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:v, color:'white' });
-          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(v), color:'white' });
+          if (criterion === 'color') sendBLE({ cmd:'show', node_id:nodeId, shape:'circle', color:v, duration:state.session.config.duration });
+          else if (criterion === 'shape') sendBLE({ cmd:'show', node_id:nodeId, shape:v, color:'white', duration:state.session.config.duration });
+          else sendBLE({ cmd:'show', node_id:nodeId, shape:String(v), color:'white', duration:state.session.config.duration });
         }
       });
 
@@ -2531,9 +2690,11 @@
       const finalMode = document.getElementById('exChronoFinalMode').value;
       const greenMin = parseInt(document.getElementById('exChronoGreenMin').value);
       const greenMax = parseInt(document.getElementById('exChronoGreenMax').value);
+      const startDuration = parseInt(document.getElementById('exChronoStartDuration').value);
+      const endDuration = parseInt(document.getElementById('exChronoEndDuration').value);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
-      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax}, chrono:{} };
+      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextChrono, 600);
@@ -2549,9 +2710,11 @@
       const finalMode = document.getElementById('chronoFinalMode').value;
       const greenMin = parseInt(document.getElementById('chronoGreenMin').value);
       const greenMax = parseInt(document.getElementById('chronoGreenMax').value);
+      const startDuration = parseInt(document.getElementById('chronoStartDuration').value);
+      const endDuration = parseInt(document.getElementById('chronoEndDuration').value);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
-      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax}, chrono:{} };
+      state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextChrono, 600);
@@ -2625,6 +2788,7 @@
       const nodes = parseInt(document.getElementById('discNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('discReps')?.value || 10);
       const timeout = parseInt(document.getElementById('discTimeout')?.value || 2000);
+      const duration = parseInt(document.getElementById('discDuration')?.value || 2000);
       const delay = parseInt(document.getElementById('discDelay')?.value || 800);
       const criterion = document.getElementById('discCriterion')?.value || 'color';
       const correctValue = document.getElementById('discValue')?.value || 'green';
@@ -2635,7 +2799,7 @@
         const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
         sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
       }
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,delay,criterion,correctValue,distractors}, nodeValues:{} };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
