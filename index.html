@@ -407,36 +407,7 @@
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="logo">ORION <span>REACT</span></div>
-    <button class="bt-status" id="btBtn">
-      <span class="bt-dot" id="btDot"></span>
-      <span id="btText">Conectar nodo</span>
-    </button>
-  </header>
-
-  <nav class="nav">
-    <button class="nav-btn" data-page="exercises">Ejercicios</button>
-    <button class="nav-btn" data-page="create">Crear ejercicio</button>
-    <button class="nav-btn" data-page="data">Datos</button>
-    <button class="nav-btn" data-page="config">Configuración</button>
-  </nav>
-
-  <main class="main">
-
-    <!-- PANTALLA INICIAL -->
-    <section class="page active" id="page-home">
-      <div class="section-header">
-        <div class="section-title">Bienvenido a Orion React</div>
-      </div>
-      <div class="home-grid">
-        <button class="home-button" onclick="showPage('exercises')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <span>Ejercicios</span>
-        </button>
-        <button class="home-button" onclick="showPage('create')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
-          <span>Crear ejercicio</span>
+            
         </button>
         <button class="home-button" onclick="showPage('data')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -532,57 +503,9 @@
               <div class="card-title" style="margin:0;">Reacción Flash</div>
             </div>
             <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
-            <div class="field-row">
-              <div class="field">
-                <label>Nodos activos <span class="slider-val" id="exNodesVal">3</span></label>
-                <input type="range" min="1" max="8" value="3" id="exNodesCount" oninput="document.getElementById('exNodesVal').textContent=this.value" />
+            
               </div>
-              <div class="field">
-                <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="exRepsCount" />
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Intervalo (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="1200" id="exStimInterval" />
-              </div>
-              <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2000" id="exStimDuration" />
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2000" id="exStimTimeout" />
-              </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Forma</label>
-                <select id="exStimShape">
-                  <option value="circle">Círculo</option>
-                  <option value="square_filled">Cuadrado</option>
-                  <option value="plus">Cruz</option>
-                  <option value="up">↑ Arriba</option>
-                  <option value="down">↓ Abajo</option>
-                  <option value="left">← Izquierda</option>
-                  <option value="right">→ Derecha</option>
-                  <option value="number">Número aleatorio</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Color</label>
-                <select id="exStimColor">
-                  <option value="green">Verde</option>
-                  <option value="red">Rojo</option>
-                  <option value="blue">Azul</option>
-                  <option value="yellow">Amarillo</option>
-                  <option value="white">Blanco</option>
-                  <option value="cyan">Cian</option>
-                </select>
-              </div>
-            </div>
+            
             <div class="field">
               <label>Orden</label>
               <select id="exStimOrder">
@@ -603,30 +526,7 @@
               <div class="card-title" style="margin:0;">Par / Impar</div>
             </div>
             <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
-            <div class="field-row">
-              <div class="field">
-                <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="exPiReps" />
-              </div>
-              <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="exPiDuration" />
-              </div>
-            </div>
-            <div class="field">
-              <label>Timeout (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="2500" id="exPiTimeout" />
-            </div>
-            <div class="field">
-              <label>Regla</label>
-              <select id="exPiRule">
-                <option value="pairs">Tocar pares</option>
-                <option value="odds">Tocar impares</option>
-              </select>
-            </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startParImparEx()">Iniciar</button>
-            </div>
+            
           </div>
         </div>
         <div id="exStroopConfig" style="display:none;">
@@ -1337,28 +1237,34 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Nodos conectados</div>
-        <div class="card-sub">Estado en tiempo real de los nodos BLE y batería.</div>
-        <div id="nodesGrid" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-          <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
-        </div>
-        <div style="margin-bottom:16px;">
-          <div class="field" style="margin-bottom:12px;">
-            <label>Conectar múltiples nodos</label>
-            <div style="display:flex;gap:10px;">
-              <input type="number" min="1" max="8" value="1" id="connectCount" style="flex:1;" />
-              <button class="btn-primary" onclick="connectMultiple()" style="flex:1;">Conectar</button>
-            </div>
+        <div class="card-title">Gestión de nodos</div>
+        <div class="card-sub">Controla conexiones BLE: nodos conectados y nodos detectados.</div>
+
+        <div style="margin-top:8px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <strong style="font-size:0.95rem;">Nodos conectados</strong>
+            <button class="btn-danger" onclick="disconnectAll()">Desconectar todos</button>
+          </div>
+          <div id="connectedNodesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
           </div>
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-          <button class="btn-secondary" onclick="connectBLE()" style="flex:1;min-width:160px;">Buscar nodo</button>
-          <button class="btn-danger" onclick="disconnectBLE()" style="flex:1;min-width:160px;">Desconectar todos</button>
+
+        <div style="margin-top:6px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <strong style="font-size:0.95rem;">Nodos disponibles</strong>
+            <button id="scanBtn" class="btn-secondary" onclick="toggleScan()">Buscar</button>
+          </div>
+          <div id="availableNodesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="color:var(--muted);font-size:0.85rem;">No se han detectado nodos</div>
+          </div>
         </div>
-        <div id="selectDisconnectRow" style="display:none;margin-bottom:12px;">
-          <button class="btn-danger" onclick="disconnectSelected()" style="width:100%;">Desconectar seleccionados</button>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:160px;"><input type="number" min="1" max="8" value="1" id="connectCount" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);" /></div>
+          <div style="flex:1;min-width:160px;"><button class="btn-primary" onclick="connectMultiple()" style="width:100%;">Conectar N</button></div>
+          <div style="flex:1;min-width:160px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
         </div>
-        <button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button>
       </div>
 
       <div class="card">
@@ -1381,22 +1287,7 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title">Deportistas</div>
-        <div class="card-sub">Gestiona los perfiles para guardar datos por deportista.</div>
-        <div id="athletesList" style="margin-bottom:14px;"></div>
-        <div class="field-row">
-          <div class="field">
-            <label>Nombre</label>
-            <input type="text" id="newAthleteName" placeholder="Nombre" />
-          </div>
-          <div class="field">
-            <label>Deporte</label>
-            <input type="text" id="newAthleteSport" placeholder="Fútbol, pádel..." />
-          </div>
-        </div>
-        <button class="btn-secondary" onclick="addAthlete()">Añadir deportista</button>
-      </div>
+      <!-- 'Deportistas' card removed: functionality available on the Datos page -->
     </section>
 
   </main>
@@ -1492,6 +1383,8 @@
       bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
       nodes: {}, // {nodeId: {name, battery, lastUpdate}}
       selectedNodes: new Set(), // indices of selected nodes for bulk disconnect
+      availableDevices: [], // devices discovered but not yet connected
+      leScan: null,
       athlete: null,
       athletes: [],
       buzzerOn: true,
@@ -1513,6 +1406,14 @@
           filters: [{ name: 'OrionNode' }],
           optionalServices: [BLE_SERVICE]
         });
+        await connectDevice(device);
+      } catch(err) {
+        if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
+      }
+    }
+
+    async function connectDevice(device) {
+      try {
         device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
         const server  = await device.gatt.connect();
         const service = await server.getPrimaryService(BLE_SERVICE);
@@ -1521,11 +1422,15 @@
         await evtChar.startNotifications();
         evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
         state.bleNodes.push({ device, cmdChar, evtChar, nodeId: null, battery: 0, lastUpdate: Date.now() });
+        // remove from availableDevices if present (compare by id)
+        state.availableDevices = state.availableDevices.filter(d => (d.device ? d.device.id : d.id) !== device.id);
         updateBTUI();
         updateNodesGrid();
+        renderAvailableNodesList();
         toast('Nodo conectado ✓');
       } catch(err) {
-        if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
+        console.warn('connectDevice error', err);
+        toast('Error al conectar: ' + (err.message || err));
       }
     }
 
@@ -1547,6 +1452,9 @@
       updateNodesGrid();
       if (!device) toast('Todos los nodos desconectados');
     }
+
+    // Adapter for UI: disconnect all
+    function disconnectAll() { disconnectBLE(null); }
 
     function disconnectBLEByIndex(index) {
       if (index < 0 || index >= state.bleNodes.length) return;
@@ -1680,49 +1588,127 @@
         ? `${state.bleNodes.length} nodo${state.bleNodes.length === 1 ? '' : 's'} conectado${state.bleNodes.length === 1 ? '' : 's'}`
         : 'Conectar nodo';
     }
-
     function updateNodesGrid() {
-      const grid = document.getElementById('nodesGrid');
-      
+      const container = document.getElementById('connectedNodesList');
+      if (!container) return;
+
       if (state.bleNodes.length === 0) {
-        grid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>';
-        return;
-      }
-      
-      grid.innerHTML = state.bleNodes.map((bleNode, index) => {
-        const nodeId = bleNode.nodeId || '?';
-        const battery = bleNode.battery || 0;
-        const batteryPercent = Math.round((battery / 4095) * 100);
-        const deviceName = bleNode.device?.name || 'OrionNode';
-        const isSelected = state.selectedNodes.has(index);
-        let batteryColor = 'success';
-        if (batteryPercent < 25) batteryColor = 'danger';
-        else if (batteryPercent < 50) batteryColor = 'warning';
-        
-        return `
-          <div class="node-card" style="${isSelected ? 'border-color:var(--accent);background:rgba(59,130,246,0.05);' : ''}">
-            <div class="node-card-header">
-              <div>
-                <div style="display:flex;gap:8px;align-items:center;">
-                  <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleNodeSelection(${index})" style="margin:0;" />
-                  <div>
-                    <div class="node-id">Node ${nodeId}</div>
-                    <div class="node-sub">${deviceName}</div>
-                  </div>
+        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>';
+      } else {
+        container.innerHTML = state.bleNodes.map((bleNode, index) => {
+          const nodeId = bleNode.nodeId || '?';
+          const battery = bleNode.battery || 0;
+          const batteryPercent = Math.round((battery / 4095) * 100);
+          const deviceName = bleNode.device?.name || 'OrionNode';
+          return `
+            <div class="node-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div style="display:flex;gap:12px;align-items:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:${batteryPercent>25? 'var(--success)':'var(--danger)'}"></div>
+                <div>
+                  <div class="node-id">Node ${nodeId}</div>
+                  <div class="node-sub">${deviceName} — ${batteryPercent}%</div>
                 </div>
               </div>
-              <div class="node-status"></div>
-            </div>
-            <div class="node-battery">
-              <div class="battery-bar">
-                <div class="battery-fill ${batteryColor === 'success' ? '' : batteryColor}" style="width:${batteryPercent}%"></div>
+              <div style="display:flex;gap:8px;min-width:160px;">
+                <button class="btn-secondary" onclick="disconnectBLEByIndex(${index})">Desconectar</button>
               </div>
-              <span>${batteryPercent}%</span>
             </div>
-            <button class="btn-secondary" style="width:100%;margin-top:12px;" onclick="disconnectBLEByIndex(${index})">Desconectar</button>
+          `;
+        }).join('');
+      }
+      renderAvailableNodesList();
+    }
+
+    function renderAvailableNodesList() {
+      const list = document.getElementById('availableNodesList');
+      if (!list) return;
+      if (!state.availableDevices || state.availableDevices.length === 0) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">No se han detectado nodos</div>';
+        return;
+      }
+
+      list.innerHTML = state.availableDevices.map((entry, index) => {
+        const device = entry.device || entry;
+        const name = device.name || 'OrionNode';
+        const rssi = entry.rssi != null ? entry.rssi : (device.rssi != null ? device.rssi : '--');
+        const lastSeen = entry.lastSeen ? Math.round((Date.now() - entry.lastSeen) / 1000) : null;
+        return `
+          <div class="node-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="node-dot" style="width:10px;height:10px;background:var(--muted);"></div>
+              <div>
+                <div class="node-id">${name}</div>
+                <div class="node-sub">RSSI: ${rssi} ${lastSeen ? '· hace ' + lastSeen + 's' : ''}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;min-width:140px;">
+              <button class="btn-primary" onclick="connectFromAvailable(${index})">Conectar</button>
+            </div>
           </div>
         `;
       }).join('');
+    }
+
+    // Continuous LE scan using requestLEScan — updates `state.availableDevices` in real time
+    async function startLEScan() {
+      if (!navigator.bluetooth || !navigator.bluetooth.requestLEScan) { toast('Escaneo BLE no soportado en este navegador.'); return; }
+      try {
+        // Prefer filtering by namePrefix if supported
+        try {
+          state.leScan = await navigator.bluetooth.requestLEScan({ filters: [{ namePrefix: 'OrionNode' }], keepRepeatedDevices: true });
+        } catch(e) {
+          // Fallback to accept all advertisements
+          state.leScan = await navigator.bluetooth.requestLEScan({ acceptAllAdvertisements: true, keepRepeatedDevices: true });
+        }
+        navigator.bluetooth.addEventListener('advertisementreceived', onAdvertisementReceived);
+        const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = 'Parar búsqueda';
+        toast('Búsqueda activa...');
+      } catch(err) {
+        console.warn('startLEScan error', err);
+        toast('No se pudo iniciar el escaneo: ' + (err.message || err));
+      }
+    }
+
+    function stopLEScan() {
+      try {
+        if (state.leScan) state.leScan.stop();
+      } catch(e){}
+      state.leScan = null;
+      try { navigator.bluetooth.removeEventListener('advertisementreceived', onAdvertisementReceived); } catch(e){}
+      const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = 'Buscar';
+      toast('Búsqueda detenida');
+    }
+
+    function toggleScan() {
+      if (state.leScan) stopLEScan(); else startLEScan();
+    }
+
+    function onAdvertisementReceived(event) {
+      try {
+        const device = event.device;
+        if (!device) return;
+        const id = device.id;
+        // ignore if already connected
+        if (state.bleNodes.some(n => n.device?.id === id)) return;
+        const idx = state.availableDevices.findIndex(d => ((d.device && d.device.id) || d.id) === id);
+        const rssi = event.rssi != null ? event.rssi : (event.rssi || 0);
+        if (idx !== -1) {
+          state.availableDevices[idx].rssi = rssi;
+          state.availableDevices[idx].lastSeen = Date.now();
+        } else {
+          state.availableDevices.push({ device, rssi, lastSeen: Date.now() });
+        }
+        renderAvailableNodesList();
+      } catch(e) { console.warn('advertisementreceived', e); }
+    }
+
+    async function connectFromAvailable(index) {
+      const entry = state.availableDevices[index];
+      if (!entry) return;
+      const device = entry.device || entry;
+      // stop scanning when connecting
+      if (state.leScan) stopLEScan();
+      await connectDevice(device);
     }
 
     // EVENTOS DEL NODO
@@ -2254,16 +2240,8 @@
     }
 
     async function addAthlete() {
-      const name  = document.getElementById('newAthleteName').value.trim();
-      const sport = document.getElementById('newAthleteSport').value.trim();
-      if (!name) { toast('Introduce un nombre'); return; }
-      try {
-        await db.post('athletes', {name, sport});
-        document.getElementById('newAthleteName').value  = '';
-        document.getElementById('newAthleteSport').value = '';
-        await loadAthletes();
-        toast('Deportista añadido ✓');
-      } catch(err) { toast('Error: '+err.message); }
+      // Inline athlete form removed from Configuración — open modal instead
+      openCreateAthleteModal();
     }
 
     function openCreateAthleteModal() {
