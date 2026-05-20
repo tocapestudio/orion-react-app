@@ -1754,31 +1754,46 @@
 
       <div class="card">
         <div class="card-title">Gestión de nodos</div>
-        <div class="card-sub">Controla conexiones BLE: nodos conectados y nodos detectados.</div>
 
+        <!-- Conectados -->
         <div style="margin-top:8px;margin-bottom:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <strong style="font-size:0.95rem;">Nodos conectados</strong>
-            <button class="btn-danger" onclick="disconnectAll()">Desconectar todos</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <strong style="font-size:0.95rem;">Conectados</strong>
+            <button class="btn-danger" style="padding:6px 12px;font-size:0.8rem;" onclick="disconnectAll()">Desconectar todos</button>
           </div>
-          <div id="connectedNodesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          <div id="connectedNodesList" style="display:flex;flex-direction:column;gap:8px;">
             <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
           </div>
         </div>
 
-        <div style="margin-top:6px;margin-bottom:14px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <strong style="font-size:0.95rem;">Nodos disponibles</strong>
-            <button id="scanBtn" class="btn-secondary" onclick="toggleScan()">Buscar</button>
+        <!-- Disponibles / escaneo -->
+        <div style="margin-top:6px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <strong style="font-size:0.95rem;">Disponibles</strong>
+              <span id="scanIndicator" style="display:none;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.2s infinite;flex-shrink:0;"></span>
+            </div>
+            <button id="scanBtn" class="btn-secondary" style="padding:6px 14px;font-size:0.8rem;" onclick="toggleScan()">Buscar</button>
           </div>
-          <div id="availableNodesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-            <div style="color:var(--muted);font-size:0.85rem;">No se han detectado nodos</div>
+          <div id="availableNodesList" style="display:flex;flex-direction:column;gap:8px;min-height:36px;">
+            <div style="color:var(--muted);font-size:0.85rem;">Pulsa Buscar para escanear</div>
+          </div>
+          <div id="scanFallbackHint" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(255,200,0,0.08);border:1px solid rgba(255,200,0,0.25);border-radius:8px;font-size:0.8rem;color:var(--muted);line-height:1.5;">
+            El escaneo automático no está disponible en este navegador.<br>
+            <strong style="color:var(--text);">Chrome desktop:</strong> activa
+            <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;">chrome://flags/#enable-experimental-web-platform-features</code>
+            y reinicia el navegador.<br>
+            O usa <strong style="color:var(--text);">Chrome en Android</strong> para conexión directa.
           </div>
         </div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:160px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">Conectar nodo</button></div>
-          <div style="flex:1;min-width:160px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
+        <!-- Botones de acción -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+          <div style="flex:1;min-width:140px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">+ Añadir nodo</button></div>
+          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar</button></div>
+        </div>
+        <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">
+          "Añadir nodo" abre el selector del navegador — úsalo si el escaneo no detecta algún nodo.
         </div>
       </div>
 
@@ -2144,60 +2159,66 @@
       const list = document.getElementById('availableNodesList');
       if (!list) return;
       if (!state.availableDevices || state.availableDevices.length === 0) {
-        list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">No se han detectado nodos</div>';
+        list.innerHTML = state.leScan
+          ? '<div style="color:var(--muted);font-size:0.85rem;">Buscando nodos en rango...</div>'
+          : '<div style="color:var(--muted);font-size:0.85rem;">Pulsa Buscar para escanear</div>';
         return;
       }
-
       list.innerHTML = state.availableDevices.map((entry, index) => {
         const device = entry.device || entry;
         const name = device.name || 'OrionNode';
-        const rssi = entry.rssi != null ? entry.rssi : (device.rssi != null ? device.rssi : '--');
-        const lastSeen = entry.lastSeen ? Math.round((Date.now() - entry.lastSeen) / 1000) : null;
+        const rssi = entry.rssi != null ? entry.rssi : '--';
+        const signal = entry.rssi != null ? (entry.rssi > -65 ? '●●●' : entry.rssi > -80 ? '●●○' : '●○○') : '○○○';
         return `
           <div class="node-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
             <div style="display:flex;gap:10px;align-items:center;">
-              <div class="node-dot" style="width:10px;height:10px;background:var(--muted);"></div>
+              <div style="width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
               <div>
                 <div class="node-id">${name}</div>
-                <div class="node-sub">RSSI: ${rssi} ${lastSeen ? '· hace ' + lastSeen + 's' : ''}</div>
+                <div class="node-sub">${signal} ${rssi} dBm</div>
               </div>
             </div>
-            <div style="display:flex;gap:8px;min-width:140px;">
-              <button class="btn-primary" onclick="connectFromAvailable(${index})">Conectar</button>
-            </div>
+            <button class="btn-primary" style="padding:7px 16px;font-size:0.85rem;" onclick="connectFromAvailable(${index})">Conectar</button>
           </div>
         `;
       }).join('');
     }
 
     // Continuous LE scan using requestLEScan — updates `state.availableDevices` in real time
-    async function startLEScan() {
-      if (!navigator.bluetooth || !navigator.bluetooth.requestLEScan) { toast('Escaneo BLE no soportado en este navegador.'); return; }
+    async function startLEScan(silent = false) {
+      if (!navigator.bluetooth) return;
+      if (!navigator.bluetooth.requestLEScan) {
+        // requestLEScan not available — show hint, don't toast
+        const hint = document.getElementById('scanFallbackHint');
+        if (hint) hint.style.display = 'block';
+        return;
+      }
       try {
-        // Prefer filtering by namePrefix if supported
         try {
           state.leScan = await navigator.bluetooth.requestLEScan({ filters: [{ namePrefix: 'OrionNode' }], keepRepeatedDevices: true });
         } catch(e) {
-          // Fallback to accept all advertisements
           state.leScan = await navigator.bluetooth.requestLEScan({ acceptAllAdvertisements: true, keepRepeatedDevices: true });
         }
         navigator.bluetooth.addEventListener('advertisementreceived', onAdvertisementReceived);
-        const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = 'Parar búsqueda';
-        toast('Búsqueda activa...');
+        const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = '■ Parar';
+        const ind = document.getElementById('scanIndicator'); if (ind) ind.style.display = 'inline-block';
+        const hint = document.getElementById('scanFallbackHint'); if (hint) hint.style.display = 'none';
+        renderAvailableNodesList();
+        if (!silent) toast('Búsqueda activa...');
       } catch(err) {
         console.warn('startLEScan error', err);
-        toast('No se pudo iniciar el escaneo: ' + (err.message || err));
+        const hint = document.getElementById('scanFallbackHint');
+        if (hint) hint.style.display = 'block';
       }
     }
 
-    function stopLEScan() {
-      try {
-        if (state.leScan) state.leScan.stop();
-      } catch(e){}
+    function stopLEScan(silent = false) {
+      try { if (state.leScan) state.leScan.stop(); } catch(e){}
       state.leScan = null;
       try { navigator.bluetooth.removeEventListener('advertisementreceived', onAdvertisementReceived); } catch(e){}
       const btn = document.getElementById('scanBtn'); if (btn) btn.textContent = 'Buscar';
-      toast('Búsqueda detenida');
+      const ind = document.getElementById('scanIndicator'); if (ind) ind.style.display = 'none';
+      if (!silent) toast('Búsqueda detenida');
     }
 
     function toggleScan() {
@@ -3987,6 +4008,12 @@
       navHistory.push(pageId);
       navigateTo(pageId);
       if (pageId === 'data') loadDataPage();
+      if (pageId === 'config') {
+        state.availableDevices = [];
+        startLEScan(true);
+      } else {
+        stopLEScan(true);
+      }
       clearStarter();
     }
 
