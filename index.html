@@ -174,18 +174,18 @@
     .stepper input[type=number]:focus { outline:none; }
 
     /* CUSTOM CALENDAR */
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-    .cal-hdr  { text-align:center; font-size:0.68rem; color:var(--muted); padding:4px 0; font-weight:600; letter-spacing:.05em; }
-    .cal-day  { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:8px; border:none; background:none; cursor:pointer; font-family:inherit; gap:2px; position:relative; }
-    .cal-day:hover { background:var(--bg2); }
-    .cal-day.has-session .cal-day-num { font-weight:700; color:var(--text); }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+    .cal-hdr  { text-align:center; font-size:0.7rem; color:var(--muted); padding:4px 0 10px; font-weight:600; letter-spacing:.06em; }
+    .cal-day  { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:50%; border:none; background:none; cursor:pointer; font-family:inherit; padding:0; transition:background .12s; }
+    .cal-day:hover:not(.selected) { background:var(--bg2); }
+    .cal-day-num { font-size:1rem; line-height:1; color:var(--muted); }
+    .cal-day.has-session .cal-day-num { color:var(--text); font-weight:700; }
+    .cal-day.today:not(.selected) { outline:2px solid var(--accent); }
+    .cal-day.today:not(.selected) .cal-day-num { color:var(--accent); font-weight:700; }
     .cal-day.selected { background:var(--accent); }
-    .cal-day.selected .cal-day-num { color:#fff; font-weight:700; }
-    .cal-day.selected .cal-dot { background:#fff; }
-    .cal-day.today .cal-day-num { color:var(--accent); }
-    .cal-day.today.selected .cal-day-num { color:#fff; }
-    .cal-day-num { font-size:0.82rem; line-height:1; color:var(--muted); }
-    .cal-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); }
+    .cal-day.selected .cal-day-num { color:#fff !important; font-weight:700; }
+    .cal-day.selected .cal-dot { background:rgba(255,255,255,0.8); }
+    .cal-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); margin-top:3px; }
     .cal-empty { aspect-ratio:1; }
 
     /* TOGGLE */
@@ -1453,7 +1453,7 @@
             <div id="dataViewSport" style="font-size:0.78rem;color:var(--muted);margin-top:2px;"></div>
           </div>
         </div>
-        <div id="dataCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:14px;padding:12px;margin-bottom:14px;"></div>
+        <div id="dataCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;margin-bottom:14px;"></div>
         <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
           <button id="dataSortBtn" onclick="toggleSessionSort()"
             style="flex:1;white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
@@ -2474,10 +2474,9 @@
         const sessions = await db.get('sessions', `?athlete_id=eq.${athleteId}&order=date.desc`);
         window.dataCurrentSessions = sessions;
         // Navigate calendar to most recent session's month
-        if (sessions.length) {
-          const d = new Date(sessions[0].date + 'T00:00:00');
-          window.calYear = d.getFullYear();
-          window.calMonth = d.getMonth();
+        if (sessions.length && sessions[0].date) {
+          const d = new Date(String(sessions[0].date).slice(0, 10) + 'T00:00:00');
+          if (!isNaN(d)) { window.calYear = d.getFullYear(); window.calMonth = d.getMonth(); }
         }
         renderCalendar(window.calYear, window.calMonth);
         applySessionFilters();
@@ -2492,10 +2491,11 @@
 
     function renderCalendar(year, month) {
       const container = document.getElementById('dataCalendar');
-      if (!container) return;
+      if (!container || isNaN(year) || isNaN(month)) return;
       const sessionDates = new Set((window.dataCurrentSessions || []).map(s => s.date?.slice(0,10)).filter(Boolean));
       const today = new Date().toISOString().slice(0,10);
-      const monthLabel = new Date(year, month, 1).toLocaleDateString('es-ES', { month:'long', year:'numeric' });
+      const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      const monthLabel = `${MONTHS[month]} ${year}`;
       const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Mon=0
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const DAY_HEADERS = ['L','M','X','J','V','S','D'];
@@ -2505,9 +2505,9 @@
       for (let d = 1; d <= daysInMonth; d++) {
         const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const classes = ['cal-day',
-          sessionDates.has(ds) ? 'has-session' : '',
-          window.calSelected === ds ? 'selected' : '',
-          ds === today ? 'today' : ''
+          sessionDates.has(ds)     ? 'has-session' : '',
+          window.calSelected === ds ? 'selected'    : '',
+          ds === today              ? 'today'        : ''
         ].filter(Boolean).join(' ');
         cells += `<button class="${classes}" onclick="selectCalendarDay('${ds}')">
           <span class="cal-day-num">${d}</span>
@@ -2515,11 +2515,14 @@
         </button>`;
       }
 
+      const navBtn = (label, fn) =>
+        `<button onclick="${fn}" style="background:var(--bg2);border:none;color:var(--text);font-size:1.2rem;line-height:1;cursor:pointer;padding:6px 14px;border-radius:10px;font-family:inherit;">${label}</button>`;
+
       container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <button onclick="changeCalendarMonth(-1)" style="background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:8px;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">‹</button>
-          <span style="font-size:0.85rem;font-weight:600;color:var(--text);text-transform:capitalize;">${monthLabel}</span>
-          <button onclick="changeCalendarMonth(1)" style="background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:8px;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">›</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          ${navBtn('‹', 'changeCalendarMonth(-1)')}
+          <span style="font-size:1rem;font-weight:700;color:var(--text);">${monthLabel}</span>
+          ${navBtn('›', 'changeCalendarMonth(1)')}
         </div>
         <div class="cal-grid">${cells}</div>`;
     }
