@@ -188,6 +188,16 @@
     .cal-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); margin-top:3px; }
     .cal-empty { aspect-ratio:1; }
 
+    /* ATHLETE VIEW RESPONSIVE LAYOUT */
+    .athlete-layout { display:flex; flex-direction:column; gap:14px; }
+    .athlete-cal-col { width:100%; }
+    .athlete-sessions-col { width:100%; }
+    @media (min-width: 700px) {
+      .athlete-layout { flex-direction:row; align-items:flex-start; }
+      .athlete-cal-col { flex:0 0 320px; position:sticky; top:16px; }
+      .athlete-sessions-col { flex:1; min-width:0; }
+    }
+
     /* TOGGLE */
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -1453,14 +1463,20 @@
             <div id="dataViewSport" style="font-size:0.78rem;color:var(--muted);margin-top:2px;"></div>
           </div>
         </div>
-        <div id="dataCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;margin-bottom:14px;"></div>
-        <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
-          <button id="dataSortBtn" onclick="toggleSessionSort()"
-            style="flex:1;white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
-          <button onclick="selectCalendarDay(null)"
-            style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">Ver todo</button>
+        <div class="athlete-layout">
+          <div class="athlete-cal-col">
+            <div id="dataCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;"></div>
+          </div>
+          <div class="athlete-sessions-col">
+            <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+              <button id="dataSortBtn" onclick="toggleSessionSort()"
+                style="flex:1;white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
+              <button onclick="selectCalendarDay(null)"
+                style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">Ver todo</button>
+            </div>
+            <div id="dataViewSessions"></div>
+          </div>
         </div>
-        <div id="dataViewSessions"></div>
       </div>
     </section>
 
