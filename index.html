@@ -723,6 +723,13 @@
               <div class="card-title" style="margin:0;">Par / Impar</div>
             </div>
             <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div class="field">
+              <label>Modo</label>
+              <select id="exPiMode">
+                <option value="shapes">Modo 1 — Número en pantalla · O y X en nodos</option>
+                <option value="numbers">Modo 2 — Palabra en pantalla · números en nodos</option>
+              </select>
+            </div>
             <div class="field-row">
               <div class="field">
                 <label>Repeticiones</label>
@@ -741,20 +748,27 @@
                 </div>
               </div>
             </div>
-            <div class="field">
-              <label>Regla</label>
-              <select id="exPiRule">
-                <option value="even">Par</option>
-                <option value="odd">Impar</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
-              <div class="stepper">
-                <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',-0.5,0,30)">−</button>
-                <input type="number" min="0" max="30" step="0.5" value="0" id="exPiTimeout" />
-                <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',0.5,0,30)">+</button>
+            <div class="field-row">
+              <div class="field">
+                <label>Intervalo entre rondas (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiInterval',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="exPiInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiInterval',0.1,0,5)">+</button>
+                </div>
               </div>
+              <div class="field">
+                <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',-0.5,0,30)">−</button>
+                  <input type="number" min="0" max="30" step="0.5" value="0" id="exPiTimeout" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',0.5,0,30)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+              <input type="checkbox" id="exPiColorDiff" style="width:16px;height:16px;accent-color:var(--accent);" />
+              <label for="exPiColorDiff" style="margin:0;cursor:pointer;">Dificultad de color — colores aleatorios para despistar</label>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -1273,6 +1287,13 @@
               <div class="card-title" style="margin:0;">Par / Impar</div>
             </div>
             <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div class="field">
+              <label>Modo</label>
+              <select id="piMode">
+                <option value="shapes">Modo 1 — Número en pantalla · O y X en nodos</option>
+                <option value="numbers">Modo 2 — Palabra en pantalla · números en nodos</option>
+              </select>
+            </div>
             <div class="field-row">
               <div class="field">
                 <label>Repeticiones</label>
@@ -1291,20 +1312,27 @@
                 </div>
               </div>
             </div>
-            <div class="field">
-              <label>Regla</label>
-              <select id="piRule">
-                <option value="pairs">Tocar pares</option>
-                <option value="odds">Tocar impares</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
-              <div class="stepper">
-                <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',-0.5,0,30)">−</button>
-                <input type="number" min="0" max="30" step="0.5" value="0" id="piTimeout" />
-                <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',0.5,0,30)">+</button>
+            <div class="field-row">
+              <div class="field">
+                <label>Intervalo entre rondas (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piInterval',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="piInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piInterval',0.1,0,5)">+</button>
+                </div>
               </div>
+              <div class="field">
+                <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',-0.5,0,30)">−</button>
+                  <input type="number" min="0" max="30" step="0.5" value="0" id="piTimeout" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',0.5,0,30)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+              <input type="checkbox" id="piColorDiff" style="width:16px;height:16px;accent-color:var(--accent);" />
+              <label for="piColorDiff" style="margin:0;cursor:pointer;">Dificultad de color — colores aleatorios para despistar</label>
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -2208,11 +2236,8 @@
     function onReactionReceived(data) {
       if (!state.session.active || !state.session.waiting) return;
       if (state.session.type === 'parimpar') {
-        const val = state.session.nodeValues[data.node_id];
-        if (val == null) return;
-        const isEven = val % 2 === 0;
-        const wantsEven = state.session.config.rule === 'pairs';
-        completeParImpar(data.reaction_ms >= 0 && (isEven === wantsEven), data.reaction_ms >= 0 ? data.reaction_ms : null);
+        const correct = data.reaction_ms >= 0 && data.node_id === state.session.correctNode;
+        completeParImpar(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else if (state.session.type === 'custom') {
         const step = state.session.sequence[state.session.current];
         let correct = false;
@@ -2557,12 +2582,15 @@
     }
     function startParImpar() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      const reps    = parseInt(document.getElementById('piReps').value);
-      const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
-      const timeout = readTimeout('piTimeout');
-      const rule    = document.getElementById('piRule').value;
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, timeout, rule } };
-      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
+      const reps      = parseInt(document.getElementById('piReps').value);
+      const duration  = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('piInterval').value) * 1000);
+      const timeout   = readTimeout('piTimeout');
+      const piMode    = document.getElementById('piMode').value;
+      const colorDiff = document.getElementById('piColorDiff').checked;
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff } };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff}, correctNode:null };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -2570,38 +2598,64 @@
 
     function nextParImpar() {
       if (!state.session.active) return;
-      const even = 2*(Math.floor(Math.random()*9)+1);
-      const odd  = 2*(Math.floor(Math.random()*9)+1)-1;
-      const n1even = Math.random() < 0.5;
-      const v1 = n1even ? even : odd;
-      const v2 = n1even ? odd  : even;
-      state.session.nodeValues = {1:v1, 2:v2};
-      const colors = ['red','green','blue','yellow'];
-      document.getElementById('liveNode').textContent     = `${v1} · ${v2}`;
-      document.getElementById('liveHint').textContent     = state.session.config.rule === 'pairs' ? 'Toca el PAR' : 'Toca el IMPAR';
-      document.getElementById('statProgress').textContent = `${state.session.current+1}/${state.session.total}`;
-      sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration });
-      setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration }), 120);
+      const { config, current, total } = state.session;
+      document.getElementById('statProgress').textContent = `${current+1}/${total}`;
+      const dur = config.duration;
+      const diffColors = ['red','green','blue','yellow','cyan','white'];
+
+      if (config.piMode === 'shapes') {
+        // Modo 1: número en pantalla, X y O en nodos
+        const num = Math.floor(Math.random() * 99) + 1;
+        const isEven = num % 2 === 0;
+        const node1HasCircle = Math.random() < 0.5;
+        state.session.correctNode = isEven ? (node1HasCircle ? 1 : 2) : (node1HasCircle ? 2 : 1);
+        const screenColor = config.colorDiff ? ['white','green','blue'][Math.floor(Math.random()*3)] : 'white';
+        updateStroopScreen({ word: String(num), ink: screenColor });
+        document.getElementById('liveNode').textContent = `Nodo 1: ${node1HasCircle?'O':'X'}  ·  Nodo 2: ${node1HasCircle?'X':'O'}`;
+        document.getElementById('liveHint').textContent = isEven ? 'PAR → toca O' : 'IMPAR → toca X';
+        sendBLE({ cmd:'show', node_id:1, shape: node1HasCircle ? 'circle' : 'x', color:'white', duration:dur, sensor:'vibration' });
+        setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:'vibration' }), 80);
+      } else {
+        // Modo 2: palabra en pantalla, números en nodos
+        const evens = [2,4,6,8], odds = [1,3,5,7,9];
+        const evenNum = evens[Math.floor(Math.random() * evens.length)];
+        const oddNum  = odds[Math.floor(Math.random() * odds.length)];
+        const node1HasEven = Math.random() < 0.5;
+        const v1 = node1HasEven ? evenNum : oddNum;
+        const v2 = node1HasEven ? oddNum  : evenNum;
+        const wantsEven = Math.random() < 0.5;
+        state.session.correctNode = wantsEven ? (node1HasEven ? 1 : 2) : (node1HasEven ? 2 : 1);
+        const screenWord  = wantsEven ? 'PAR' : 'IMPAR';
+        const screenColor = config.colorDiff ? (Math.random() < 0.5 ? 'green' : 'red') : 'white';
+        updateStroopScreen({ word: screenWord, ink: screenColor });
+        document.getElementById('liveNode').textContent = `Nodo 1: ${v1}  ·  Nodo 2: ${v2}`;
+        document.getElementById('liveHint').textContent = `Toca el número ${screenWord}`;
+        const c1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
+        const c2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
+        sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:c1, duration:dur, sensor:'vibration' });
+        setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:c2, duration:dur, sensor:'vibration' }), 80);
+      }
+
       state.session.waiting = true;
-      const _pWaitMs = state.session.config.timeout > 0 && state.session.config.timeout < state.session.config.duration
-        ? state.session.config.timeout : state.session.config.duration + 1500;
+      const waitMs = config.timeout > 0 && config.timeout < config.duration ? config.timeout : config.duration + 1500;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeParImpar(false, null);
-      }, _pWaitMs);
+      }, waitMs);
     }
 
     function completeParImpar(correct, reactionMs) {
       state.session.waiting = false;
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
-      state.session.history.push({ repetition:state.session.current+1, node_id:null, shape:'parimpar', color:null, reaction_ms:reactionMs, result:correct?'ok':'miss' });
+      updateStroopScreen(null);
+      state.session.history.push({ repetition:state.session.current+1, reaction_ms:reactionMs, result:correct?'ok':'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
-      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
+      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : '✗ Error o sin respuesta';
       updateLiveStats();
       state.session.current++;
       if (state.session.current < state.session.total) {
-        setTimeout(nextParImpar, 700);
+        setTimeout(nextParImpar, state.session.config.interval || 700);
       } else {
         setTimeout(endSession, 800);
       }
@@ -2655,8 +2709,8 @@
       const hits = h.filter(x=>x.result==='ok').length;
       const sprintValues = h.filter(x=>x.sprint_ms!=null).map(x=>x.sprint_ms);
       const avgSprint = sprintValues.length ? sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length : null;
-      const isFlashReps = state.session.type === 'flash' && state.session.exerciseMode !== 'time';
-      const totalActiveMs = isFlashReps
+      const isTimedExercise = (state.session.type === 'flash' && state.session.exerciseMode !== 'time') || state.session.type === 'parimpar';
+      const totalActiveMs = isTimedExercise
         ? h.reduce((sum, r) => sum + (r.reaction_ms != null ? r.reaction_ms : state.session.config.duration), 0)
         : null;
       document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg !== null ? msToS(avg) + ' s' : '--'}`;
@@ -3260,12 +3314,15 @@
 
     function startParImparEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      const reps    = parseInt(document.getElementById('exPiReps').value);
-      const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
-      const timeout = readTimeout('exPiTimeout');
-      const rule    = document.getElementById('exPiRule').value;
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, timeout, rule } };
-      state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
+      const reps      = parseInt(document.getElementById('exPiReps').value);
+      const duration  = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('exPiInterval').value) * 1000);
+      const timeout   = readTimeout('exPiTimeout');
+      const piMode    = document.getElementById('exPiMode').value;
+      const colorDiff = document.getElementById('exPiColorDiff').checked;
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff } };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff}, correctNode:null };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -4023,8 +4080,9 @@
 
     function startParImparWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
       window._lastCfg = { _type: 'parimpar', config: cfg };
-      state.session = { active:true, type:'parimpar', history:[], current:0, total:cfg.reps, sequence:[], timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, timeout:cfg.timeout, rule:cfg.rule}, nodeValues:{} };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff}, correctNode:null };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -4097,13 +4155,15 @@
 
     async function saveParImparExConfig() {
       const name = document.getElementById('exPiSaveName').value.trim() || `Par/Impar · ${new Date().toLocaleDateString()}`;
-      const reps = parseInt(document.getElementById('exPiReps').value);
-      const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
-      const timeout = readTimeout('exPiTimeout');
-      const rule = document.getElementById('exPiRule').value;
-      const cfg = { reps, duration, timeout, rule };
+      const reps      = parseInt(document.getElementById('exPiReps').value);
+      const duration  = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('exPiInterval').value) * 1000);
+      const timeout   = readTimeout('exPiTimeout');
+      const piMode    = document.getElementById('exPiMode').value;
+      const colorDiff = document.getElementById('exPiColorDiff').checked;
+      const cfg = { reps, duration, interval, timeout, piMode, colorDiff };
       try {
-        await db.post('exercises', { name, description: `Par/Impar · ${rule === 'even' ? 'tocar pares' : 'tocar impares'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -4211,13 +4271,15 @@
 
     async function saveParImparConfig() {
       const name = (document.getElementById('piSaveName')?.value.trim()) || `Par/Impar · ${new Date().toLocaleDateString()}`;
-      const reps = parseInt(document.getElementById('piReps').value);
-      const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
-      const timeout = readTimeout('piTimeout');
-      const rule = document.getElementById('piRule').value;
-      const cfg = { reps, duration, timeout, rule };
+      const reps      = parseInt(document.getElementById('piReps').value);
+      const duration  = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('piInterval').value) * 1000);
+      const timeout   = readTimeout('piTimeout');
+      const piMode    = document.getElementById('piMode').value;
+      const colorDiff = document.getElementById('piColorDiff').checked;
+      const cfg = { reps, duration, interval, timeout, piMode, colorDiff };
       try {
-        await db.post('exercises', { name, description: `Par/Impar · ${rule === 'pairs' ? 'tocar pares' : 'tocar impares'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
