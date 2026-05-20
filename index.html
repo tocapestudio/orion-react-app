@@ -1402,12 +1402,20 @@
 
       <!-- Vista de jugador: sesiones -->
       <div id="dataAthleteView" style="display:none;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
           <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="backToDataMain()">← Volver</button>
-          <div>
-            <div id="dataViewName" style="font-weight:700;font-size:1rem;"></div>
+          <div style="flex:1;">
+            <div id="dataViewName" style="font-weight:700;font-size:1.05rem;"></div>
             <div id="dataViewSport" style="font-size:0.78rem;color:var(--muted);margin-top:2px;"></div>
           </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;">
+          <input type="date" id="dataSessionDateFilter" onchange="applySessionFilters()"
+            style="flex:1;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.82rem;min-width:0;" />
+          <button id="dataSortBtn" onclick="toggleSessionSort()"
+            style="white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
+          <button onclick="document.getElementById('dataSessionDateFilter').value='';applySessionFilters();"
+            style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">✕</button>
         </div>
         <div id="dataViewSessions"></div>
       </div>
@@ -2343,6 +2351,8 @@
     // DATOS
     // ── DATOS — variables de estado ──────────────────────────
     window.dataLastAthleteId = null;
+    window.dataCurrentSessions = [];
+    window.dataSessionSortDesc = true;
     let dataPlayerListVisible = true;
 
     function getExerciseName(type) {
@@ -2387,7 +2397,7 @@
         return;
       }
       list.innerHTML = athletes.map(a => `
-        <div class="ex-item" onclick="selectDataAthlete(${a.id})" style="margin-bottom:8px;">
+        <div class="ex-item" onclick="selectDataAthlete('${a.id}')" style="margin-bottom:8px;">
           <div class="ex-item-info">
             <h3 style="font-size:0.92rem;">${a.name}</h3>
             <p>${a.sport || 'Sin deporte'}</p>
@@ -2403,20 +2413,46 @@
     }
 
     async function selectDataAthlete(athleteId) {
-      const athlete = state.athletes.find(a => a.id === athleteId);
+      const athlete = state.athletes.find(a => String(a.id) === String(athleteId));
       if (!athlete) return;
       document.getElementById('dataMainView').style.display = 'none';
       document.getElementById('dataAthleteView').style.display = 'block';
       document.getElementById('dataViewName').textContent = athlete.name;
       document.getElementById('dataViewSport').textContent = athlete.sport || 'Sin deporte';
+      const dateFilter = document.getElementById('dataSessionDateFilter');
+      if (dateFilter) dateFilter.value = '';
+      window.dataSessionSortDesc = true;
+      const sortBtn = document.getElementById('dataSortBtn');
+      if (sortBtn) sortBtn.textContent = '↓ Recientes';
       const container = document.getElementById('dataViewSessions');
       container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:32px;font-size:0.85rem;">Cargando sesiones...</div>`;
       try {
         const sessions = await db.get('sessions', `?athlete_id=eq.${athleteId}&order=date.desc`);
-        renderDataSessions(sessions, container);
+        window.dataCurrentSessions = sessions;
+        applySessionFilters();
       } catch {
         container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
       }
+    }
+
+    function toggleSessionSort() {
+      window.dataSessionSortDesc = !window.dataSessionSortDesc;
+      const btn = document.getElementById('dataSortBtn');
+      if (btn) btn.textContent = window.dataSessionSortDesc ? '↓ Recientes' : '↑ Antiguas';
+      applySessionFilters();
+    }
+
+    function applySessionFilters() {
+      let sessions = [...(window.dataCurrentSessions || [])];
+      const dateFilter = document.getElementById('dataSessionDateFilter')?.value;
+      if (dateFilter) {
+        sessions = sessions.filter(s => s.date && s.date.startsWith(dateFilter));
+      }
+      sessions.sort((a, b) => {
+        const da = new Date(a.date), db = new Date(b.date);
+        return window.dataSessionSortDesc ? db - da : da - db;
+      });
+      renderDataSessions(sessions, document.getElementById('dataViewSessions'));
     }
 
     function backToDataMain() {
