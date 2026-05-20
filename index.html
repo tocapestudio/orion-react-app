@@ -575,8 +575,27 @@
                 </div>
               </div>
               <div class="field">
-                <label>Repeticiones</label>
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exModeRepsBtn" onclick="setFlashMode('reps','ex')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exModeTimeBtn" onclick="setFlashMode('time','ex')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div id="exRepsRow" class="field">
+              <label>Repeticiones</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exRepsCount',-1,1,50)">−</button>
                 <input type="number" min="1" max="50" value="10" id="exRepsCount" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exRepsCount',1,1,50)">+</button>
+              </div>
+            </div>
+            <div id="exTimeRow" class="field" style="display:none;">
+              <label>Duración total (s)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exTimeLimit',-10,10,600)">−</button>
+                <input type="number" min="10" max="600" step="10" value="60" id="exTimeLimit" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exTimeLimit',10,10,600)">+</button>
               </div>
             </div>
             <div class="field-row">
@@ -946,7 +965,7 @@
         <div class="stats-row">
           <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media s</span></div>
           <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor s</span></div>
-          <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl">Progreso</span></div>
+          <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
         </div>
         <div class="btn-row">
           <button class="btn-danger" onclick="stopSession()">Detener sesión</button>
@@ -1042,8 +1061,27 @@
                 </div>
               </div>
               <div class="field">
-                <label>Repeticiones</label>
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="stimModeRepsBtn" onclick="setFlashMode('reps','stim')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="stimModeTimeBtn" onclick="setFlashMode('time','stim')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div id="stimRepsRow" class="field">
+              <label>Repeticiones</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('repsCount',-1,1,50)">−</button>
                 <input type="number" min="1" max="50" value="10" id="repsCount" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('repsCount',1,1,50)">+</button>
+              </div>
+            </div>
+            <div id="stimTimeRow" class="field" style="display:none;">
+              <label>Duración total (s)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimTimeLimit',-10,10,600)">−</button>
+                <input type="number" min="10" max="600" step="10" value="60" id="stimTimeLimit" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimTimeLimit',10,10,600)">+</button>
               </div>
             </div>
             <div class="field-row">
@@ -2046,7 +2084,9 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('nodesCount').value);
       if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      const exerciseMode = document.getElementById('stimTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps     = parseInt(document.getElementById('repsCount').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
       const order    = document.getElementById('stimOrder').value;
       const category = document.getElementById('stimCategory').value;
       const value    = document.getElementById('stimValue').value;
@@ -2057,12 +2097,20 @@
       const timeout  = readTimeout('stimTimeout');
       const sensor   = document.getElementById('stimSensor').value;
       const sound    = document.getElementById('stimSound').checked;
-      const sequence = Array.from({length: reps}, (_,i) =>
+      const total    = exerciseMode === 'reps' ? reps : 999;
+      const sequence = Array.from({length: total}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { numNodes:nodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      if (exerciseMode === 'time') {
+        state.session.countdownId = setInterval(() => {
+          if (!state.session.active) return;
+          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
+          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
+        }, 500);
+      }
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -2073,10 +2121,17 @@
       const { sequence, current, config } = state.session;
       const nodeId = sequence[current];
       const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
-      document.getElementById('liveNode').textContent     = `Nodo ${nodeId}`;
-      document.getElementById('liveTime').textContent     = '-- s';
-      document.getElementById('liveHint').textContent     = 'Reacciona al ver el estímulo';
-      document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
+      document.getElementById('liveNode').textContent = `Nodo ${nodeId}`;
+      document.getElementById('liveTime').textContent = '-- s';
+      document.getElementById('liveHint').textContent = 'Reacciona al ver el estímulo';
+      if (state.session.exerciseMode === 'time') {
+        document.getElementById('statProgressLbl').textContent = 'Restante';
+        const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
+        document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
+      } else {
+        document.getElementById('statProgressLbl').textContent = 'Progreso';
+        document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
+      }
       sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration, sensor:config.sensor || 'vibration' });
       state.session.waiting = true;
       const _fWaitMs = config.timeout > 0 && config.timeout < config.duration
@@ -2096,10 +2151,12 @@
       document.getElementById('liveHint').textContent = ok ? '✓ Reacción registrada' : 'Sin respuesta';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
-        setTimeout(nextStimulus, state.session.config.interval);
-      } else {
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
         setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextStimulus, state.session.config.interval);
       }
     }
 
@@ -2393,6 +2450,7 @@
 
     function stopSession() {
       clearTimeout(state.session.timeoutId);
+      clearInterval(state.session.countdownId);
       state.session.active = state.session.waiting = false;
       sendBLE({ cmd:'off' });
       endSession();
@@ -2400,8 +2458,10 @@
 
     function endSession() {
       state.session.active = false;
+      clearInterval(state.session.countdownId);
       sendBLE({ cmd:'off' });
       document.getElementById('activeSession').style.display = 'none';
+      document.getElementById('statProgressLbl').textContent = 'Progreso';
       showSummary();
     }
 
@@ -2984,7 +3044,9 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('exNodesCount').value);
       if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      const exerciseMode = document.getElementById('exTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps     = parseInt(document.getElementById('exRepsCount').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
       const order    = document.getElementById('exStimOrder').value;
       const category = document.getElementById('exStimCategory').value;
       const value    = document.getElementById('exStimValue').value;
@@ -2995,12 +3057,20 @@
       const timeout  = readTimeout('exStimTimeout');
       const sensor   = document.getElementById('exStimSensor').value;
       const sound    = document.getElementById('exStimSound').checked;
-      const sequence = Array.from({length: reps}, (_,i) =>
+      const total    = exerciseMode === 'reps' ? reps : 999;
+      const sequence = Array.from({length: total}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { numNodes:nodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      if (exerciseMode === 'time') {
+        state.session.countdownId = setInterval(() => {
+          if (!state.session.active) return;
+          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
+          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
+        }, 500);
+      }
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3688,6 +3758,18 @@
       el.value = v;
     }
 
+    function setFlashMode(mode, prefix) {
+      const isTime = mode === 'time';
+      const repsRow = document.getElementById(prefix + 'RepsRow');
+      const timeRow = document.getElementById(prefix + 'TimeRow');
+      const repsBtn = document.getElementById(prefix + 'ModeRepsBtn');
+      const timeBtn = document.getElementById(prefix + 'ModeTimeBtn');
+      if (repsRow) repsRow.style.display = isTime ? 'none' : '';
+      if (timeRow) timeRow.style.display = isTime ? '' : 'none';
+      if (repsBtn) { repsBtn.style.background = isTime ? 'transparent' : 'var(--accent)'; repsBtn.style.color = isTime ? 'var(--muted)' : '#fff'; }
+      if (timeBtn) { timeBtn.style.background = isTime ? 'var(--accent)' : 'transparent'; timeBtn.style.color = isTime ? '#fff' : 'var(--muted)'; }
+    }
+
     // ── Content-type helpers ──────────────────────────────────────────────
     function updateStimValueOptions(catId, valId, colorRowId) {
       const cat = document.getElementById(catId)?.value;
@@ -3718,12 +3800,21 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       if (state.bleNodes.length < cfg.numNodes) { toast(`Necesitas ${cfg.numNodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
       window._lastCfg = { _type: 'flash', config: cfg };
+      const exerciseMode = cfg.exerciseMode || 'reps';
       const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
-      const sequence = Array.from({length: cfg.reps}, (_,i) =>
+      const total = exerciseMode === 'reps' ? cfg.reps : 999;
+      const sequence = Array.from({length: total}, (_,i) =>
         cfg.order === 'sequential' ? (i % cfg.numNodes) + 1 : Math.floor(Math.random() * cfg.numNodes) + 1
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
-      state.session = { active:true, type:'flash', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration'} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration'} };
+      if (exerciseMode === 'time') {
+        state.session.countdownId = setInterval(() => {
+          if (!state.session.active) return;
+          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
+          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
+        }, 500);
+      }
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3793,7 +3884,9 @@
       const timeout = readTimeout('exStimTimeout');
       const sensor = document.getElementById('exStimSensor').value;
       const sound = document.getElementById('exStimSound').checked;
-      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
+      const exerciseMode = document.getElementById('exTimeRow').style.display !== 'none' ? 'time' : 'reps';
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -3905,7 +3998,9 @@
       const timeout = readTimeout('stimTimeout');
       const sensor = document.getElementById('stimSensor').value;
       const sound = document.getElementById('stimSound').checked;
-      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
+      const exerciseMode = document.getElementById('stimTimeRow').style.display !== 'none' ? 'time' : 'reps';
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
