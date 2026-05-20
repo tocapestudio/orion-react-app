@@ -446,9 +446,9 @@
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
       background: var(--bg2); border-top: 1px solid var(--border2);
       box-shadow: 0 -6px 24px rgba(0,0,0,0.45);
-      padding: 12px 20px; display: none; align-items: center; gap: 14px;
+      padding: 12px 20px; display: none; align-items: center; justify-content: center; gap: 20px;
     }
-    #startBar .cd-opts { display: flex; align-items: center; gap: 10px; flex: 1; flex-wrap: wrap; }
+    #startBar .cd-opts { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
     #startBar label { display: flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; color: var(--muted); }
     #startBar label input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
     #startBarBtn {
@@ -2660,11 +2660,13 @@
         ? h.reduce((sum, r) => sum + (r.reaction_ms != null ? r.reaction_ms : state.session.config.duration), 0)
         : null;
       document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg !== null ? msToS(avg) + ' s' : '--'}`;
-      document.getElementById('summaryStats').innerHTML = `
+      const statsEl = document.getElementById('summaryStats');
+      statsEl.style.gridTemplateColumns = 'repeat(2,1fr)';
+      statsEl.innerHTML = `
+        ${totalActiveMs !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}
+        ${avgSprint !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(avgSprint)}</span><span class="lbl">Media sprint</span></div>` : ''}
         <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
-        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>
-        ${avgSprint !== null ? `<div class="stat-tile"><span class="val">${msToS(avgSprint)}</span><span class="lbl">Media sprint</span></div>` : ''}
-        ${totalActiveMs !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}`;
+        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>`;
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
