@@ -1935,7 +1935,7 @@
       try {
         toast('Buscando nodo...');
         const device = await navigator.bluetooth.requestDevice({
-          filters: [{ namePrefix: 'OrionNode' }],
+          filters: [{ services: [BLE_SERVICE] }],
           optionalServices: [BLE_SERVICE]
         });
         await connectDevice(device);
@@ -2005,7 +2005,7 @@
           if (!navigator.bluetooth) break;
           toast(`Buscando nodo ${connected + 1}/${toConnect}...`);
           const device = await navigator.bluetooth.requestDevice({
-            filters: [{ namePrefix: 'OrionNode' }],
+            filters: [{ services: [BLE_SERVICE] }],
             optionalServices: [BLE_SERVICE]
           });
           device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
@@ -2195,7 +2195,7 @@
       }
       try {
         try {
-          state.leScan = await navigator.bluetooth.requestLEScan({ filters: [{ namePrefix: 'OrionNode' }], keepRepeatedDevices: true });
+          state.leScan = await navigator.bluetooth.requestLEScan({ filters: [{ services: [BLE_SERVICE] }], keepRepeatedDevices: true });
         } catch(e) {
           state.leScan = await navigator.bluetooth.requestLEScan({ acceptAllAdvertisements: true, keepRepeatedDevices: true });
         }
