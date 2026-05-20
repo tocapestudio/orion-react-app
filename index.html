@@ -576,18 +576,18 @@
                 </select>
               </div>
               <div class="field">
-                <label>Intervalo (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="1200" id="exStimInterval" />
+                <label>Intervalo (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="exStimInterval" />
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2000" id="exStimDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2" id="exStimDuration" />
               </div>
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2000" id="exStimTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="2" id="exStimTimeout" />
               </div>
             </div>
             <div class="btn-row">
@@ -609,14 +609,14 @@
                 <input type="number" min="1" max="50" value="10" id="exPiReps" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="exPiDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exPiDuration" />
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2500" id="exPiTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="2.5" id="exPiTimeout" />
               </div>
               <div class="field">
                 <label>Regla</label>
@@ -666,17 +666,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="exStroopTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopTimeout" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="exStroopDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopDuration" />
               </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="800" id="exStroopInterval" />
+              <label>Delay entre rondas (s)</label>
+              <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startStroopEx()">Iniciar</button>
@@ -703,17 +703,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="10000" step="100" value="2000" id="exDiscTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.3" max="10" step="0.1" value="2" id="exDiscTimeout" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2000" id="exDiscDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2" id="exDiscDuration" />
               </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (ms)</label>
-              <input type="number" min="0" max="5000" step="100" value="800" id="exDiscDelay" />
+              <label>Delay entre rondas (s)</label>
+              <input type="number" min="0" max="5" step="0.1" value="0.8" id="exDiscDelay" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -800,18 +800,18 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Delay aleatorio entre repeticiones (ms)</label>
-                <input type="number" min="0" max="10000" step="100" value="800" id="exChronoDelay" />
+                <label>Delay aleatorio entre repeticiones (s)</label>
+                <input type="number" min="0" max="10" step="0.1" value="0.8" id="exChronoDelay" />
               </div>
               <div class="field">
-                <label>Duración estímulo inicio (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="3000" id="exChronoStartDuration" />
+                <label>Duración estímulo inicio (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoStartDuration" />
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Duración estímulo final (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="3000" id="exChronoEndDuration" />
+                <label>Duración estímulo final (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoEndDuration" />
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -823,12 +823,12 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Retraso verde mínimo (ms)</label>
-                <input type="number" min="1000" max="5000" step="100" value="1000" id="exChronoGreenMin" />
+                <label>Retraso verde mínimo (s)</label>
+                <input type="number" min="0.5" max="5" step="0.1" value="1" id="exChronoGreenMin" />
               </div>
               <div class="field">
-                <label>Retraso verde máximo (ms)</label>
-                <input type="number" min="1000" max="5000" step="100" value="3000" id="exChronoGreenMax" />
+                <label>Retraso verde máximo (s)</label>
+                <input type="number" min="0.5" max="5" step="0.1" value="3" id="exChronoGreenMax" />
               </div>
             </div>
             <div class="btn-row">
@@ -841,13 +841,13 @@
       <div id="activeSession" style="display:none;">
         <div class="live-display">
           <div class="live-node" id="liveNode">--</div>
-          <div class="live-time" id="liveTime">-- ms</div>
+          <div class="live-time" id="liveTime">-- s</div>
           <div class="live-hint" id="liveHint">Preparando...</div>
           <div class="stroop-stimulus" id="stroopScreen"></div>
         </div>
         <div class="stats-row">
-          <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media ms</span></div>
-          <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor ms</span></div>
+          <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media s</span></div>
+          <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor s</span></div>
           <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl">Progreso</span></div>
         </div>
         <div class="btn-row">
@@ -945,18 +945,18 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Intervalo (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="1200" id="stimInterval" />
+                <label>Intervalo (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="stimInterval" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2000" id="stimDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2" id="stimDuration" />
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="5000" step="100" value="2000" id="stimTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="2" id="stimTimeout" />
               </div>
             <div class="field-row">
               <div class="field">
@@ -1012,13 +1012,13 @@
                 <input type="number" min="1" max="50" value="10" id="piReps" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="piDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="piDuration" />
               </div>
             </div>
             <div class="field">
-              <label>Timeout (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="2500" id="piTimeout" />
+              <label>Timeout (s)</label>
+              <input type="number" min="0.3" max="5" step="0.1" value="2.5" id="piTimeout" />
             </div>
             <div class="field">
               <label>Regla</label>
@@ -1070,17 +1070,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="stroopTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopTimeout" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2500" id="stroopDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopDuration" />
               </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (ms)</label>
-              <input type="number" min="300" max="5000" step="100" value="800" id="stroopInterval" />
+              <label>Delay entre rondas (s)</label>
+              <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveStroopConfig()">Guardar configuración</button>
@@ -1107,17 +1107,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (ms)</label>
-                <input type="number" min="300" max="10000" step="100" value="2000" id="discTimeout" />
+                <label>Timeout (s)</label>
+                <input type="number" min="0.3" max="10" step="0.1" value="2" id="discTimeout" />
               </div>
               <div class="field">
-                <label>Duración del estímulo (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="2000" id="discDuration" />
+                <label>Duración del estímulo (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="2" id="discDuration" />
               </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (ms)</label>
-              <input type="number" min="0" max="5000" step="100" value="800" id="discDelay" />
+              <label>Delay entre rondas (s)</label>
+              <input type="number" min="0" max="5" step="0.1" value="0.8" id="discDelay" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -1205,18 +1205,18 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Delay aleatorio entre repeticiones (ms)</label>
-                <input type="number" min="0" max="10000" step="100" value="800" id="chronoDelay" />
+                <label>Delay aleatorio entre repeticiones (s)</label>
+                <input type="number" min="0" max="10" step="0.1" value="0.8" id="chronoDelay" />
               </div>
               <div class="field">
-                <label>Duración estímulo inicio (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="3000" id="chronoStartDuration" />
+                <label>Duración estímulo inicio (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoStartDuration" />
               </div>
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Duración estímulo final (ms)</label>
-                <input type="number" min="500" max="10000" step="100" value="3000" id="chronoEndDuration" />
+                <label>Duración estímulo final (s)</label>
+                <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoEndDuration" />
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -1228,12 +1228,12 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Retraso verde mínimo (ms)</label>
-                <input type="number" min="1000" max="5000" step="100" value="1000" id="chronoGreenMin" />
+                <label>Retraso verde mínimo (s)</label>
+                <input type="number" min="0.5" max="5" step="0.1" value="1" id="chronoGreenMin" />
               </div>
               <div class="field">
-                <label>Retraso verde máximo (ms)</label>
-                <input type="number" min="1000" max="5000" step="100" value="3000" id="chronoGreenMax" />
+                <label>Retraso verde máximo (s)</label>
+                <input type="number" min="0.5" max="5" step="0.1" value="3" id="chronoGreenMax" />
               </div>
             </div>
             <div class="btn-row">
@@ -1290,44 +1290,57 @@
     <section class="page" id="page-data">
       <div class="section-header">
         <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
-        <div class="section-title">Datos guardados</div>
-        <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="loadSessions()">↻ Actualizar</button>
+        <div class="section-title">Datos</div>
+        <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
       </div>
-      <div class="card">
-        <div class="card-title">Deportistas</div>
-        <div class="card-sub">Gestiona los jugadores y sus datos de rendimiento.</div>
-        <button class="btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openCreateAthleteModal()">+ Crear jugador</button>
-        <div class="field" style="margin-bottom:12px;">
-          <label>Buscar por nombre</label>
-          <input type="text" id="athleteSearchDataInput" placeholder="Escribe un nombre..." oninput="filterAthletesInData()" />
+
+      <!-- Vista principal: buscador + último evaluado + lista de jugadores -->
+      <div id="dataMainView">
+        <!-- Buscador -->
+        <div style="position:relative;margin-bottom:14px;">
+          <input type="text" id="dataAthleteSearch" placeholder="Buscar jugador..." oninput="filterDataAthletes()"
+            style="width:100%;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
+          <svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </div>
-        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg-secondary);cursor:pointer;" onclick="toggleAthletesList()">
-            <span style="font-size:0.9rem;font-weight:500;">Jugadores (<span id="athletesCount">0</span>)</span>
-            <span id="athletesListArrow" style="transform:rotate(-90deg);transition:transform 0.2s;font-size:1.2rem;">›</span>
+
+        <!-- Último evaluado -->
+        <div id="dataLastEvaluated" style="display:none;margin-bottom:16px;">
+          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;font-family:'DM Mono',monospace;">Último evaluado</div>
+          <div class="card" style="cursor:pointer;border-color:var(--border2);margin-bottom:0;" onclick="selectDataAthlete(window.dataLastAthleteId)">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div id="dataLastName" style="font-weight:600;font-size:0.95rem;"></div>
+                <div id="dataLastSport" style="font-size:0.78rem;color:var(--muted);margin-top:3px;"></div>
+              </div>
+              <div style="text-align:right;">
+                <div id="dataLastDate" style="font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;"></div>
+                <div id="dataLastExType" style="font-size:0.78rem;color:var(--accent);margin-top:3px;font-weight:500;"></div>
+              </div>
+            </div>
           </div>
-          <div id="athletesListDataExpanded" style="display:none;max-height:300px;overflow-y:auto;"></div>
+        </div>
+
+        <!-- Desplegable jugadores guardados -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleDataPlayerList()">
+            <span style="font-size:0.95rem;font-weight:600;">Jugadores guardados</span>
+            <span id="dataPlayerArrow" style="color:var(--muted);font-size:0.85rem;transition:transform 0.2s;">▼</span>
+          </div>
+          <div id="dataPlayerList" style="margin-top:12px;"></div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Filtrar sesiones</div>
-        <div class="field">
-          <label>Buscar por nombre del deportista</label>
-          <input type="text" id="athleteSearchInput" placeholder="Escribe un nombre..." oninput="filterSessionsByName()" />
+
+      <!-- Vista de jugador: sesiones -->
+      <div id="dataAthleteView" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="backToDataMain()">← Volver</button>
+          <div>
+            <div id="dataViewName" style="font-weight:700;font-size:1rem;"></div>
+            <div id="dataViewSport" style="font-size:0.78rem;color:var(--muted);margin-top:2px;"></div>
+          </div>
         </div>
-        <div class="field">
-          <label>O selecciona de la lista</label>
-          <select id="filterAthlete" onchange="loadSessions()">
-            <option value="">Todos</option>
-          </select>
-        </div>
-      </div>
-      <div id="sessionsList">
-        <div class="empty">
-          <div class="empty-icon">📊</div>
-          <h3>Sin datos todavía</h3>
-          <p>Las sesiones guardadas aparecerán aquí.</p>
-        </div>
+        <div id="dataViewSessions"></div>
       </div>
     </section>
 
@@ -1481,6 +1494,8 @@
     };
 
     // ESTADO
+    function msToS(ms) { return (ms / 1000).toFixed(3); }
+
     const state = {
       bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
       nodes: {}, // {nodeId: {name, battery, lastUpdate}}
@@ -1870,9 +1885,9 @@
       const order    = document.getElementById('stimOrder').value;
       const shape    = document.getElementById('stimShape').value;
       const color    = document.getElementById('stimColor').value;
-      const interval = parseInt(document.getElementById('stimInterval').value);
-      const duration = parseInt(document.getElementById('stimDuration').value);
-      const timeout  = parseInt(document.getElementById('stimTimeout').value);
+      const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
+      const timeout  = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
@@ -1888,7 +1903,7 @@
       const nodeId = sequence[current];
       const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
       document.getElementById('liveNode').textContent     = `Nodo ${nodeId}`;
-      document.getElementById('liveTime').textContent     = '-- ms';
+      document.getElementById('liveTime').textContent     = '-- s';
       document.getElementById('liveHint').textContent     = 'Reacciona al ver el estímulo';
       document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
       sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration });
@@ -1904,7 +1919,7 @@
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
       state.session.history.push({ repetition:state.session.current+1, node_id:state.session.sequence[state.session.current], shape:state.session.config.shape, color:state.session.config.color, reaction_ms:reactionMs, result:ok?'ok':'miss' });
-      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs+' ms' : '—';
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = ok ? '✓ Reacción registrada' : 'Sin respuesta';
       updateLiveStats();
       state.session.current++;
@@ -1994,7 +2009,7 @@
         result: ok ? 'ok' : 'miss'
       };
       state.session.history.push(entry);
-      document.getElementById('liveTime').textContent = endReactionMs !== null ? endReactionMs + ' ms' : '—';
+      document.getElementById('liveTime').textContent = endReactionMs !== null ? msToS(endReactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = ok ? '✓ Crono registrado' : 'Sin respuesta';
       updateLiveStats();
       state.session.current++;
@@ -2074,9 +2089,9 @@
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
-      const timeout = parseInt(document.getElementById('stroopTimeout').value);
-      const duration = parseInt(document.getElementById('stroopDuration').value);
-      const interval = parseInt(document.getElementById('stroopInterval').value);
+      const timeout = Math.round(parseFloat(document.getElementById('stroopTimeout').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
+      const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sequence = [];
       if (resetMode === 'same') {
         const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
@@ -2118,7 +2133,7 @@
       const step = state.session.sequence[state.session.current];
       updateStroopScreen(null);
       state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:'stroop', color:step.target_color, reaction_ms:reactionMs, result:correct ? 'ok' : 'miss' });
-      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
       state.session.current++;
@@ -2131,8 +2146,8 @@
     function startParImpar() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('piReps').value);
-      const duration = parseInt(document.getElementById('piDuration').value);
-      const timeout = parseInt(document.getElementById('piTimeout').value);
+      const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
+      const timeout = Math.round(parseFloat(document.getElementById('piTimeout').value) * 1000);
       const rule    = document.getElementById('piRule').value;
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       showPage('exercises');
@@ -2207,30 +2222,30 @@
         .map(h => h.end_reaction_ms != null ? h.end_reaction_ms : h.reaction_ms)
         .filter(x => x != null);
       if (rs.length) {
-        document.getElementById('statAvg').textContent  = Math.round(rs.reduce((a,b)=>a+b,0)/rs.length);
-        document.getElementById('statBest').textContent = Math.min(...rs);
+        document.getElementById('statAvg').textContent  = msToS(rs.reduce((a,b)=>a+b,0)/rs.length);
+        document.getElementById('statBest').textContent = msToS(Math.min(...rs));
       }
     }
 
     function showSummary() {
       const h  = state.session.history;
       const rs = h.map(x=> x.end_reaction_ms != null ? x.end_reaction_ms : x.reaction_ms).filter(x=>x!=null);
-      const avg  = rs.length ? Math.round(rs.reduce((a,b)=>a+b,0)/rs.length) : '--';
-      const best = rs.length ? Math.min(...rs) : '--';
+      const avg  = rs.length ? rs.reduce((a,b)=>a+b,0)/rs.length : null;
+      const best = rs.length ? Math.min(...rs) : null;
       const hits = h.filter(x=>x.result==='ok').length;
       const sprintValues = h.filter(x=>x.sprint_ms!=null).map(x=>x.sprint_ms);
-      const avgSprint = sprintValues.length ? Math.round(sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length) : '--';
-      document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg} ms`;
+      const avgSprint = sprintValues.length ? sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length : null;
+      document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg !== null ? msToS(avg) + ' s' : '--'}`;
       document.getElementById('summaryStats').innerHTML = `
-        <div class="stat-tile"><span class="val">${avg}</span><span class="lbl">Media ms</span></div>
-        <div class="stat-tile"><span class="val">${best}</span><span class="lbl">Mejor ms</span></div>
-        <div class="stat-tile"><span class="val">${avgSprint}</span><span class="lbl">Media sprint</span></div>`;
+        <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
+        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Mejor s</span></div>
+        <div class="stat-tile"><span class="val">${avgSprint !== null ? msToS(avgSprint) : '--'}</span><span class="lbl">Media sprint</span></div>`;
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
           <tbody>${h.map(r=>{
-            const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : '—'));
-            return `<tr><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time!== '—' ? time+' ms' : '—'}</td></tr>`;
+            const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : null));
+            return `<tr><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
           }).join('')}</tbody>
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
@@ -2255,51 +2270,161 @@
     }
 
     // DATOS
-    let allSessions = [];
+    // ── DATOS — variables de estado ──────────────────────────
+    window.dataLastAthleteId = null;
+    let dataPlayerListVisible = true;
 
-    async function loadSessionsInternal() {
-      const aid = document.getElementById('filterAthlete').value;
-      const f = aid ? `?athlete_id=eq.${aid}&order=date.desc` : '?order=date.desc';
+    function getExerciseName(type) {
+      return { flash:'Reacción Flash', parimpar:'Par / Impar', stroop:'Stroop',
+               discrimination:'Discriminación', chrono:'Chrono', custom:'Personalizado' }[type] || type;
+    }
+
+    async function loadDataPage() {
+      renderDataAthletes(state.athletes);
+      await loadLastEvaluated();
+    }
+
+    async function loadLastEvaluated() {
       try {
-        allSessions = await db.get('sessions', f);
-        renderSessions(allSessions);
-      } catch { toast('Error cargando sesiones'); }
-    }
-
-    function filterSessionsByName() {
-      const searchInput = document.getElementById('athleteSearchInput').value.toLowerCase();
-      if (!searchInput) {
-        loadSessionsInternal();
-        return;
-      }
-      const filtered = allSessions.filter(s => {
+        const sessions = await db.get('sessions', '?order=date.desc&limit=1');
+        if (!sessions.length) return;
+        const s = sessions[0];
+        if (!s.athlete_id) return;
         const athlete = state.athletes.find(a => a.id === s.athlete_id);
-        return athlete && athlete.name.toLowerCase().includes(searchInput);
-      });
-      renderSessions(filtered);
+        if (!athlete) return;
+        window.dataLastAthleteId = athlete.id;
+        document.getElementById('dataLastName').textContent = athlete.name;
+        document.getElementById('dataLastSport').textContent = athlete.sport || 'Sin deporte';
+        document.getElementById('dataLastDate').textContent =
+          new Date(s.date).toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+        document.getElementById('dataLastExType').textContent = getExerciseName(s.exercise_type);
+        document.getElementById('dataLastEvaluated').style.display = 'block';
+      } catch {}
     }
 
-    function renderSessions(sessions) {
-      const list = document.getElementById('sessionsList');
-      if (!sessions.length) {
-        list.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin sesiones</h3><p>Guarda una sesión para verla aquí.</p></div>`;
+    function filterDataAthletes() {
+      const q = document.getElementById('dataAthleteSearch').value.toLowerCase();
+      const filtered = q ? state.athletes.filter(a => a.name.toLowerCase().includes(q)) : state.athletes;
+      renderDataAthletes(filtered);
+    }
+
+    function renderDataAthletes(athletes) {
+      const list = document.getElementById('dataPlayerList');
+      if (!list) return;
+      if (!athletes.length) {
+        list.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:8px 0;text-align:center;">Sin jugadores guardados</div>`;
         return;
       }
-      list.innerHTML = sessions.map(s=>{
-        let exerciseName = s.exercise_type === 'flash' ? 'Reacción Flash' : s.exercise_type === 'parimpar' ? 'Par/Impar' : s.exercise_type === 'discrimination' ? 'Discriminación' : 'Ejercicio personalizado';
-        return `
-          <div class="card" style="margin-bottom:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <strong style="font-size:0.9rem;">${exerciseName}</strong>
-              <span style="font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;">${new Date(s.date).toLocaleDateString('es-ES')}</span>
-            </div>
-            <span style="font-size:0.78rem;color:var(--muted);">${s.notes?JSON.parse(s.notes).reps+' repeticiones':''}</span>
-          </div>`}).join('');
+      list.innerHTML = athletes.map(a => `
+        <div class="ex-item" onclick="selectDataAthlete(${a.id})" style="margin-bottom:8px;">
+          <div class="ex-item-info">
+            <h3 style="font-size:0.92rem;">${a.name}</h3>
+            <p>${a.sport || 'Sin deporte'}</p>
+          </div>
+          <span class="ex-item-arrow">›</span>
+        </div>`).join('');
     }
 
-    function loadSessions() {
-      document.getElementById('athleteSearchInput').value = '';
-      loadSessionsInternal();
+    function toggleDataPlayerList() {
+      dataPlayerListVisible = !dataPlayerListVisible;
+      document.getElementById('dataPlayerList').style.display = dataPlayerListVisible ? 'block' : 'none';
+      document.getElementById('dataPlayerArrow').style.transform = dataPlayerListVisible ? '' : 'rotate(-90deg)';
+    }
+
+    async function selectDataAthlete(athleteId) {
+      const athlete = state.athletes.find(a => a.id === athleteId);
+      if (!athlete) return;
+      document.getElementById('dataMainView').style.display = 'none';
+      document.getElementById('dataAthleteView').style.display = 'block';
+      document.getElementById('dataViewName').textContent = athlete.name;
+      document.getElementById('dataViewSport').textContent = athlete.sport || 'Sin deporte';
+      const container = document.getElementById('dataViewSessions');
+      container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:32px;font-size:0.85rem;">Cargando sesiones...</div>`;
+      try {
+        const sessions = await db.get('sessions', `?athlete_id=eq.${athleteId}&order=date.desc`);
+        renderDataSessions(sessions, container);
+      } catch {
+        container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
+      }
+    }
+
+    function backToDataMain() {
+      document.getElementById('dataAthleteView').style.display = 'none';
+      document.getElementById('dataMainView').style.display = 'block';
+    }
+
+    function renderDataSessions(sessions, container) {
+      if (!sessions.length) {
+        container.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:32px;">Sin sesiones guardadas</div>`;
+        return;
+      }
+      container.innerHTML = sessions.map(s => {
+        const exName = getExerciseName(s.exercise_type);
+        const cfg = s.notes ? (() => { try { return JSON.parse(s.notes); } catch { return {}; } })() : {};
+        const date = new Date(s.date).toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+        const time = new Date(s.date).toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+        const repsLabel = cfg.reps ? `${cfg.reps} reps · ` : '';
+        return `
+          <div class="card" style="margin-bottom:10px;padding:0;overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;" onclick="toggleDataSession('${s.id}')">
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">${exName}</div>
+                <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">${repsLabel}${date} · ${time}</div>
+              </div>
+              <span id="sess-arrow-${s.id}" style="color:var(--muted);font-size:1.1rem;transition:transform 0.2s;">›</span>
+            </div>
+            <div id="sess-detail-${s.id}" style="display:none;border-top:1px solid var(--border);padding:16px;"></div>
+          </div>`;
+      }).join('');
+    }
+
+    async function toggleDataSession(sessionId) {
+      const detail = document.getElementById(`sess-detail-${sessionId}`);
+      const arrow  = document.getElementById(`sess-arrow-${sessionId}`);
+      const isHidden = detail.style.display === 'none';
+      detail.style.display = isHidden ? 'block' : 'none';
+      arrow.style.transform = isHidden ? 'rotate(90deg)' : '';
+      if (isHidden && detail.dataset.loaded !== 'true') {
+        detail.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:0.82rem;padding:8px;">Cargando resultados...</div>`;
+        try {
+          const results = await db.get('results', `?session_id=eq.${sessionId}&order=repetition.asc`);
+          detail.innerHTML = renderSessionDetail(results);
+          detail.dataset.loaded = 'true';
+        } catch {
+          detail.innerHTML = `<div style="color:var(--danger);font-size:0.82rem;">Error al cargar resultados</div>`;
+        }
+      }
+    }
+
+    function renderSessionDetail(results) {
+      if (!results.length) return `<div style="color:var(--muted);font-size:0.82rem;text-align:center;">Sin resultados registrados</div>`;
+      const times = results.map(r => r.sprint_ms ?? r.end_reaction_ms ?? r.reaction_ms).filter(t => t != null && t > 0);
+      const hits   = results.filter(r => r.result === 'ok').length;
+      const misses = results.length - hits;
+      const avg    = times.length ? times.reduce((a,b)=>a+b,0)/times.length : null;
+      const best   = times.length ? Math.min(...times) : null;
+      const rows   = results.map(r => {
+        const t = r.sprint_ms ?? r.end_reaction_ms ?? r.reaction_ms;
+        const tStr = t != null && t > 0 ? msToS(t) + ' s' : '—';
+        return `<tr>
+          <td>${r.repetition}</td>
+          <td style="color:var(--muted);">${r.shape || '—'}</td>
+          <td style="font-family:'DM Mono',monospace;">${tStr}</td>
+          <td><span class="badge ${r.result}" style="font-size:0.7rem;padding:2px 8px;">${r.result==='ok'?'OK':'Miss'}</span></td>
+        </tr>`;
+      }).join('');
+      return `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+          <div class="stat-tile"><span class="val" style="font-size:1rem;">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
+          <div class="stat-tile"><span class="val" style="font-size:1rem;">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Mejor s</span></div>
+          <div class="stat-tile"><span class="val" style="font-size:1rem;">${hits}/${results.length}</span><span class="lbl">Aciertos</span></div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="history" style="width:100%;font-size:0.8rem;">
+            <thead><tr><th>#</th><th>Estímulo</th><th>Tiempo</th><th>Resultado</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
     }
 
     // DEPORTISTAS
@@ -2307,7 +2432,7 @@
       try {
         state.athletes = await db.get('athletes','?order=name');
         renderAthletes();
-        renderAthletesInData(state.athletes);
+        renderDataAthletes(state.athletes);
         updateAthleteFilter();
       } catch {}
     }
@@ -2327,20 +2452,16 @@
     function renderAthletesInData(athletes) {
       const listContainer = document.getElementById('athletesListDataExpanded');
       const countEl = document.getElementById('athletesCount');
+      if (!listContainer || !countEl) return;
       countEl.textContent = athletes.length;
-      if (!athletes.length) {
-        listContainer.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
-        return;
-      }
-      listContainer.innerHTML = athletes.map(a=>{
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);">
+      listContainer.innerHTML = athletes.map(a=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);">
           <div>
             <div style="font-size:0.9rem;font-weight:500;">${a.name}</div>
             <div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div>
           </div>
           <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
-        </div>`;
-      }).join('');
+        </div>`).join('') || '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
     }
 
     async function addAthlete() {
@@ -2373,19 +2494,17 @@
     function toggleAthletesList() {
       const list = document.getElementById('athletesListDataExpanded');
       const arrow = document.getElementById('athletesListArrow');
+      if (!list || !arrow) return;
       const isHidden = list.style.display === 'none';
       list.style.display = isHidden ? 'block' : 'none';
       arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
     }
 
     function filterAthletesInData() {
-      const searchInput = document.getElementById('athleteSearchDataInput').value.toLowerCase();
-      if (!searchInput) {
-        renderAthletesInData(state.athletes);
-        return;
-      }
-      const filtered = state.athletes.filter(a => a.name.toLowerCase().includes(searchInput));
-      renderAthletesInData(filtered);
+      const input = document.getElementById('athleteSearchDataInput');
+      if (!input) return;
+      const q = input.value.toLowerCase();
+      renderAthletesInData(q ? state.athletes.filter(a => a.name.toLowerCase().includes(q)) : state.athletes);
     }
 
     async function deleteAthlete(id) {
@@ -2397,8 +2516,8 @@
     }
 
     function updateAthleteFilter() {
-      document.getElementById('filterAthlete').innerHTML =
-        '<option value="">Todos</option>' +
+      const el = document.getElementById('filterAthlete');
+      if (el) el.innerHTML = '<option value="">Todos</option>' +
         state.athletes.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
     }
 
@@ -2577,9 +2696,9 @@
       const order    = document.getElementById('exStimOrder').value;
       const shape    = document.getElementById('exStimShape').value;
       const color    = document.getElementById('exStimColor').value;
-      const interval = parseInt(document.getElementById('exStimInterval').value);
-      const duration = parseInt(document.getElementById('exStimDuration').value);
-      const timeout  = parseInt(document.getElementById('exStimTimeout').value);
+      const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
+      const timeout  = Math.round(parseFloat(document.getElementById('exStimTimeout').value) * 1000);
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
@@ -2592,8 +2711,8 @@
     function startParImparEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('exPiReps').value);
-      const duration = parseInt(document.getElementById('exPiDuration').value);
-      const timeout = parseInt(document.getElementById('exPiTimeout').value);
+      const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
+      const timeout = Math.round(parseFloat(document.getElementById('exPiTimeout').value) * 1000);
       const rule    = document.getElementById('exPiRule').value;
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       closePresetConfig();
@@ -2607,9 +2726,9 @@
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
       const resetMode = document.getElementById('exStroopResetMode').value;
-      const timeout = parseInt(document.getElementById('exStroopTimeout').value);
-      const duration = parseInt(document.getElementById('exStroopDuration').value);
-      const interval = parseInt(document.getElementById('exStroopInterval').value);
+      const timeout = Math.round(parseFloat(document.getElementById('exStroopTimeout').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
+      const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sequence = [];
       if (resetMode === 'same') {
         const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
@@ -2661,9 +2780,9 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
-      const timeout = parseInt(document.getElementById('exDiscTimeout')?.value || 2000);
-      const duration = parseInt(document.getElementById('exDiscDuration')?.value || 2000);
-      const delay = parseInt(document.getElementById('exDiscDelay')?.value || 800);
+      const timeout = Math.round(parseFloat(document.getElementById('exDiscTimeout')?.value || 2) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exDiscDuration')?.value || 2) * 1000);
+      const delay = Math.round(parseFloat(document.getElementById('exDiscDelay')?.value || 0.8) * 1000);
       const criterion = document.getElementById('exDiscCriterion')?.value || 'color';
       const correctValue = document.getElementById('exDiscValue')?.value || 'green';
       const distractors = document.getElementById('exDiscDistractors')?.value || 'different';
@@ -2751,7 +2870,7 @@
       sendBLE({ cmd:'off' });
       const step = state.session.sequence[state.session.current];
       state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:step.criterion, color: step.criterion === 'color' ? step.correct_value : null, reaction_ms:reactionMs, result:ok ? 'ok' : 'miss' });
-      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
       state.session.current++;
@@ -2768,12 +2887,12 @@
       const startNode = parseInt(document.getElementById('exChronoStartNode').value);
       const endNode = parseInt(document.getElementById('exChronoEndNode').value);
       const reps = parseInt(document.getElementById('exChronoReps').value);
-      const delay = parseInt(document.getElementById('exChronoDelay').value);
+      const delay = Math.round(parseFloat(document.getElementById('exChronoDelay').value) * 1000);
       const finalMode = document.getElementById('exChronoFinalMode').value;
-      const greenMin = parseInt(document.getElementById('exChronoGreenMin').value);
-      const greenMax = parseInt(document.getElementById('exChronoGreenMax').value);
-      const startDuration = parseInt(document.getElementById('exChronoStartDuration').value);
-      const endDuration = parseInt(document.getElementById('exChronoEndDuration').value);
+      const greenMin = Math.round(parseFloat(document.getElementById('exChronoGreenMin').value) * 1000);
+      const greenMax = Math.round(parseFloat(document.getElementById('exChronoGreenMax').value) * 1000);
+      const startDuration = Math.round(parseFloat(document.getElementById('exChronoStartDuration').value) * 1000);
+      const endDuration = Math.round(parseFloat(document.getElementById('exChronoEndDuration').value) * 1000);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
@@ -2788,12 +2907,12 @@
       const startNode = parseInt(document.getElementById('chronoStartNode').value);
       const endNode = parseInt(document.getElementById('chronoEndNode').value);
       const reps = parseInt(document.getElementById('chronoReps').value);
-      const delay = parseInt(document.getElementById('chronoDelay').value);
+      const delay = Math.round(parseFloat(document.getElementById('chronoDelay').value) * 1000);
       const finalMode = document.getElementById('chronoFinalMode').value;
-      const greenMin = parseInt(document.getElementById('chronoGreenMin').value);
-      const greenMax = parseInt(document.getElementById('chronoGreenMax').value);
-      const startDuration = parseInt(document.getElementById('chronoStartDuration').value);
-      const endDuration = parseInt(document.getElementById('chronoEndDuration').value);
+      const greenMin = Math.round(parseFloat(document.getElementById('chronoGreenMin').value) * 1000);
+      const greenMax = Math.round(parseFloat(document.getElementById('chronoGreenMax').value) * 1000);
+      const startDuration = Math.round(parseFloat(document.getElementById('chronoStartDuration').value) * 1000);
+      const endDuration = Math.round(parseFloat(document.getElementById('chronoEndDuration').value) * 1000);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
@@ -2869,9 +2988,9 @@
       // mirror preset start but reading quick form fields
       const nodes = parseInt(document.getElementById('discNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('discReps')?.value || 10);
-      const timeout = parseInt(document.getElementById('discTimeout')?.value || 2000);
-      const duration = parseInt(document.getElementById('discDuration')?.value || 2000);
-      const delay = parseInt(document.getElementById('discDelay')?.value || 800);
+      const timeout = Math.round(parseFloat(document.getElementById('discTimeout')?.value || 2) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('discDuration')?.value || 2) * 1000);
+      const delay = Math.round(parseFloat(document.getElementById('discDelay')?.value || 0.8) * 1000);
       const criterion = document.getElementById('discCriterion')?.value || 'color';
       const correctValue = document.getElementById('discValue')?.value || 'green';
       const distractors = document.getElementById('discDistractors')?.value || 'different';
@@ -2944,12 +3063,12 @@
           
           <div class="field-row">
             <div class="field">
-              <label>Tiempo de exposición (ms)</label>
-              <input type="number" class="exposureTime" data-step="${stepIndex}" min="100" max="10000" value="1000">
+              <label>Tiempo de exposición (s)</label>
+              <input type="number" class="exposureTime" data-step="${stepIndex}" min="0.1" max="10" step="0.1" value="1">
             </div>
             <div class="field">
-              <label>Delay antes del siguiente (ms)</label>
-              <input type="number" class="delayTime" data-step="${stepIndex}" min="0" max="10000" value="500">
+              <label>Delay antes del siguiente (s)</label>
+              <input type="number" class="delayTime" data-step="${stepIndex}" min="0" max="10" step="0.1" value="0.5">
             </div>
           </div>
         </div>
@@ -3084,8 +3203,8 @@
         const correctResponseType = stepEl.querySelector('.correctResponseType').value;
         const correctResponseValue = stepEl.querySelector('.correctResponseValue').value;
         const repeatCount = parseInt(stepEl.querySelector('.stepRepeat').value) || 1;
-        const exposureTime = parseInt(stepEl.querySelector('.exposureTime').value);
-        const delayTime = parseInt(stepEl.querySelector('.delayTime').value);
+        const exposureTime = Math.round(parseFloat(stepEl.querySelector('.exposureTime').value) * 1000);
+        const delayTime = Math.round(parseFloat(stepEl.querySelector('.delayTime').value) * 1000);
         const correctNode = correctResponseType === 'node' ? parseInt(correctResponseValue) : null;
         const correctResponse = correctResponseType === 'node'
           ? 'node-1'
@@ -3189,7 +3308,7 @@
         result: correct ? 'ok' : 'miss'
       });
       
-      document.getElementById('liveTime').textContent = reactionMs !== null ? reactionMs + ' ms' : '—';
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta';
       updateLiveStats();
       
@@ -3213,6 +3332,7 @@
     function showPage(pageId) {
       navHistory.push(pageId);
       navigateTo(pageId);
+      if (pageId === 'data') loadDataPage();
     }
 
     function goBack() {
@@ -3232,8 +3352,8 @@
       const order = document.getElementById('stimOrder').value;
       const shape = document.getElementById('stimShape').value;
       const color = document.getElementById('stimColor').value;
-      const interval = parseInt(document.getElementById('stimInterval').value);
-      const timeout = parseInt(document.getElementById('stimTimeout').value);
+      const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
+      const timeout = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
       
       const steps = Array.from({length: reps}, (_,i) => {
         const nodeId = order === 'sequential' ? (i % numNodes) + 1 : Math.floor(Math.random() * numNodes) + 1;
@@ -3260,7 +3380,7 @@
     async function saveParImparConfig() {
       const name = `Par/Impar - ${new Date().toLocaleDateString()}`;
       const reps = parseInt(document.getElementById('piReps').value);
-      const timeout = parseInt(document.getElementById('piTimeout').value);
+      const timeout = Math.round(parseFloat(document.getElementById('piTimeout').value) * 1000);
       const rule = document.getElementById('piRule').value;
       
       const steps = Array.from({length: reps}, () => ({
@@ -3286,8 +3406,8 @@
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
-      const timeout = parseInt(document.getElementById('stroopTimeout').value);
-      const delay = parseInt(document.getElementById('stroopInterval').value);
+      const timeout = Math.round(parseFloat(document.getElementById('stroopTimeout').value) * 1000);
+      const delay = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const description = `Stroop ${resolveBy === 'named' ? 'color nombrado' : 'color de tinta'} · ${resetMode === 'different' ? 'cambia cada vez' : 'mismo esquema'}`;
       const steps = [];
       if (resetMode === 'same') {
