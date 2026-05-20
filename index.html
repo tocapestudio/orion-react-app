@@ -2650,11 +2650,16 @@
       const hits = h.filter(x=>x.result==='ok').length;
       const sprintValues = h.filter(x=>x.sprint_ms!=null).map(x=>x.sprint_ms);
       const avgSprint = sprintValues.length ? sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length : null;
+      const isFlashReps = state.session.type === 'flash' && state.session.exerciseMode !== 'time';
+      const totalActiveMs = isFlashReps
+        ? h.reduce((sum, r) => sum + (r.reaction_ms != null ? r.reaction_ms : state.session.config.duration), 0)
+        : null;
       document.getElementById('summaryText').textContent = `${h.length} estímulos · ${hits} aciertos · Media ${avg !== null ? msToS(avg) + ' s' : '--'}`;
       document.getElementById('summaryStats').innerHTML = `
         <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
-        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Mejor s</span></div>
-        <div class="stat-tile"><span class="val">${avgSprint !== null ? msToS(avgSprint) : '--'}</span><span class="lbl">Media sprint</span></div>`;
+        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>
+        <div class="stat-tile"><span class="val">${avgSprint !== null ? msToS(avgSprint) : '--'}</span><span class="lbl">Media sprint</span></div>
+        ${totalActiveMs !== null ? `<div class="stat-tile"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}`;
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
