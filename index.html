@@ -634,6 +634,19 @@
               <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
               <input type="number" min="0.3" max="30" step="0.1" id="exStimTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Apagado</label>
+                <select id="exStimSensor">
+                  <option value="vibration">Vibración (toque)</option>
+                  <option value="proximity">Proximidad</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exStimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exStimSound" style="margin:0;cursor:pointer;">Sonido</label>
+              </div>
+            </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
                 <label>Nombre del ejercicio</label>
@@ -1085,6 +1098,19 @@
                 <option value="random">Aleatorio</option>
                 <option value="sequential">Secuencial</option>
               </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Apagado</label>
+                <select id="stimSensor">
+                  <option value="vibration">Vibración (toque)</option>
+                  <option value="proximity">Proximidad</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="stimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="stimSound" style="margin:0;cursor:pointer;">Sonido</label>
+              </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -1976,7 +2002,7 @@
         if (val == null) return;
         const isEven = val % 2 === 0;
         const wantsEven = state.session.config.rule === 'pairs';
-        completeParImpar(isEven === wantsEven, data.reaction_ms >= 0 ? data.reaction_ms : null);
+        completeParImpar(data.reaction_ms >= 0 && (isEven === wantsEven), data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else if (state.session.type === 'custom') {
         const step = state.session.sequence[state.session.current];
         let correct = false;
@@ -2002,7 +2028,7 @@
         completeCustomStep(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else if (state.session.type === 'stroop') {
         const step = state.session.sequence[state.session.current];
-        const correct = data.node_id === step.correct_node;
+        const correct = data.reaction_ms >= 0 && data.node_id === step.correct_node;
         completeStroop(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else if (state.session.type === 'discrimination') {
         const step = state.session.sequence[state.session.current];
@@ -2019,6 +2045,7 @@
     function startFlash() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('nodesCount').value);
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
       const reps     = parseInt(document.getElementById('repsCount').value);
       const order    = document.getElementById('stimOrder').value;
       const category = document.getElementById('stimCategory').value;
@@ -2028,10 +2055,14 @@
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout  = readTimeout('stimTimeout');
+      const sensor   = document.getElementById('stimSensor').value;
+      const sound    = document.getElementById('stimSound').checked;
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout} };
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      window._lastCfg = { _type: 'flash', config: { numNodes:nodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -2046,7 +2077,7 @@
       document.getElementById('liveTime').textContent     = '-- s';
       document.getElementById('liveHint').textContent     = 'Reacciona al ver el estímulo';
       document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
-      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration });
+      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration, sensor:config.sensor || 'vibration' });
       state.session.waiting = true;
       const _fWaitMs = config.timeout > 0 && config.timeout < config.duration
         ? config.timeout : config.duration + 1500;
@@ -2087,7 +2118,7 @@
         state.session.timeoutId = setTimeout(() => {
           if (!state.session.waiting) return;
           completeChrono(false, null, null);
-        }, config.delay || 5000);
+        }, config.endDuration + 1500);
       } else {
         const delay = config.mode === 'mode3'
           ? Math.floor(Math.random() * (config.greenMax - config.greenMin + 1)) + config.greenMin
@@ -2109,13 +2140,19 @@
       const chrono = state.session.chrono || {};
       if (config.mode === 'mode1' && chrono.phase === 'end') {
         if (data.node_id !== config.endNode) return;
-        completeChrono(true, data.reaction_ms >= 0 ? data.reaction_ms : null, null);
+        completeChrono(data.reaction_ms >= 0, data.reaction_ms >= 0 ? data.reaction_ms : null, null);
       } else if (config.mode === 'mode2' || config.mode === 'mode3') {
         if (chrono.phase === 'start') {
           if (data.node_id !== config.startNode) return;
+          if (data.reaction_ms < 0) {
+            state.session.waiting = false;
+            clearTimeout(state.session.timeoutId);
+            completeChrono(false, null, null);
+            return;
+          }
           state.session.waiting = false;
           clearTimeout(state.session.timeoutId);
-          state.session.chrono = { phase:'end', startTouchTs: Date.now() };
+          state.session.chrono = { phase:'end', startTouchTs: Date.now(), startReactionMs: data.reaction_ms };
           sendBLE({ cmd:'off' });
           document.getElementById('liveNode').textContent = `Final ${config.endNode}`;
           document.getElementById('liveHint').textContent = 'Toca el nodo final ahora';
@@ -2125,12 +2162,13 @@
             state.session.timeoutId = setTimeout(() => {
               if (!state.session.waiting) return;
               completeChrono(false, null, null);
-            }, config.delay || 5000);
+            }, config.endDuration + 1500);
           }, 300);
         } else if (chrono.phase === 'end') {
           if (data.node_id !== config.endNode) return;
-          const sprintMs = state.session.chrono.startTouchTs ? Date.now() - state.session.chrono.startTouchTs : null;
-          completeChrono(true, data.reaction_ms >= 0 ? data.reaction_ms : null, sprintMs);
+          const ok = data.reaction_ms >= 0;
+          const sprintMs = ok && state.session.chrono.startTouchTs ? Date.now() - state.session.chrono.startTouchTs : null;
+          completeChrono(ok, ok ? data.reaction_ms : null, sprintMs);
         }
       }
     }
@@ -2145,7 +2183,7 @@
         node_id: state.session.config.endNode,
         start_node: state.session.config.startNode,
         end_node: state.session.config.endNode,
-        start_reaction_ms: state.session.chrono.startTouchTs ? Math.round(state.session.chrono.startTouchTs - state.session.chrono.startShowTs) : null,
+        start_reaction_ms: state.session.chrono.startReactionMs ?? null,
         end_reaction_ms: endReactionMs,
         sprint_ms: sprintMs,
         result: ok ? 'ok' : 'miss'
@@ -2241,6 +2279,7 @@
       } else {
         for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
       }
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval } };
       state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,resetMode,duration}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
@@ -2293,6 +2332,7 @@
       const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
       const timeout = readTimeout('piTimeout');
       const rule    = document.getElementById('piRule').value;
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, timeout, rule } };
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
@@ -2327,6 +2367,8 @@
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
       state.session.history.push({ repetition:state.session.current+1, node_id:null, shape:'parimpar', color:null, reaction_ms:reactionMs, result:correct?'ok':'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
+      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
       state.session.current++;
       if (state.session.current < state.session.total) {
@@ -2941,6 +2983,7 @@
     function startFlashEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes    = parseInt(document.getElementById('exNodesCount').value);
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
       const reps     = parseInt(document.getElementById('exRepsCount').value);
       const order    = document.getElementById('exStimOrder').value;
       const category = document.getElementById('exStimCategory').value;
@@ -2950,10 +2993,14 @@
       const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout  = readTimeout('exStimTimeout');
+      const sensor   = document.getElementById('exStimSensor').value;
+      const sound    = document.getElementById('exStimSound').checked;
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
-      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout} };
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      window._lastCfg = { _type: 'flash', config: { numNodes:nodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
+      state.session = { active:true, type:'flash', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -2965,6 +3012,7 @@
       const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
       const timeout = readTimeout('exPiTimeout');
       const rule    = document.getElementById('exPiRule').value;
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, timeout, rule } };
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
@@ -2987,6 +3035,7 @@
       } else {
         for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
       }
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval } };
       state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,resetMode,duration,interval}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
@@ -3045,6 +3094,7 @@
         sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
       }
 
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors } };
       state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
@@ -3147,6 +3197,7 @@
       const startDuration = Math.round(parseFloat(document.getElementById('exChronoStartDuration').value) * 1000);
       const endDuration = Math.round(parseFloat(document.getElementById('exChronoEndDuration').value) * 1000);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      window._lastCfg = { _type: 'chrono', config: { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration } };
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
       closePresetConfig();
@@ -3167,6 +3218,7 @@
       const startDuration = Math.round(parseFloat(document.getElementById('chronoStartDuration').value) * 1000);
       const endDuration = Math.round(parseFloat(document.getElementById('chronoEndDuration').value) * 1000);
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      window._lastCfg = { _type: 'chrono', config: { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration } };
       const sequence = Array.from({ length: reps }, () => ({ mode, startNode, endNode, delay, finalMode, greenMin, greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{mode,startNode,endNode,delay,finalMode,greenMin,greenMax,startDuration,endDuration}, chrono:{} };
       showPage('exercises');
@@ -3253,6 +3305,7 @@
         const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
         sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, timeout, delay });
       }
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors } };
       state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
@@ -3663,12 +3716,14 @@
     // ── Launch-from-saved-config helpers ─────────────────────────────────
     function startFlashWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length < cfg.numNodes) { toast(`Necesitas ${cfg.numNodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
       window._lastCfg = { _type: 'flash', config: cfg };
       const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
       const sequence = Array.from({length: cfg.reps}, (_,i) =>
         cfg.order === 'sequential' ? (i % cfg.numNodes) + 1 : Math.floor(Math.random() * cfg.numNodes) + 1
       );
-      state.session = { active:true, type:'flash', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout} };
+      sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
+      state.session = { active:true, type:'flash', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration'} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3736,7 +3791,9 @@
       const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout = readTimeout('exStimTimeout');
-      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
+      const sensor = document.getElementById('exStimSensor').value;
+      const sound = document.getElementById('exStimSound').checked;
+      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -3846,7 +3903,9 @@
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout = readTimeout('stimTimeout');
-      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
+      const sensor = document.getElementById('stimSensor').value;
+      const sound = document.getElementById('stimSound').checked;
+      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
