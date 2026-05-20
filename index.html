@@ -948,6 +948,7 @@
           <div id="summaryTable"></div>
           <div class="btn-row">
             <button class="btn-primary" onclick="saveSession()">Guardar en la nube</button>
+            <button class="btn-secondary" onclick="restartSession()">Reiniciar</button>
             <button class="btn-secondary" onclick="discardSession()">Descartar</button>
           </div>
         </div>
@@ -2047,10 +2048,12 @@
       document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
       sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration });
       state.session.waiting = true;
+      const _fWaitMs = config.timeout > 0 && config.timeout < config.duration
+        ? config.timeout : config.duration + 1500;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeStimulus(null, false);
-      }, Math.max(config.timeout, config.duration));
+      }, _fWaitMs);
     }
 
     function completeStimulus(reactionMs, ok) {
@@ -2259,10 +2262,12 @@
         sendBLE({ cmd: 'show', node_id: nodeId, shape: node.shape, color: node.colors[0], duration: state.session.config.duration });
       });
       state.session.waiting = true;
+      const _sWaitMs = step.exposure_time > 0 && step.exposure_time < state.session.config.duration
+        ? step.exposure_time : state.session.config.duration + 1500;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeStroop(false, null);
-      }, Math.max(step.exposure_time, state.session.config.duration));
+      }, _sWaitMs);
     }
 
     function completeStroop(correct, reactionMs) {
@@ -2309,10 +2314,12 @@
       sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration });
       setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:colors[Math.floor(Math.random()*4)], duration:state.session.config.duration }), 120);
       state.session.waiting = true;
+      const _pWaitMs = state.session.config.timeout > 0 && state.session.config.timeout < state.session.config.duration
+        ? state.session.config.timeout : state.session.config.duration + 1500;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeParImpar(false, null);
-      }, Math.max(state.session.config.timeout, state.session.config.duration));
+      }, _pWaitMs);
     }
 
     function completeParImpar(correct, reactionMs) {
@@ -2406,6 +2413,14 @@
       document.getElementById('sessionSummary').style.display = 'none';
       document.getElementById('exerciseList').style.display   = 'block';
       state.session = { active:false, history:[], current:0, total:0, sequence:[], waiting:false, config:{}, nodeValues:{} };
+    }
+
+    function restartSession() {
+      if (!window._lastCfg) { toast('No hay ejercicio para reiniciar'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      document.getElementById('sessionSummary').style.display = 'none';
+      sendBLE({ cmd: 'off' });
+      launchCustomExercise({ steps: JSON.stringify(window._lastCfg) });
     }
 
     // DATOS
@@ -3094,10 +3109,12 @@
       });
 
       state.session.waiting = true;
+      const _dWaitMs = timeout > 0 && timeout < state.session.config.duration
+        ? timeout : state.session.config.duration + 1500;
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeDiscrimination(null, false);
-      }, Math.max(timeout, state.session.config.duration));
+      }, _dWaitMs);
     }
 
     function completeDiscrimination(reactionMs, ok) {
@@ -3606,9 +3623,9 @@
     }
 
     // ── Stepper helper ───────────────────────────────────────────────────
-    function readTimeout(id, fallback = 30) {
+    function readTimeout(id) {
       const v = parseFloat(document.getElementById(id)?.value);
-      return Math.round((isNaN(v) || v <= 0 ? fallback : v) * 1000);
+      return (isNaN(v) || v <= 0) ? 0 : Math.round(v * 1000);
     }
 
     function adjustCount(id, delta, min, max) {
@@ -3646,6 +3663,7 @@
     // ── Launch-from-saved-config helpers ─────────────────────────────────
     function startFlashWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      window._lastCfg = { _type: 'flash', config: cfg };
       const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
       const sequence = Array.from({length: cfg.reps}, (_,i) =>
         cfg.order === 'sequential' ? (i % cfg.numNodes) + 1 : Math.floor(Math.random() * cfg.numNodes) + 1
@@ -3658,6 +3676,7 @@
 
     function startParImparWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      window._lastCfg = { _type: 'parimpar', config: cfg };
       state.session = { active:true, type:'parimpar', history:[], current:0, total:cfg.reps, sequence:[], timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, timeout:cfg.timeout, rule:cfg.rule}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
@@ -3666,6 +3685,7 @@
 
     function startStroopWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      window._lastCfg = { _type: 'stroop', config: cfg };
       const sequence = [];
       if (cfg.resetMode === 'same') {
         const step = buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval);
@@ -3681,6 +3701,7 @@
 
     function startDiscriminationWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      window._lastCfg = { _type: 'discrimination', config: cfg };
       const sequence = [];
       for (let i = 0; i < cfg.reps; i++) {
         const nodeIds = Array.from({length: cfg.nodes}, (_, idx) => idx + 1);
@@ -3695,6 +3716,7 @@
 
     function startChronoWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      window._lastCfg = { _type: 'chrono', config: cfg };
       const sequence = Array.from({ length: cfg.reps }, () => ({ mode: cfg.mode, startNode: cfg.startNode, endNode: cfg.endNode, delay: cfg.delay, finalMode: cfg.finalMode, greenMin: cfg.greenMin, greenMax: cfg.greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{mode:cfg.mode, startNode:cfg.startNode, endNode:cfg.endNode, delay:cfg.delay, finalMode:cfg.finalMode, greenMin:cfg.greenMin, greenMax:cfg.greenMax, startDuration:cfg.startDuration, endDuration:cfg.endDuration}, chrono:{} };
       showPage('exercises');
