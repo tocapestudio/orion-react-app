@@ -41,6 +41,9 @@
     }
     button { font: inherit; border: none; cursor: pointer; }
     input, select { font: inherit; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
     /* TOPBAR */
     .topbar {
@@ -642,16 +645,28 @@
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2" id="exStimDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStimDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2" id="exStimDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStimDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Intervalo (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="exStimInterval" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStimInterval',-0.1,0.3,5)">−</button>
+                  <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="exStimInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStimInterval',0.1,0.3,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="exStimTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStimTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="exStimTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStimTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -689,11 +704,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="exPiReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exPiReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',1,1,50)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exPiDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exPiDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
@@ -704,8 +727,12 @@
               </select>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="exPiTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="exPiTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -737,7 +764,11 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="exStroopReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exStroopReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -759,16 +790,28 @@
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Delay entre rondas (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopInterval',-0.1,0.3,5)">−</button>
+                  <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopInterval',0.1,0.3,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.5" max="30" step="0.1" id="exStroopTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStroopTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="exStroopTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStroopTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -801,22 +844,38 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="exDiscReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exDiscReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2" id="exDiscDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2" id="exDiscDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Delay entre rondas (s)</label>
-                <input type="number" min="0" max="5" step="0.1" value="0.8" id="exDiscDelay" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscDelay',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="exDiscDelay" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscDelay',0.1,0,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="exDiscTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exDiscTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="exDiscTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exDiscTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -877,7 +936,11 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="5" id="exChronoReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="5" id="exChronoReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -910,18 +973,30 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Delay aleatorio entre repeticiones (s)</label>
-                <input type="number" min="0" max="10" step="0.1" value="0.8" id="exChronoDelay" />
+                <label>Delay entre repeticiones (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoDelay',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="0.8" id="exChronoDelay" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoDelay',0.1,0,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Duración estímulo inicio (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoStartDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoStartDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoStartDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoStartDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
                 <label>Duración estímulo final (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoEndDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoEndDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="3" id="exChronoEndDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoEndDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -934,11 +1009,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Retraso verde mínimo (s)</label>
-                <input type="number" min="0.5" max="5" step="0.1" value="1" id="exChronoGreenMin" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoGreenMin',-0.5,0.5,5)">−</button>
+                  <input type="number" min="0.5" max="5" step="0.1" value="1" id="exChronoGreenMin" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoGreenMin',0.5,0.5,5)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Retraso verde máximo (s)</label>
-                <input type="number" min="0.5" max="5" step="0.1" value="3" id="exChronoGreenMax" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoGreenMax',-0.5,0.5,5)">−</button>
+                  <input type="number" min="0.5" max="5" step="0.1" value="3" id="exChronoGreenMax" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exChronoGreenMax',0.5,0.5,5)">+</button>
+                </div>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1087,16 +1170,28 @@
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2" id="stimDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2" id="stimDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Intervalo (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="stimInterval" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimInterval',-0.1,0.3,5)">−</button>
+                  <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="stimInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimInterval',0.1,0.3,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="stimTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="stimTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -1172,11 +1267,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="piReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="piReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',1,1,50)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="piDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="piDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
@@ -1187,8 +1290,12 @@
               </select>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="piTimeout" placeholder="Sin límite" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="piTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('piTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -1220,7 +1327,11 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="stroopReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="stroopReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -1242,16 +1353,28 @@
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Delay entre rondas (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopInterval',-0.1,0.3,5)">−</button>
+                  <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopInterval',0.1,0.3,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.5" max="30" step="0.1" id="stroopTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('stroopTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="stroopTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('stroopTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -1281,22 +1404,38 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="10" id="discReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="discReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
                 <label>Duración del estímulo (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2" id="discDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="2" id="discDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Delay entre rondas (s)</label>
-                <input type="number" min="0" max="5" step="0.1" value="0.8" id="discDelay" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discDelay',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="discDelay" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discDelay',0.1,0,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
-              <input type="number" min="0.3" max="30" step="0.1" id="discTimeout" placeholder="Sin límite" style="width:100%;" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('discTimeout',-0.5,0,30)">−</button>
+                <input type="number" min="0" max="30" step="0.5" value="0" id="discTimeout" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('discTimeout',0.5,0,30)">+</button>
+              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -1355,7 +1494,11 @@
               </div>
               <div class="field">
                 <label>Repeticiones</label>
-                <input type="number" min="1" max="50" value="5" id="chronoReps" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="5" id="chronoReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoReps',1,1,50)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -1388,18 +1531,30 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Delay aleatorio entre repeticiones (s)</label>
-                <input type="number" min="0" max="10" step="0.1" value="0.8" id="chronoDelay" />
+                <label>Delay entre repeticiones (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoDelay',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="0.8" id="chronoDelay" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoDelay',0.1,0,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Duración estímulo inicio (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoStartDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoStartDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoStartDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoStartDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
             </div>
             <div class="field-row">
               <div class="field">
                 <label>Duración estímulo final (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoEndDuration" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoEndDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="3" id="chronoEndDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoEndDuration',0.1,0.5,10)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Activación final</label>
@@ -1412,11 +1567,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Retraso verde mínimo (s)</label>
-                <input type="number" min="0.5" max="5" step="0.1" value="1" id="chronoGreenMin" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoGreenMin',-0.5,0.5,5)">−</button>
+                  <input type="number" min="0.5" max="5" step="0.1" value="1" id="chronoGreenMin" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoGreenMin',0.5,0.5,5)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Retraso verde máximo (s)</label>
-                <input type="number" min="0.5" max="5" step="0.1" value="3" id="chronoGreenMax" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoGreenMax',-0.5,0.5,5)">−</button>
+                  <input type="number" min="0.5" max="5" step="0.1" value="3" id="chronoGreenMax" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('chronoGreenMax',0.5,0.5,5)">+</button>
+                </div>
               </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
@@ -1464,7 +1627,11 @@
 
           <div class="field">
             <label>Número de repeticiones del ejercicio completo</label>
-            <input type="number" min="1" max="100" value="1" id="exerciseReps" />
+            <div class="stepper">
+              <button type="button" class="stepper-btn" onclick="adjustCount('exerciseReps',-1,1,100)">−</button>
+              <input type="number" min="1" max="100" value="1" id="exerciseReps" />
+              <button type="button" class="stepper-btn" onclick="adjustCount('exerciseReps',1,1,100)">+</button>
+            </div>
           </div>
 
           <div class="btn-row">
@@ -3446,18 +3613,30 @@
           <div class="field-row">
             <div class="field">
               <label>Repeticiones del paso</label>
-              <input type="number" class="stepRepeat" data-step="${stepIndex}" min="1" max="20" value="1">
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,-1,1,20,this.nextElementSibling)">−</button>
+                <input type="number" class="stepRepeat" data-step="${stepIndex}" min="1" max="20" value="1">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,1,1,20,this.previousElementSibling)">+</button>
+              </div>
             </div>
           </div>
-          
+
           <div class="field-row">
             <div class="field">
               <label>Tiempo de exposición (s)</label>
-              <input type="number" class="exposureTime" data-step="${stepIndex}" min="0.1" max="10" step="0.1" value="1">
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,-0.1,0.1,10,this.nextElementSibling)">−</button>
+                <input type="number" class="exposureTime" data-step="${stepIndex}" min="0.1" max="10" step="0.1" value="1">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,0.1,0.1,10,this.previousElementSibling)">+</button>
+              </div>
             </div>
             <div class="field">
               <label>Delay antes del siguiente (s)</label>
-              <input type="number" class="delayTime" data-step="${stepIndex}" min="0" max="10" step="0.1" value="0.5">
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,-0.1,0,10,this.nextElementSibling)">−</button>
+                <input type="number" class="delayTime" data-step="${stepIndex}" min="0" max="10" step="0.1" value="0.5">
+                <button type="button" class="stepper-btn" onclick="adjustCount(null,0.1,0,10,this.previousElementSibling)">+</button>
+              </div>
             </div>
           </div>
         </div>
@@ -3751,11 +3930,14 @@
       return (isNaN(v) || v <= 0) ? 0 : Math.round(v * 1000);
     }
 
-    function adjustCount(id, delta, min, max) {
-      const el = document.getElementById(id);
+    function adjustCount(id, delta, min, max, elRef) {
+      const el = elRef || document.getElementById(id);
       if (!el) return;
-      const v = Math.min(max, Math.max(min, (parseInt(el.value) || min) + delta));
-      el.value = v;
+      const current = parseFloat(el.value);
+      const base = isNaN(current) ? min : current;
+      const raw = Math.min(max, Math.max(min, base + delta));
+      const decimals = (String(Math.abs(delta)).split('.')[1] || '').length;
+      el.value = decimals > 0 ? raw.toFixed(decimals) : String(Math.round(raw));
     }
 
     function setFlashMode(mode, prefix) {
