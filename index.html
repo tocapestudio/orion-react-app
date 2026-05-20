@@ -440,6 +440,31 @@
     .color-yellow { background: #f59e0b; }
     .color-white { background: #e8f0fb; }
     .color-cyan { background: #06b6d4; }
+    /* START BAR */
+    body.has-start-bar .page { padding-bottom: 88px; }
+    #startBar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: var(--bg2); border-top: 1px solid var(--border2);
+      box-shadow: 0 -6px 24px rgba(0,0,0,0.45);
+      padding: 12px 20px; display: none; align-items: center; gap: 14px;
+    }
+    #startBar .cd-opts { display: flex; align-items: center; gap: 10px; flex: 1; flex-wrap: wrap; }
+    #startBar label { display: flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; color: var(--muted); }
+    #startBar label input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+    #startBarBtn {
+      padding: 15px 36px; font-size: 1.05rem; font-weight: 700;
+      letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0;
+    }
+    /* COUNTDOWN OVERLAY */
+    #countdownOverlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(5,10,20,0.92);
+      display: none; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
+    }
+    #countdownNumber {
+      font-family: 'DM Mono', monospace; font-size: 9rem; font-weight: 700;
+      color: var(--accent); line-height: 1; text-shadow: 0 0 40px rgba(59,130,246,0.5);
+    }
   </style>
 </head>
 <body>
@@ -688,9 +713,6 @@
               </div>
               <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveFlashExConfig()">Guardar como ejercicio</button>
             </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startFlashEx()">Iniciar</button>
-            </div>
           </div>
         </div>
         <!-- ParImpar -->
@@ -740,9 +762,6 @@
                 <input type="text" id="exPiSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
               <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveParImparExConfig()">Guardar como ejercicio</button>
-            </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startParImparEx()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -819,9 +838,6 @@
                 <input type="text" id="exStroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
               <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveStroopExConfig()">Guardar como ejercicio</button>
-            </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startStroopEx()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -911,9 +927,6 @@
                 <input type="text" id="exDiscSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
               <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveDiscriminationExConfig()">Guardar como ejercicio</button>
-            </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startDiscrimination()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1030,9 +1043,6 @@
                 <input type="text" id="exChronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
               <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveChronoExConfig()">Guardar como ejercicio</button>
-            </div>
-            <div class="btn-row">
-              <button class="btn-secondary" onclick="startChronoEx()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1251,7 +1261,6 @@
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveFlashConfig()">Guardar ejercicio</button>
-              <button class="btn-secondary" onclick="startFlash()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1303,7 +1312,6 @@
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveParImparConfig()">Guardar ejercicio</button>
-              <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1382,7 +1390,6 @@
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveStroopConfig()">Guardar ejercicio</button>
-              <button class="btn-secondary" onclick="startStroop()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1471,7 +1478,6 @@
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
-              <button class="btn-secondary" onclick="startQuickDiscrimination()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -1588,7 +1594,6 @@
             </div>
             <div class="btn-row">
               <button class="btn-primary" onclick="saveChronoConfig()">Guardar ejercicio</button>
-              <button class="btn-secondary" onclick="startChrono()">Iniciar</button>
             </div>
           </div>
         </div>
@@ -2658,8 +2663,8 @@
       document.getElementById('summaryStats').innerHTML = `
         <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
         <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>
-        <div class="stat-tile"><span class="val">${avgSprint !== null ? msToS(avgSprint) : '--'}</span><span class="lbl">Media sprint</span></div>
-        ${totalActiveMs !== null ? `<div class="stat-tile"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}`;
+        ${avgSprint !== null ? `<div class="stat-tile"><span class="val">${msToS(avgSprint)}</span><span class="lbl">Media sprint</span></div>` : ''}
+        ${totalActiveMs !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}`;
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
@@ -3199,6 +3204,8 @@
         document.getElementById('exStroopConfig').style.display = type === 'stroop' ? 'block' : 'none';
         document.getElementById('exDiscriminationConfig').style.display = type === 'discrimination' ? 'block' : 'none';
         document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
+        const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx };
+        setStarter(fns[type]);
       }
     }
 
@@ -3210,6 +3217,7 @@
       document.getElementById('exDiscriminationConfig').style.display = 'none';
       document.getElementById('exChronoConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
+      clearStarter();
     }
 
     function startFlashEx() {
@@ -3492,6 +3500,8 @@
       document.getElementById('quickFormStroop').style.display = type === 'stroop' ? 'block' : 'none';
       document.getElementById('quickFormDiscrimination').style.display = type === 'discrimination' ? 'block' : 'none';
       document.getElementById('quickFormChrono').style.display = type === 'chrono' ? 'block' : 'none';
+      const fns = { flash: startFlash, parimpar: startParImpar, stroop: startStroop, discrimination: startQuickDiscrimination, chrono: startChrono };
+      setStarter(fns[type]);
     }
 
     function collapseQuickForm() {
@@ -3501,6 +3511,7 @@
       document.getElementById('quickFormStroop').style.display = 'none';
       document.getElementById('quickFormDiscrimination').style.display = 'none';
       document.getElementById('quickFormChrono').style.display = 'none';
+      clearStarter();
     }
 
     function updateQuickDiscOptions() {
@@ -3917,6 +3928,7 @@
       navHistory.push(pageId);
       navigateTo(pageId);
       if (pageId === 'data') loadDataPage();
+      clearStarter();
     }
 
     function goBack() {
@@ -4242,6 +4254,55 @@
 
     // TOAST
     let toastTimer;
+    // ── BARRA DE INICIO FIJA ──────────────────────────────────
+    window._startFn = null;
+    let _cdTimer = null;
+
+    function setStarter(fn) {
+      window._startFn = fn;
+      document.getElementById('startBar').style.display = 'flex';
+      document.body.classList.add('has-start-bar');
+    }
+
+    function clearStarter() {
+      window._startFn = null;
+      document.getElementById('startBar').style.display = 'none';
+      document.body.classList.remove('has-start-bar');
+      cancelCountdown();
+    }
+
+    function updateCountdownUI() {
+      const use = document.getElementById('useCountdown').checked;
+      document.getElementById('countdownConfig').style.display = use ? 'flex' : 'none';
+    }
+
+    function triggerStart() {
+      if (!window._startFn) return;
+      const use = document.getElementById('useCountdown').checked;
+      const secs = use ? (parseInt(document.getElementById('countdownSecs').value) || 3) : 0;
+      if (secs <= 0) { const fn = window._startFn; clearStarter(); fn(); return; }
+      const overlay = document.getElementById('countdownOverlay');
+      const numEl   = document.getElementById('countdownNumber');
+      overlay.style.display = 'flex';
+      let rem = secs;
+      numEl.textContent = rem;
+      _cdTimer = setInterval(() => {
+        rem--;
+        if (rem <= 0) {
+          clearInterval(_cdTimer); _cdTimer = null;
+          overlay.style.display = 'none';
+          const fn = window._startFn; clearStarter(); fn();
+        } else {
+          numEl.textContent = rem;
+        }
+      }, 1000);
+    }
+
+    function cancelCountdown() {
+      if (_cdTimer) { clearInterval(_cdTimer); _cdTimer = null; }
+      document.getElementById('countdownOverlay').style.display = 'none';
+    }
+
     function toast(msg) {
       const el = document.getElementById('toast');
       el.textContent = msg;
@@ -4257,5 +4318,31 @@
     loadExercises();
     loadFolders();
   </script>
+
+  <!-- BARRA FIJA DE INICIO -->
+  <div id="startBar">
+    <div class="cd-opts">
+      <label>
+        <input type="checkbox" id="useCountdown" onchange="updateCountdownUI()">
+        Cuenta atrás
+      </label>
+      <div id="countdownConfig" style="display:none;align-items:center;gap:8px;">
+        <div class="stepper" style="margin:0;">
+          <button type="button" class="stepper-btn" onclick="adjustCount('countdownSecs',-1,1,10)">−</button>
+          <input type="number" id="countdownSecs" min="1" max="10" step="1" value="3" style="width:44px;" />
+          <button type="button" class="stepper-btn" onclick="adjustCount('countdownSecs',1,1,10)">+</button>
+        </div>
+        <span style="font-size:0.85rem;color:var(--muted);">s</span>
+      </div>
+    </div>
+    <button id="startBarBtn" class="btn-primary" onclick="triggerStart()">▶ INICIAR</button>
+  </div>
+
+  <!-- OVERLAY CUENTA ATRÁS -->
+  <div id="countdownOverlay">
+    <div id="countdownNumber">3</div>
+    <button class="btn-secondary" onclick="cancelCountdown()">Cancelar</button>
+  </div>
+
 </body>
 </html>
