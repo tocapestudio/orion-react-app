@@ -1643,15 +1643,18 @@
       try {
         const data = JSON.parse(new TextDecoder().decode(event.target.value));
         const bleNode = state.bleNodes.find(n => n.evtChar === event.target);
-        
+
+        // Registrar nodeId desde cualquier mensaje que lo incluya (incluyendo el "connected" inicial)
+        if (data.node_id != null && bleNode) {
+          bleNode.nodeId = data.node_id;
+        }
+
         // Actualizar información de batería
         if (data.battery != null) {
           const nodeId = data.node_id || 1;
-          if (bleNode) bleNode.nodeId = nodeId;
           if (!state.nodes[nodeId]) state.nodes[nodeId] = {};
           state.nodes[nodeId].battery = data.battery;
           state.nodes[nodeId].lastUpdate = Date.now();
-          // También actualizar en bleNodes
           const bn = state.bleNodes.find(n => n.nodeId === nodeId);
           if (bn) {
             bn.battery = data.battery;
@@ -1659,20 +1662,19 @@
           }
           updateNodesGrid();
         }
-        
+
         // Reacciones y eventos de sesión
         if (data.reaction_ms != null) onReactionReceived(data);
       } catch {}
     }
 
     async function sendBLE(payload) {
-      // Si el payload incluye node_id, enviar solo a ese nodo
-      // Si no, enviar a todos los nodos conectados
       const targetNodeId = payload.node_id;
-      const targetnodes = targetNodeId 
+      let targetnodes = targetNodeId
         ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
         : state.bleNodes;
-      
+      // Si se especificó node_id pero ningún nodo coincide (nodeId aún null), enviar a todos
+      if (targetNodeId && targetnodes.length === 0) targetnodes = state.bleNodes;
       for (const bleNode of targetnodes) {
         if (!bleNode.cmdChar) continue;
         try {
@@ -1922,7 +1924,7 @@
       if (config.mode === 'mode1') {
         document.getElementById('liveNode').textContent = `Nodo ${config.endNode}`;
         document.getElementById('liveHint').textContent = 'Toca el nodo final cuando aparezca';
-        sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration });
+        sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration, sensor: config.finalMode === 'proximity' ? 'proximity' : 'vibration' });
         state.session.waiting = true;
         state.session.chrono = { phase:'end', startTouchTs: null, startShowTs: Date.now() };
         state.session.timeoutId = setTimeout(() => {
@@ -1961,7 +1963,7 @@
           document.getElementById('liveNode').textContent = `Final ${config.endNode}`;
           document.getElementById('liveHint').textContent = 'Toca el nodo final ahora';
           setTimeout(() => {
-            sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration });
+            sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration, sensor: config.finalMode === 'proximity' ? 'proximity' : 'vibration' });
             state.session.waiting = true;
             state.session.timeoutId = setTimeout(() => {
               if (!state.session.waiting) return;
@@ -2106,7 +2108,7 @@
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeStroop(false, null);
-      }, step.exposure_time);
+      }, Math.max(step.exposure_time, state.session.config.duration));
     }
 
     function completeStroop(correct, reactionMs) {
@@ -2156,7 +2158,7 @@
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeParImpar(false, null);
-      }, state.session.config.timeout);
+      }, Math.max(state.session.config.timeout, state.session.config.duration));
     }
 
     function completeParImpar(correct, reactionMs) {
@@ -2740,7 +2742,7 @@
       state.session.timeoutId = setTimeout(() => {
         if (!state.session.waiting) return;
         completeDiscrimination(null, false);
-      }, timeout);
+      }, Math.max(timeout, state.session.config.duration));
     }
 
     function completeDiscrimination(reactionMs, ok) {
