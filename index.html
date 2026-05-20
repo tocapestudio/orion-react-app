@@ -1790,7 +1790,7 @@
         <!-- Botones de acción -->
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
           <div style="flex:1;min-width:140px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">+ Añadir nodo</button></div>
-          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar</button></div>
+          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="connectAny()" style="width:100%;">Ver todos</button></div>
         </div>
         <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">
           "Añadir nodo" abre el selector del navegador — úsalo si el escaneo no detecta algún nodo.
@@ -1994,6 +1994,19 @@
     }
 
     function connectNode() { connectMultiple(1); }
+
+    async function connectAny() {
+      if (!navigator.bluetooth) { toast('Web Bluetooth no disponible'); return; }
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: [BLE_SERVICE]
+        });
+        await connectDevice(device);
+      } catch(err) {
+        if (err.name !== 'NotFoundError' && err.name !== 'AbortError') toast('Error: ' + err.message);
+      }
+    }
 
     async function connectMultiple(count) {
       count = parseInt(count) || 1;
