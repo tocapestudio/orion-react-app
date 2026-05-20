@@ -549,21 +549,27 @@
                   <option value="sequential">Secuencial</option>
                 </select>
               </div>
+            </div>
+            <div class="field-row">
               <div class="field">
-                <label>Forma</label>
-                <select id="exStimShape">
+                <label>Tipo de contenido</label>
+                <select id="exStimCategory" onchange="updateStimValueOptions('exStimCategory','exStimValue','exStimColorRow')">
+                  <option value="shape">Formas</option>
+                  <option value="color">Colores</option>
+                  <option value="number">Números</option>
+                  <option value="arrow">Flechas</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Valor</label>
+                <select id="exStimValue">
                   <option value="circle">Círculo</option>
                   <option value="square_filled">Cuadrado</option>
                   <option value="plus">Cruz</option>
-                  <option value="up">Arriba</option>
-                  <option value="down">Abajo</option>
-                  <option value="left">Izquierda</option>
-                  <option value="right">Derecha</option>
-                  <option value="number">Número</option>
                 </select>
               </div>
             </div>
-            <div class="field-row">
+            <div class="field-row" id="exStimColorRow">
               <div class="field">
                 <label>Color</label>
                 <select id="exStimColor">
@@ -589,6 +595,13 @@
                 <label>Timeout (s)</label>
                 <input type="number" min="0.3" max="5" step="0.1" value="2" id="exStimTimeout" />
               </div>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exFlashSaveName" placeholder="Reacción Flash — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveFlashExConfig()">Guardar como ejercicio</button>
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startFlashEx()">Iniciar</button>
@@ -625,6 +638,13 @@
                   <option value="odd">Impar</option>
                 </select>
               </div>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exPiSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveParImparExConfig()">Guardar como ejercicio</button>
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startParImparEx()">Iniciar</button>
@@ -677,6 +697,13 @@
             <div class="field">
               <label>Delay entre rondas (s)</label>
               <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exStroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveStroopExConfig()">Guardar como ejercicio</button>
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startStroopEx()">Iniciar</button>
@@ -742,6 +769,13 @@
                 <option value="same">Iguales entre sí</option>
                 <option value="different">Diferentes entre sí</option>
               </select>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exDiscSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveDiscriminationExConfig()">Guardar como ejercicio</button>
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startDiscrimination()">Iniciar</button>
@@ -830,6 +864,13 @@
                 <label>Retraso verde máximo (s)</label>
                 <input type="number" min="0.5" max="5" step="0.1" value="3" id="exChronoGreenMax" />
               </div>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exChronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveChronoExConfig()">Guardar como ejercicio</button>
             </div>
             <div class="btn-row">
               <button class="btn-secondary" onclick="startChronoEx()">Iniciar</button>
@@ -958,20 +999,27 @@
                 <label>Timeout (s)</label>
                 <input type="number" min="0.3" max="5" step="0.1" value="2" id="stimTimeout" />
               </div>
+            </div>
             <div class="field-row">
               <div class="field">
-                <label>Forma</label>
-                <select id="stimShape">
+                <label>Tipo de contenido</label>
+                <select id="stimCategory" onchange="updateStimValueOptions('stimCategory','stimValue','stimColorRow')">
+                  <option value="shape">Formas</option>
+                  <option value="color">Colores</option>
+                  <option value="number">Números</option>
+                  <option value="arrow">Flechas</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Valor</label>
+                <select id="stimValue">
                   <option value="circle">Círculo</option>
                   <option value="square_filled">Cuadrado</option>
                   <option value="plus">Cruz</option>
-                  <option value="up">↑ Arriba</option>
-                  <option value="down">↓ Abajo</option>
-                  <option value="left">← Izquierda</option>
-                  <option value="right">→ Derecha</option>
-                  <option value="number">Número aleatorio</option>
                 </select>
               </div>
+            </div>
+            <div class="field-row" id="stimColorRow">
               <div class="field">
                 <label>Color</label>
                 <select id="stimColor">
@@ -991,8 +1039,12 @@
                 <option value="sequential">Secuencial</option>
               </select>
             </div>
+            <div class="field" style="margin-bottom:8px;">
+              <label>Nombre del ejercicio</label>
+              <input type="text" id="flashSaveName" placeholder="Reacción Flash — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+            </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveFlashConfig()">Guardar configuración</button>
+              <button class="btn-primary" onclick="saveFlashConfig()">Guardar ejercicio</button>
               <button class="btn-secondary" onclick="startFlash()">Iniciar</button>
             </div>
           </div>
@@ -1027,8 +1079,12 @@
                 <option value="odds">Tocar impares</option>
               </select>
             </div>
+            <div class="field" style="margin-bottom:8px;">
+              <label>Nombre del ejercicio</label>
+              <input type="text" id="piSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+            </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveParImparConfig()">Guardar configuración</button>
+              <button class="btn-primary" onclick="saveParImparConfig()">Guardar ejercicio</button>
               <button class="btn-secondary" onclick="startParImpar()">Iniciar</button>
             </div>
           </div>
@@ -1082,8 +1138,12 @@
               <label>Delay entre rondas (s)</label>
               <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
             </div>
+            <div class="field" style="margin-bottom:8px;">
+              <label>Nombre del ejercicio</label>
+              <input type="text" id="stroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+            </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveStroopConfig()">Guardar configuración</button>
+              <button class="btn-primary" onclick="saveStroopConfig()">Guardar ejercicio</button>
               <button class="btn-secondary" onclick="startStroop()">Iniciar</button>
             </div>
           </div>
@@ -1147,8 +1207,12 @@
                 <option value="different">Diferentes entre sí</option>
               </select>
             </div>
+            <div class="field" style="margin-bottom:8px;">
+              <label>Nombre del ejercicio</label>
+              <input type="text" id="discSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+            </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveQuickDiscriminationConfig()">Guardar configuración</button>
+              <button class="btn-primary" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
               <button class="btn-secondary" onclick="startQuickDiscrimination()">Iniciar</button>
             </div>
           </div>
@@ -1236,7 +1300,12 @@
                 <input type="number" min="0.5" max="5" step="0.1" value="3" id="chronoGreenMax" />
               </div>
             </div>
+            <div class="field" style="margin-bottom:8px;">
+              <label>Nombre del ejercicio</label>
+              <input type="text" id="chronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+            </div>
             <div class="btn-row">
+              <button class="btn-primary" onclick="saveChronoConfig()">Guardar ejercicio</button>
               <button class="btn-secondary" onclick="startChrono()">Iniciar</button>
             </div>
           </div>
@@ -1883,8 +1952,10 @@
       const nodes    = parseInt(document.getElementById('nodesCount').value);
       const reps     = parseInt(document.getElementById('repsCount').value);
       const order    = document.getElementById('stimOrder').value;
-      const shape    = document.getElementById('stimShape').value;
-      const color    = document.getElementById('stimColor').value;
+      const category = document.getElementById('stimCategory').value;
+      const value    = document.getElementById('stimValue').value;
+      const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
+      const { shape, color } = resolveStimContent(category, value, displayColor);
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout  = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
@@ -2694,8 +2765,10 @@
       const nodes    = parseInt(document.getElementById('exNodesCount').value);
       const reps     = parseInt(document.getElementById('exRepsCount').value);
       const order    = document.getElementById('exStimOrder').value;
-      const shape    = document.getElementById('exStimShape').value;
-      const color    = document.getElementById('exStimColor').value;
+      const category = document.getElementById('exStimCategory').value;
+      const value    = document.getElementById('exStimValue').value;
+      const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
+      const { shape, color } = resolveStimContent(category, value, displayColor);
       const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout  = Math.round(parseFloat(document.getElementById('exStimTimeout').value) * 1000);
@@ -3006,9 +3079,22 @@
       setTimeout(nextDiscrimination, 600);
     }
 
-    function saveQuickDiscriminationConfig() {
-      // Basic alias to save as preset — could be extended to persist
-      toast('Configuración rápida guardada');
+    async function saveQuickDiscriminationConfig() {
+      const name = (document.getElementById('discSaveName')?.value.trim()) || `Discriminación · ${new Date().toLocaleDateString()}`;
+      const nodes = parseInt(document.getElementById('discNodesCount').value);
+      const reps = parseInt(document.getElementById('discReps').value);
+      const timeout = Math.round(parseFloat(document.getElementById('discTimeout').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('discDuration').value) * 1000);
+      const delay = Math.round(parseFloat(document.getElementById('discDelay').value) * 1000);
+      const criterion = document.getElementById('discCriterion').value;
+      const correctValue = document.getElementById('discValue').value;
+      const distractors = document.getElementById('discDistractors').value;
+      const cfg = { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors };
+      try {
+        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
     }
 
     function addStep() {
@@ -3246,10 +3332,21 @@
 
     function launchCustomExercise(exercise) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      
-      const steps = JSON.parse(exercise.steps);
-      const totalReps = steps.length; // Each step is one "repetition"
-      
+
+      const stepsData = JSON.parse(exercise.steps);
+
+      if (!Array.isArray(stepsData) && stepsData._type) {
+        const cfg = stepsData.config;
+        if (stepsData._type === 'flash')          { startFlashWithConfig(cfg); return; }
+        if (stepsData._type === 'parimpar')       { startParImparWithConfig(cfg); return; }
+        if (stepsData._type === 'stroop')         { startStroopWithConfig(cfg); return; }
+        if (stepsData._type === 'discrimination') { startDiscriminationWithConfig(cfg); return; }
+        if (stepsData._type === 'chrono')         { startChronoWithConfig(cfg); return; }
+      }
+
+      const steps = Array.isArray(stepsData) ? stepsData : [];
+      const totalReps = steps.length;
+
       state.session = {
         active: true,
         type: 'custom',
@@ -3259,10 +3356,10 @@
         sequence: steps,
         timeoutId: null,
         waiting: false,
-        config: { steps, reps: 1 }, // reps is 1 since steps define the sequence
+        config: { steps, reps: 1 },
         nodeValues: {}
       };
-      
+
       showPage('exercises');
       showActiveSession();
       setTimeout(nextCustomStep, 600);
@@ -3345,84 +3442,249 @@
       }
     }
 
+    // ── Content-type helpers ──────────────────────────────────────────────
+    function updateStimValueOptions(catId, valId, colorRowId) {
+      const cat = document.getElementById(catId)?.value;
+      const valSel = document.getElementById(valId);
+      const colorRow = document.getElementById(colorRowId);
+      if (!cat || !valSel) return;
+      const shapeOpts = '<option value="circle">Círculo</option><option value="square_filled">Cuadrado</option><option value="plus">Cruz</option>';
+      const colorOpts = '<option value="green">Verde</option><option value="red">Rojo</option><option value="blue">Azul</option><option value="yellow">Amarillo</option><option value="white">Blanco</option><option value="cyan">Cian</option>';
+      const numOpts = '<option value="random">Aleatorio</option>' + [1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">${n}</option>`).join('');
+      const arrowOpts = '<option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option>';
+      if (cat === 'shape')  { valSel.innerHTML = shapeOpts; if (colorRow) colorRow.style.display = ''; }
+      else if (cat === 'color')  { valSel.innerHTML = colorOpts; if (colorRow) colorRow.style.display = 'none'; }
+      else if (cat === 'number') { valSel.innerHTML = numOpts;   if (colorRow) colorRow.style.display = ''; }
+      else if (cat === 'arrow')  { valSel.innerHTML = arrowOpts; if (colorRow) colorRow.style.display = ''; }
+    }
+
+    function resolveStimContent(category, value, displayColor) {
+      if (category === 'color') return { shape: 'circle', color: value };
+      return { shape: value, color: displayColor || 'white' };
+    }
+
+    function getCategoryLabel(cat) {
+      return { shape: 'Formas', color: 'Colores', number: 'Números', arrow: 'Flechas' }[cat] || cat;
+    }
+
+    // ── Launch-from-saved-config helpers ─────────────────────────────────
+    function startFlashWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
+      const sequence = Array.from({length: cfg.reps}, (_,i) =>
+        cfg.order === 'sequential' ? (i % cfg.numNodes) + 1 : Math.floor(Math.random() * cfg.numNodes) + 1
+      );
+      state.session = { active:true, type:'flash', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextStimulus, 600);
+    }
+
+    function startParImparWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      state.session = { active:true, type:'parimpar', history:[], current:0, total:cfg.reps, sequence:[], timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, timeout:cfg.timeout, rule:cfg.rule}, nodeValues:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextParImpar, 600);
+    }
+
+    function startStroopWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const sequence = [];
+      if (cfg.resetMode === 'same') {
+        const step = buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval);
+        for (let i = 0; i < cfg.reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
+      } else {
+        for (let i = 0; i < cfg.reps; i++) sequence.push(buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval));
+      }
+      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, resetMode:cfg.resetMode, duration:cfg.duration, interval:cfg.interval}, nodeValues:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextStroop, 600);
+    }
+
+    function startDiscriminationWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const sequence = [];
+      for (let i = 0; i < cfg.reps; i++) {
+        const nodeIds = Array.from({length: cfg.nodes}, (_, idx) => idx + 1);
+        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion: cfg.criterion, correct_value: cfg.correctValue, distractors: cfg.distractors, timeout: cfg.timeout, delay: cfg.delay });
+      }
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextDiscrimination, 600);
+    }
+
+    function startChronoWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const sequence = Array.from({ length: cfg.reps }, () => ({ mode: cfg.mode, startNode: cfg.startNode, endNode: cfg.endNode, delay: cfg.delay, finalMode: cfg.finalMode, greenMin: cfg.greenMin, greenMax: cfg.greenMax }));
+      state.session = { active:true, type:'chrono', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{mode:cfg.mode, startNode:cfg.startNode, endNode:cfg.endNode, delay:cfg.delay, finalMode:cfg.finalMode, greenMin:cfg.greenMin, greenMax:cfg.greenMax, startDuration:cfg.startDuration, endDuration:cfg.endDuration}, chrono:{} };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextChrono, 600);
+    }
+
+    // ── Save preset-form configs as named exercises ───────────────────────
+    async function saveFlashExConfig() {
+      const name = document.getElementById('exFlashSaveName').value.trim() || `Reacción Flash · ${new Date().toLocaleDateString()}`;
+      const numNodes = parseInt(document.getElementById('exNodesCount').value);
+      const reps = parseInt(document.getElementById('exRepsCount').value);
+      const order = document.getElementById('exStimOrder').value;
+      const category = document.getElementById('exStimCategory').value;
+      const value = document.getElementById('exStimValue').value;
+      const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
+      const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
+      const timeout = Math.round(parseFloat(document.getElementById('exStimTimeout').value) * 1000);
+      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
+      try {
+        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function saveParImparExConfig() {
+      const name = document.getElementById('exPiSaveName').value.trim() || `Par/Impar · ${new Date().toLocaleDateString()}`;
+      const reps = parseInt(document.getElementById('exPiReps').value);
+      const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
+      const timeout = Math.round(parseFloat(document.getElementById('exPiTimeout').value) * 1000);
+      const rule = document.getElementById('exPiRule').value;
+      const cfg = { reps, duration, timeout, rule };
+      try {
+        await db.post('exercises', { name, description: `Par/Impar · ${rule === 'even' ? 'tocar pares' : 'tocar impares'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function saveStroopExConfig() {
+      const name = document.getElementById('exStroopSaveName').value.trim() || `Stroop · ${new Date().toLocaleDateString()}`;
+      const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
+      const reps = parseInt(document.getElementById('exStroopReps').value);
+      const resolveBy = document.getElementById('exStroopRule').value;
+      const resetMode = document.getElementById('exStroopResetMode').value;
+      const timeout = Math.round(parseFloat(document.getElementById('exStroopTimeout').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
+      const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
+      const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
+      try {
+        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function saveDiscriminationExConfig() {
+      const name = document.getElementById('exDiscSaveName').value.trim() || `Discriminación · ${new Date().toLocaleDateString()}`;
+      const nodes = parseInt(document.getElementById('exDiscNodesCount').value);
+      const reps = parseInt(document.getElementById('exDiscReps').value);
+      const timeout = Math.round(parseFloat(document.getElementById('exDiscTimeout').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('exDiscDuration').value) * 1000);
+      const delay = Math.round(parseFloat(document.getElementById('exDiscDelay').value) * 1000);
+      const criterion = document.getElementById('exDiscCriterion').value;
+      const correctValue = document.getElementById('exDiscValue').value;
+      const distractors = document.getElementById('exDiscDistractors').value;
+      const cfg = { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors };
+      try {
+        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function saveChronoExConfig() {
+      const name = document.getElementById('exChronoSaveName').value.trim() || `Chrono · ${new Date().toLocaleDateString()}`;
+      const mode = document.getElementById('exChronoMode').value;
+      const startNode = parseInt(document.getElementById('exChronoStartNode').value);
+      const endNode = parseInt(document.getElementById('exChronoEndNode').value);
+      const reps = parseInt(document.getElementById('exChronoReps').value);
+      const delay = Math.round(parseFloat(document.getElementById('exChronoDelay').value) * 1000);
+      const finalMode = document.getElementById('exChronoFinalMode').value;
+      const greenMin = Math.round(parseFloat(document.getElementById('exChronoGreenMin').value) * 1000);
+      const greenMax = Math.round(parseFloat(document.getElementById('exChronoGreenMax').value) * 1000);
+      const startDuration = Math.round(parseFloat(document.getElementById('exChronoStartDuration').value) * 1000);
+      const endDuration = Math.round(parseFloat(document.getElementById('exChronoEndDuration').value) * 1000);
+      if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      const cfg = { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration };
+      try {
+        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function saveChronoConfig() {
+      const name = (document.getElementById('chronoSaveName')?.value.trim()) || `Chrono · ${new Date().toLocaleDateString()}`;
+      const mode = document.getElementById('chronoMode').value;
+      const startNode = parseInt(document.getElementById('chronoStartNode').value);
+      const endNode = parseInt(document.getElementById('chronoEndNode').value);
+      const reps = parseInt(document.getElementById('chronoReps').value);
+      const delay = Math.round(parseFloat(document.getElementById('chronoDelay').value) * 1000);
+      const finalMode = document.getElementById('chronoFinalMode').value;
+      const greenMin = Math.round(parseFloat(document.getElementById('chronoGreenMin').value) * 1000);
+      const greenMax = Math.round(parseFloat(document.getElementById('chronoGreenMax').value) * 1000);
+      const startDuration = Math.round(parseFloat(document.getElementById('chronoStartDuration').value) * 1000);
+      const endDuration = Math.round(parseFloat(document.getElementById('chronoEndDuration').value) * 1000);
+      if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
+      const cfg = { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration };
+      try {
+        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
     async function saveFlashConfig() {
-      const name = `Reacción Flash - ${new Date().toLocaleDateString()}`;
+      const name = (document.getElementById('flashSaveName')?.value.trim()) || `Reacción Flash · ${new Date().toLocaleDateString()}`;
       const numNodes = parseInt(document.getElementById('nodesCount').value);
       const reps = parseInt(document.getElementById('repsCount').value);
       const order = document.getElementById('stimOrder').value;
-      const shape = document.getElementById('stimShape').value;
-      const color = document.getElementById('stimColor').value;
+      const category = document.getElementById('stimCategory').value;
+      const value = document.getElementById('stimValue').value;
+      const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
+      const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
-      
-      const steps = Array.from({length: reps}, (_,i) => {
-        const nodeId = order === 'sequential' ? (i % numNodes) + 1 : Math.floor(Math.random() * numNodes) + 1;
-        const stepNodes = {};
-        stepNodes[nodeId] = { shape, colors: [color] };
-        return {
-          nodes: stepNodes,
-          correct_response: 'node-1',
-          correct_node: nodeId,
-          exposure_time: timeout,
-          delay: interval
-        };
-      });
-      
+      const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
       try {
-        await db.post('exercises', { name, description: 'Configuración rápida - Reacción Flash', steps: JSON.stringify(steps), folder_id: null });
-        toast('Configuración guardada ✓');
+        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
         await loadExercises();
-      } catch(err) {
-        toast('Error: ' + err.message);
-      }
+      } catch(err) { toast('Error: ' + err.message); }
     }
 
     async function saveParImparConfig() {
-      const name = `Par/Impar - ${new Date().toLocaleDateString()}`;
+      const name = (document.getElementById('piSaveName')?.value.trim()) || `Par/Impar · ${new Date().toLocaleDateString()}`;
       const reps = parseInt(document.getElementById('piReps').value);
+      const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
       const timeout = Math.round(parseFloat(document.getElementById('piTimeout').value) * 1000);
       const rule = document.getElementById('piRule').value;
-      
-      const steps = Array.from({length: reps}, () => ({
-        nodes: { 1: { shape: 'circle', colors: ['red', 'green', 'blue', 'yellow'] }, 2: { shape: 'circle', colors: ['red', 'green', 'blue', 'yellow'] }},
-        correct_response: rule === 'pairs' ? 'even' : 'odd',
-        correct_node: null,
-        exposure_time: timeout,
-        delay: 700
-      }));
-      
+      const cfg = { reps, duration, timeout, rule };
       try {
-        await db.post('exercises', { name, description: 'Configuración rápida - Par/Impar', steps: JSON.stringify(steps), folder_id: null });
-        toast('Configuración guardada ✓');
+        await db.post('exercises', { name, description: `Par/Impar · ${rule === 'pairs' ? 'tocar pares' : 'tocar impares'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
         await loadExercises();
-      } catch(err) {
-        toast('Error: ' + err.message);
-      }
+      } catch(err) { toast('Error: ' + err.message); }
     }
 
     async function saveStroopConfig() {
-      const name = `Stroop - ${new Date().toLocaleDateString()}`;
+      const name = (document.getElementById('stroopSaveName')?.value.trim()) || `Stroop · ${new Date().toLocaleDateString()}`;
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
       const timeout = Math.round(parseFloat(document.getElementById('stroopTimeout').value) * 1000);
-      const delay = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
-      const description = `Stroop ${resolveBy === 'named' ? 'color nombrado' : 'color de tinta'} · ${resetMode === 'different' ? 'cambia cada vez' : 'mismo esquema'}`;
-      const steps = [];
-      if (resetMode === 'same') {
-        const step = buildStroopStep(nodesCount, resolveBy, timeout, delay);
-        for (let i = 0; i < reps; i++) steps.push(JSON.parse(JSON.stringify(step)));
-      } else {
-        for (let i = 0; i < reps; i++) steps.push(buildStroopStep(nodesCount, resolveBy, timeout, delay));
-      }
+      const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
+      const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
+      const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
       try {
-        await db.post('exercises', { name, description: `Configuración rápida - ${description}`, steps: JSON.stringify(steps), folder_id: null });
-        toast('Configuración guardada ✓');
+        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
+        toast('Ejercicio guardado ✓');
         await loadExercises();
-      } catch(err) {
-        toast('Error: ' + err.message);
-      }
+      } catch(err) { toast('Error: ' + err.message); }
     }
 
     function launchExercise(type) { 
