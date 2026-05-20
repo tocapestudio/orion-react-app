@@ -594,10 +594,6 @@
                   <option value="cyan">Cian</option>
                 </select>
               </div>
-              <div class="field">
-                <label>Intervalo (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="exStimInterval" />
-              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -605,9 +601,13 @@
                 <input type="number" min="0.5" max="10" step="0.1" value="2" id="exStimDuration" />
               </div>
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="2" id="exStimTimeout" />
+                <label>Intervalo (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="exStimInterval" />
               </div>
+            </div>
+            <div class="field">
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="exStimTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -639,18 +639,16 @@
                 <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exPiDuration" />
               </div>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="2.5" id="exPiTimeout" />
-              </div>
-              <div class="field">
-                <label>Regla</label>
-                <select id="exPiRule">
-                  <option value="even">Par</option>
-                  <option value="odd">Impar</option>
-                </select>
-              </div>
+            <div class="field">
+              <label>Regla</label>
+              <select id="exPiRule">
+                <option value="even">Par</option>
+                <option value="odd">Impar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="exPiTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -703,17 +701,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopTimeout" />
-              </div>
-              <div class="field">
                 <label>Duración del estímulo (s)</label>
                 <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="exStroopDuration" />
               </div>
+              <div class="field">
+                <label>Delay entre rondas (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
+              </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (s)</label>
-              <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="exStroopInterval" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.5" max="30" step="0.1" id="exStroopTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
               <div class="field" style="margin-bottom:10px;">
@@ -751,17 +749,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.3" max="10" step="0.1" value="2" id="exDiscTimeout" />
-              </div>
-              <div class="field">
                 <label>Duración del estímulo (s)</label>
                 <input type="number" min="0.5" max="10" step="0.1" value="2" id="exDiscDuration" />
               </div>
+              <div class="field">
+                <label>Delay entre rondas (s)</label>
+                <input type="number" min="0" max="5" step="0.1" value="0.8" id="exDiscDelay" />
+              </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (s)</label>
-              <input type="number" min="0" max="5" step="0.1" value="0.8" id="exDiscDelay" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="exDiscTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -1011,19 +1009,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Intervalo (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="stimInterval" />
-              </div>
-              <div class="field">
                 <label>Duración del estímulo (s)</label>
                 <input type="number" min="0.5" max="10" step="0.1" value="2" id="stimDuration" />
               </div>
-            </div>
-            <div class="field-row">
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.3" max="5" step="0.1" value="2" id="stimTimeout" />
+                <label>Intervalo (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="1.2" id="stimInterval" />
               </div>
+            </div>
+            <div class="field">
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="stimTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -1094,15 +1090,15 @@
               </div>
             </div>
             <div class="field">
-              <label>Timeout (s)</label>
-              <input type="number" min="0.3" max="5" step="0.1" value="2.5" id="piTimeout" />
-            </div>
-            <div class="field">
               <label>Regla</label>
               <select id="piRule">
                 <option value="pairs">Tocar pares</option>
                 <option value="odds">Tocar impares</option>
               </select>
+            </div>
+            <div class="field">
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="piTimeout" placeholder="Sin límite" />
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -1155,17 +1151,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopTimeout" />
-              </div>
-              <div class="field">
                 <label>Duración del estímulo (s)</label>
                 <input type="number" min="0.5" max="10" step="0.1" value="2.5" id="stroopDuration" />
               </div>
+              <div class="field">
+                <label>Delay entre rondas (s)</label>
+                <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
+              </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (s)</label>
-              <input type="number" min="0.3" max="5" step="0.1" value="0.8" id="stroopInterval" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.5" max="30" step="0.1" id="stroopTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div class="field" style="margin-bottom:8px;">
               <label>Nombre del ejercicio</label>
@@ -1200,17 +1196,17 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Timeout (s)</label>
-                <input type="number" min="0.3" max="10" step="0.1" value="2" id="discTimeout" />
-              </div>
-              <div class="field">
                 <label>Duración del estímulo (s)</label>
                 <input type="number" min="0.5" max="10" step="0.1" value="2" id="discDuration" />
               </div>
+              <div class="field">
+                <label>Delay entre rondas (s)</label>
+                <input type="number" min="0" max="5" step="0.1" value="0.8" id="discDelay" />
+              </div>
             </div>
             <div class="field">
-              <label>Delay entre rondas (s)</label>
-              <input type="number" min="0" max="5" step="0.1" value="0.8" id="discDelay" />
+              <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">(opcional)</span></label>
+              <input type="number" min="0.3" max="30" step="0.1" id="discTimeout" placeholder="Sin límite" style="width:100%;" />
             </div>
             <div class="field-row">
               <div class="field">
@@ -2001,7 +1997,7 @@
       const { shape, color } = resolveStimContent(category, value, displayColor);
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
-      const timeout  = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
+      const timeout  = readTimeout('stimTimeout');
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
@@ -2203,7 +2199,7 @@
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
-      const timeout = Math.round(parseFloat(document.getElementById('stroopTimeout').value) * 1000);
+      const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sequence = [];
@@ -2261,7 +2257,7 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('piReps').value);
       const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('piTimeout').value) * 1000);
+      const timeout = readTimeout('piTimeout');
       const rule    = document.getElementById('piRule').value;
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       showPage('exercises');
@@ -2477,15 +2473,29 @@
       const dates = [...new Set(sessions.map(s => s.date?.slice(0,10)).filter(Boolean))].sort((a,b) => b.localeCompare(a));
       if (!dates.length) { container.innerHTML = ''; return; }
       container.innerHTML = dates.map(d => {
-        const label = new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
-        return `<button type="button" onclick="filterByDateChip('${d}')" style="padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--accent);font-size:0.75rem;cursor:pointer;font-family:inherit;white-space:nowrap;">${label}</button>`;
+        const dt = new Date(d + 'T00:00:00');
+        const day  = dt.toLocaleDateString('es-ES', { day:'2-digit' });
+        const mon  = dt.toLocaleDateString('es-ES', { month:'short' });
+        return `<button type="button" id="chip-${d}" onclick="filterByDateChip('${d}')"
+          style="display:flex;flex-direction:column;align-items:center;padding:6px 10px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;font-family:inherit;min-width:44px;gap:2px;transition:background .15s,border-color .15s;">
+          <span style="font-size:0.82rem;font-weight:700;color:var(--text);line-height:1;">${day}</span>
+          <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;line-height:1;">${mon}</span>
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--accent);display:block;margin-top:2px;"></span>
+        </button>`;
       }).join('');
     }
 
     function filterByDateChip(date) {
       const input = document.getElementById('dataSessionDateFilter');
       if (!input) return;
-      if (input.value === date) { input.value = ''; } else { input.value = date; }
+      const isActive = input.value === date;
+      input.value = isActive ? '' : date;
+      document.querySelectorAll('[id^="chip-"]').forEach(btn => {
+        const active = btn.id === `chip-${input.value}`;
+        btn.style.background = active ? 'var(--accent)' : 'var(--bg3)';
+        btn.style.borderColor = active ? 'var(--accent)' : 'var(--border2)';
+        btn.querySelector('span').style.color = active ? '#fff' : 'var(--text)';
+      });
       applySessionFilters();
     }
 
@@ -2866,7 +2876,7 @@
       const { shape, color } = resolveStimContent(category, value, displayColor);
       const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
-      const timeout  = Math.round(parseFloat(document.getElementById('exStimTimeout').value) * 1000);
+      const timeout  = readTimeout('exStimTimeout');
       const sequence = Array.from({length: reps}, (_,i) =>
         order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
       );
@@ -2880,7 +2890,7 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const reps    = parseInt(document.getElementById('exPiReps').value);
       const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('exPiTimeout').value) * 1000);
+      const timeout = readTimeout('exPiTimeout');
       const rule    = document.getElementById('exPiRule').value;
       state.session = { active:true, type:'parimpar', history:[], current:0, total:reps, sequence:[], timeoutId:null, waiting:false, config:{reps,duration,timeout,rule}, nodeValues:{} };
       closePresetConfig();
@@ -2894,7 +2904,7 @@
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
       const resetMode = document.getElementById('exStroopResetMode').value;
-      const timeout = Math.round(parseFloat(document.getElementById('exStroopTimeout').value) * 1000);
+      const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sequence = [];
@@ -2948,7 +2958,7 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
-      const timeout = Math.round(parseFloat(document.getElementById('exDiscTimeout')?.value || 2) * 1000);
+      const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay')?.value || 0.8) * 1000);
       const criterion = document.getElementById('exDiscCriterion')?.value || 'color';
@@ -3156,7 +3166,7 @@
       // mirror preset start but reading quick form fields
       const nodes = parseInt(document.getElementById('discNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('discReps')?.value || 10);
-      const timeout = Math.round(parseFloat(document.getElementById('discTimeout')?.value || 2) * 1000);
+      const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay')?.value || 0.8) * 1000);
       const criterion = document.getElementById('discCriterion')?.value || 'color';
@@ -3178,7 +3188,7 @@
       const name = (document.getElementById('discSaveName')?.value.trim()) || `Discriminación · ${new Date().toLocaleDateString()}`;
       const nodes = parseInt(document.getElementById('discNodesCount').value);
       const reps = parseInt(document.getElementById('discReps').value);
-      const timeout = Math.round(parseFloat(document.getElementById('discTimeout').value) * 1000);
+      const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay').value) * 1000);
       const criterion = document.getElementById('discCriterion').value;
@@ -3538,6 +3548,11 @@
     }
 
     // ── Stepper helper ───────────────────────────────────────────────────
+    function readTimeout(id, fallback = 30) {
+      const v = parseFloat(document.getElementById(id)?.value);
+      return Math.round((isNaN(v) || v <= 0 ? fallback : v) * 1000);
+    }
+
     function adjustCount(id, delta, min, max) {
       const el = document.getElementById(id);
       if (!el) return;
@@ -3640,7 +3655,7 @@
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
       const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('exStimTimeout').value) * 1000);
+      const timeout = readTimeout('exStimTimeout');
       const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
@@ -3653,7 +3668,7 @@
       const name = document.getElementById('exPiSaveName').value.trim() || `Par/Impar · ${new Date().toLocaleDateString()}`;
       const reps = parseInt(document.getElementById('exPiReps').value);
       const duration = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('exPiTimeout').value) * 1000);
+      const timeout = readTimeout('exPiTimeout');
       const rule = document.getElementById('exPiRule').value;
       const cfg = { reps, duration, timeout, rule };
       try {
@@ -3669,7 +3684,7 @@
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
       const resetMode = document.getElementById('exStroopResetMode').value;
-      const timeout = Math.round(parseFloat(document.getElementById('exStroopTimeout').value) * 1000);
+      const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
@@ -3684,7 +3699,7 @@
       const name = document.getElementById('exDiscSaveName').value.trim() || `Discriminación · ${new Date().toLocaleDateString()}`;
       const nodes = parseInt(document.getElementById('exDiscNodesCount').value);
       const reps = parseInt(document.getElementById('exDiscReps').value);
-      const timeout = Math.round(parseFloat(document.getElementById('exDiscTimeout').value) * 1000);
+      const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay').value) * 1000);
       const criterion = document.getElementById('exDiscCriterion').value;
@@ -3750,7 +3765,7 @@
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
       const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('stimTimeout').value) * 1000);
+      const timeout = readTimeout('stimTimeout');
       const cfg = { numNodes, reps, order, category, value, displayColor, interval, duration, timeout };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
@@ -3763,7 +3778,7 @@
       const name = (document.getElementById('piSaveName')?.value.trim()) || `Par/Impar · ${new Date().toLocaleDateString()}`;
       const reps = parseInt(document.getElementById('piReps').value);
       const duration = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
-      const timeout = Math.round(parseFloat(document.getElementById('piTimeout').value) * 1000);
+      const timeout = readTimeout('piTimeout');
       const rule = document.getElementById('piRule').value;
       const cfg = { reps, duration, timeout, rule };
       try {
@@ -3779,7 +3794,7 @@
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
       const resetMode = document.getElementById('stroopResetMode').value;
-      const timeout = Math.round(parseFloat(document.getElementById('stroopTimeout').value) * 1000);
+      const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
