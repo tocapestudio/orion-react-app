@@ -164,6 +164,15 @@
     .field-row .field { flex: 1; }
     .slider-val { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--accent); float: right; }
 
+    /* STEPPER (number + − +) */
+    .stepper { display:flex; align-items:center; gap:0; border:1px solid var(--border2); border-radius:12px; overflow:hidden; background:var(--bg3); }
+    .stepper-btn { background:none; border:none; color:var(--accent); font-size:1.25rem; width:40px; height:40px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .stepper-btn:active { background:var(--bg2); }
+    .stepper input[type=number] { background:none; border:none; color:var(--text); font-family:'DM Mono',monospace; font-size:1rem; text-align:center; width:40px; appearance:textfield; -moz-appearance:textfield; padding:0; }
+    .stepper input[type=number]::-webkit-inner-spin-button,
+    .stepper input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+    .stepper input[type=number]:focus { outline:none; }
+
     /* TOGGLE */
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -534,7 +543,11 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
-                <input type="number" min="1" max="8" value="3" id="exNodesCount" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exNodesCount',-1,1,8)">−</button>
+                  <input type="number" min="1" max="8" value="3" id="exNodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exNodesCount',1,1,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -661,7 +674,11 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
-                <input type="number" min="2" max="8" value="3" id="exStroopNodesCount" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopNodesCount',-1,2,8)">−</button>
+                  <input type="number" min="2" max="8" value="3" id="exStroopNodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopNodesCount',1,2,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -721,7 +738,11 @@
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
-                <input type="number" min="2" max="8" value="3" id="exDiscNodesCount" />
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscNodesCount',-1,2,8)">−</button>
+                  <input type="number" min="2" max="8" value="3" id="exDiscNodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscNodesCount',1,2,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -976,8 +997,12 @@
             <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
             <div class="field-row">
               <div class="field">
-                <label>Nodos activos <span class="slider-val" id="nodesVal">3</span></label>
-                <input type="range" min="1" max="8" value="3" id="nodesCount" oninput="document.getElementById('nodesVal').textContent=this.value" />
+                <label>Nodos activos</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('nodesCount',-1,1,8)">−</button>
+                  <input type="number" min="1" max="8" value="3" id="nodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('nodesCount',1,1,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -1100,8 +1125,12 @@
             <div class="card-sub">Elige si la respuesta está en el nombre del color o en el color de la tinta.</div>
             <div class="field-row">
               <div class="field">
-                <label>Nodos activos <span class="slider-val" id="stroopNodesVal">3</span></label>
-                <input type="range" min="2" max="8" value="3" id="stroopNodesCount" oninput="document.getElementById('stroopNodesVal').textContent=this.value" />
+                <label>Nodos activos</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopNodesCount',-1,2,8)">−</button>
+                  <input type="number" min="2" max="8" value="3" id="stroopNodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopNodesCount',1,2,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -1157,8 +1186,12 @@
             <div class="card-sub">Encuentra el objetivo entre distractores.</div>
             <div class="field-row">
               <div class="field">
-                <label>Nodos activos <span class="slider-val" id="discNodesVal">3</span></label>
-                <input type="range" min="2" max="8" value="3" id="discNodesCount" oninput="document.getElementById('discNodesVal').textContent=this.value" />
+                <label>Nodos activos</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discNodesCount',-1,2,8)">−</button>
+                  <input type="number" min="2" max="8" value="3" id="discNodesCount" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discNodesCount',1,2,8)">+</button>
+                </div>
               </div>
               <div class="field">
                 <label>Repeticiones</label>
@@ -1417,6 +1450,7 @@
           <button onclick="document.getElementById('dataSessionDateFilter').value='';applySessionFilters();"
             style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">✕</button>
         </div>
+        <div id="dataSessionDateChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
         <div id="dataViewSessions"></div>
       </div>
     </section>
@@ -1453,8 +1487,7 @@
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:160px;"><input type="number" min="1" max="8" value="1" id="connectCount" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);" /></div>
-          <div style="flex:1;min-width:160px;"><button class="btn-primary" onclick="connectMultiple()" style="width:100%;">Conectar N</button></div>
+          <div style="flex:1;min-width:160px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">Conectar nodo</button></div>
           <div style="flex:1;min-width:160px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
         </div>
       </div>
@@ -1655,8 +1688,10 @@
       disconnectBLE(state.bleNodes[index].device);
     }
 
-    async function connectMultiple() {
-      const count = parseInt(document.getElementById('connectCount').value) || 1;
+    function connectNode() { connectMultiple(1); }
+
+    async function connectMultiple(count) {
+      count = parseInt(count) || 1;
       const toConnect = Math.max(1, Math.min(count, 8 - state.bleNodes.length));
       let connected = 0;
       
@@ -2429,10 +2464,29 @@
       try {
         const sessions = await db.get('sessions', `?athlete_id=eq.${athleteId}&order=date.desc`);
         window.dataCurrentSessions = sessions;
+        renderSessionDateChips(sessions);
         applySessionFilters();
       } catch {
         container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
       }
+    }
+
+    function renderSessionDateChips(sessions) {
+      const container = document.getElementById('dataSessionDateChips');
+      if (!container) return;
+      const dates = [...new Set(sessions.map(s => s.date?.slice(0,10)).filter(Boolean))].sort((a,b) => b.localeCompare(a));
+      if (!dates.length) { container.innerHTML = ''; return; }
+      container.innerHTML = dates.map(d => {
+        const label = new Date(d + 'T00:00:00').toLocaleDateString('es-ES', { day:'2-digit', month:'short' });
+        return `<button type="button" onclick="filterByDateChip('${d}')" style="padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--accent);font-size:0.75rem;cursor:pointer;font-family:inherit;white-space:nowrap;">${label}</button>`;
+      }).join('');
+    }
+
+    function filterByDateChip(date) {
+      const input = document.getElementById('dataSessionDateFilter');
+      if (!input) return;
+      if (input.value === date) { input.value = ''; } else { input.value = date; }
+      applySessionFilters();
     }
 
     function toggleSessionSort() {
@@ -2671,8 +2725,13 @@
     // CONFIG
     function updateBrightnessPreview(val) {
       document.getElementById('brightnessVal').textContent = val;
-      // Envía el brillo a todos los nodos para que se vea la previa
-      sendBLE({ cmd:'brightness', value:String(val), preview:true });
+      sendBLE({ cmd:'brightness', value:String(val) });
+      if (!state.session?.active && state.bleNodes.length > 0) {
+        clearTimeout(window._brightnessTimer);
+        window._brightnessTimer = setTimeout(() => {
+          state.bleNodes.forEach(n => sendBLE({ cmd:'show', node_id:n.nodeId, shape:'circle', color:'white', duration:1500 }));
+        }, 80);
+      }
     }
 
     function updateBrightness(val) {
@@ -3476,6 +3535,14 @@
         navHistory = ['home'];
         navigateTo('home');
       }
+    }
+
+    // ── Stepper helper ───────────────────────────────────────────────────
+    function adjustCount(id, delta, min, max) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const v = Math.min(max, Math.max(min, (parseInt(el.value) || min) + delta));
+      el.value = v;
     }
 
     // ── Content-type helpers ──────────────────────────────────────────────
