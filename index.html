@@ -2085,7 +2085,7 @@
       disconnectBLE(state.bleNodes[index].device);
     }
 
-    function connectNode() { connectMultiple(1); }
+    function connectNode() { connectBLE(); }
 
     async function connectAny() {
       if (!navigator.bluetooth) { toast('Web Bluetooth no disponible'); return; }
@@ -2127,7 +2127,10 @@
           requestNodeId(cmdChar);
           await new Promise(r => setTimeout(r, 600));
         } catch(err) {
-          if (err.name !== 'NotFoundError' && err.name !== 'AbortError') console.warn(err);
+          if (err.name !== 'NotFoundError' && err.name !== 'AbortError') {
+            console.warn(err);
+            toast('Error al conectar: ' + (err.message || err));
+          }
           break;
         }
       }
@@ -2167,6 +2170,9 @@
 
     function onBLEDisconnected(device) {
       const index = state.bleNodes.findIndex(n => n.device === device);
+      const nodeLabel = index !== -1
+        ? `Nodo ${state.bleNodes[index].nodeId || state.bleNodes[index].device?.name || '?'}`
+        : (device?.name || 'Nodo');
       if (index !== -1) {
         state.bleNodes.splice(index, 1);
       }
@@ -2174,7 +2180,7 @@
       updateNodesGrid();
       updateSelectDisconnectUI();
       if (state.bleNodes.length === 0) state.nodes = {};
-      toast('Nodo desconectado');
+      toast(`${nodeLabel} desconectado`);
     }
 
     function onBLEMessage(event) {
