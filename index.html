@@ -545,8 +545,9 @@
 
   <main class="main">
     <section class="page" id="page-home">
-      <div class="section-header">
+      <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;">
         <div class="section-title">Inicio</div>
+        <button class="btn-secondary" onclick="toggleFullscreen()" style="padding:8px 12px;font-size:1.1rem;line-height:1;" title="Pantalla completa">⛶</button>
       </div>
       <div class="home-grid home-grid-main">
 
@@ -1431,7 +1432,6 @@
         <div class="btn-row" style="flex-wrap:wrap;gap:8px;">
           <button class="btn-danger" onclick="stopSession()" style="flex:1;">Detener</button>
           <button class="btn-secondary" id="btnPause" onclick="togglePause()" style="flex:1;">⏸ Pausa</button>
-          <button class="btn-secondary" onclick="toggleFullscreen()" style="padding:10px 14px;" title="Pantalla completa">⛶</button>
         </div>
       </div>
 
@@ -1449,7 +1449,7 @@
             <button class="btn-primary" id="btnSaveSession" onclick="saveSession()" style="flex:1;">Guardar en la nube</button>
             <button class="btn-secondary" onclick="exportSessionCSV()" style="flex:1;">Exportar CSV</button>
           </div>
-          <div class="btn-row" style="flex-wrap:wrap;gap:8px;margin-top:0;">
+          <div class="btn-row" style="flex-wrap:wrap;gap:8px;margin-top:12px;">
             <button class="btn-secondary" onclick="restartSession()">Reiniciar</button>
             <button class="btn-secondary" onclick="reconfigureSession()">Reconfigurar</button>
             <button class="btn-secondary" onclick="discardSession()">Descartar</button>
@@ -3070,7 +3070,7 @@
       const { sequence, current } = state.session;
       const step = sequence[current];
       const nodeIds = Object.keys(step.nodes).map(Number);
-      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      document.getElementById('liveNode').textContent = '';
       const hintColor = step.correct_response === 'stroop-named' ? step.named_color : step.ink_color;
       const action = step.correct_response === 'stroop-named' ? 'Toca el color nombrado' : 'Toca el color de la tinta';
       document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(hintColor)}`;
@@ -3095,7 +3095,6 @@
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
       const step = state.session.sequence[state.session.current];
-      updateStroopScreen(null);
       state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:'stroop', color: step.correct_response === 'stroop-named' ? step.named_color : step.ink_color, reaction_ms:reactionMs, result:correct ? 'ok' : 'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
@@ -3143,13 +3142,15 @@
         state.session.correctNode = isEven ? (node1HasCircle ? nid1 : nid2) : (node1HasCircle ? nid2 : nid1);
         const screenColor = config.colorDiff ? ['white','green','blue'][Math.floor(Math.random()*3)] : 'white';
         updateStroopScreen({ word: String(num), ink: screenColor });
-        document.getElementById('liveNode').textContent = `Nodo ${nid1}: ${node1HasCircle?'O':'X'}  ·  Nodo ${nid2}: ${node1HasCircle?'X':'O'}`;
+        document.getElementById('liveNode').textContent = '';
         document.getElementById('liveHint').textContent = isEven ? 'PAR → toca O' : 'IMPAR → toca X';
-        sendBLE({ cmd:'show', node_id:nid1, shape: node1HasCircle ? 'circle' : 'x', color:'white', duration:dur, sensor:config.sensor||'vibration' });
+        const nc1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
+        const nc2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
+        sendBLE({ cmd:'show', node_id:nid1, shape: node1HasCircle ? 'ring' : 'x', color:nc1, duration:dur, sensor:config.sensor||'vibration' });
         const _piRound1 = state.session.current;
         state.session.showNode2Id = setTimeout(() => {
           if (!state.session.active || state.session.current !== _piRound1) return;
-          sendBLE({ cmd:'show', node_id:nid2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:config.sensor||'vibration' });
+          sendBLE({ cmd:'show', node_id:nid2, shape: node1HasCircle ? 'x' : 'ring', color:nc2, duration:dur, sensor:config.sensor||'vibration' });
         }, 80);
       } else {
         // Modo 2: palabra en pantalla, números en nodos
@@ -3164,7 +3165,7 @@
         const screenWord  = wantsEven ? 'PAR' : 'IMPAR';
         const screenColor = config.colorDiff ? (Math.random() < 0.5 ? 'green' : 'red') : 'white';
         updateStroopScreen({ word: screenWord, ink: screenColor });
-        document.getElementById('liveNode').textContent = `Nodo ${nid1}: ${v1}  ·  Nodo ${nid2}: ${v2}`;
+        document.getElementById('liveNode').textContent = '';
         document.getElementById('liveHint').textContent = `Toca el número ${screenWord}`;
         const c1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
         const c2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
@@ -3189,7 +3190,6 @@
       clearTimeout(state.session.timeoutId);
       clearTimeout(state.session.showNode2Id);
       sendBLE({ cmd:'off' });
-      updateStroopScreen(null);
       state.session.history.push({ repetition:state.session.current+1, reaction_ms:reactionMs, result:correct?'ok':'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : '✗ Error o sin respuesta';
