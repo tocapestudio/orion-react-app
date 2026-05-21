@@ -776,7 +776,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exStimSensor">
+                <select id="exStimSensor" onchange="toggleProxThresh(this,'exStimProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -785,6 +785,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exStimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exStimSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exStimProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStimProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exStimProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStimProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -854,7 +862,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exPiSensor">
+                <select id="exPiSensor" onchange="toggleProxThresh(this,'exPiProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -863,6 +871,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exPiSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exPiSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exPiProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPiProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exPiProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPiProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
@@ -941,7 +957,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exStroopSensor">
+                <select id="exStroopSensor" onchange="toggleProxThresh(this,'exStroopProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -950,6 +966,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exStroopSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exStroopSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exStroopProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStroopProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exStroopProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exStroopProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1065,7 +1089,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exDiscSensor">
+                <select id="exDiscSensor" onchange="toggleProxThresh(this,'exDiscProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -1074,6 +1098,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exDiscSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exDiscSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exDiscProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exDiscProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exDiscProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exDiscProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1267,7 +1299,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exPdSensor">
+                <select id="exPdSensor" onchange="toggleProxThresh(this,'exPdProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -1276,6 +1308,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exPdSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exPdSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exPdProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPdProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exPdProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPdProxThresh',5,10,100)">+</button>
               </div>
             </div>
           </div>
@@ -1347,7 +1387,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Detección</label>
-                <select id="exSimonSensor">
+                <select id="exSimonSensor" onchange="toggleProxThresh(this,'exSimonProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -1356,6 +1396,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exSimonSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exSimonSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exSimonProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exSimonProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exSimonProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exSimonProxThresh',5,10,100)">+</button>
               </div>
             </div>
           </div>
@@ -1575,7 +1623,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Apagado</label>
-                <select id="stimSensor">
+                <select id="stimSensor" onchange="toggleProxThresh(this,'stimProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
@@ -1584,6 +1632,14 @@
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="stimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="stimSound" style="margin:0;cursor:pointer;">Sonido</label>
+              </div>
+            </div>
+            <div id="stimProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="stimProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('stimProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
@@ -1654,11 +1710,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Apagado</label>
-                <select id="piSensor">
+                <select id="piSensor" onchange="toggleProxThresh(this,'piProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
                 </select>
+              </div>
+            </div>
+            <div id="piProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('piProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="piProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('piProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
@@ -1739,11 +1803,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Apagado</label>
-                <select id="stroopSensor">
+                <select id="stroopSensor" onchange="toggleProxThresh(this,'stroopProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
                 </select>
+              </div>
+            </div>
+            <div id="stroopProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('stroopProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="stroopProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('stroopProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
@@ -1858,11 +1930,19 @@
             <div class="field-row">
               <div class="field">
                 <label>Apagado</label>
-                <select id="discSensor">
+                <select id="discSensor" onchange="toggleProxThresh(this,'discProxThreshRow')">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
                   <option value="both">Ambos</option>
                 </select>
+              </div>
+            </div>
+            <div id="discProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('discProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="discProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('discProxThresh',5,10,100)">+</button>
               </div>
             </div>
             <div class="field" style="margin-bottom:8px;">
@@ -2511,6 +2591,11 @@
     }
 
     async function sendBLE(payload) {
+      // Auto-inject proximity_threshold when using proximity-based detection
+      if (payload.sensor === 'proximity' || payload.sensor === 'both') {
+        const thresh = state.session?.config?.proximityThreshold ?? 30;
+        payload = { ...payload, proximity_threshold: thresh };
+      }
       const targetNodeId = payload.node_id;
       let targetnodes = targetNodeId
         ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
@@ -2730,6 +2815,7 @@
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout  = readTimeout('stimTimeout');
       const sensor   = document.getElementById('stimSensor').value;
+      const proximityThreshold = readProxThresh('stimProxThresh');
       const sound    = document.getElementById('stimSound').checked;
       const total    = exerciseMode === 'reps' ? reps : 999;
       const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
@@ -2737,8 +2823,8 @@
         order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
       if (exerciseMode === 'time') {
         state.session.countdownId = setInterval(() => {
           if (!state.session.active) return;
@@ -2969,10 +3055,11 @@
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sensor = document.getElementById('stroopSensor').value;
+      const proximityThreshold = readProxThresh('stroopProxThresh');
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
       const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration,sensor,proximityThreshold}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -3030,9 +3117,10 @@
       const piMode    = document.getElementById('piMode').value;
       const colorDiff = document.getElementById('piColorDiff').checked;
       const sensor    = document.getElementById('piSensor').value;
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor } };
+      const proximityThreshold = readProxThresh('piProxThresh');
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold } };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -3179,6 +3267,16 @@
         // máximo 5 entradas visibles
         while (log.children.length > 5) log.removeChild(log.lastChild);
       }
+    }
+
+    function toggleProxThresh(sensorEl, rowId) {
+      const v = typeof sensorEl === 'string' ? document.getElementById(sensorEl)?.value : sensorEl.value;
+      const row = document.getElementById(rowId);
+      if (row) row.style.display = (v === 'proximity' || v === 'both') ? '' : 'none';
+    }
+    function readProxThresh(inputId) {
+      const v = parseInt(document.getElementById(inputId)?.value);
+      return (!isNaN(v) && v >= 10 && v <= 100) ? v : 30;
     }
 
     function togglePause() {
@@ -3858,6 +3956,7 @@
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout  = readTimeout('exStimTimeout');
       const sensor   = document.getElementById('exStimSensor').value;
+      const proximityThreshold = readProxThresh('exStimProxThresh');
       const sound    = document.getElementById('exStimSound').checked;
       const total    = exerciseMode === 'reps' ? reps : 999;
       const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
@@ -3865,8 +3964,8 @@
         order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
       if (exerciseMode === 'time') {
         state.session.countdownId = setInterval(() => {
           if (!state.session.active) return;
@@ -3889,11 +3988,12 @@
       const piMode    = document.getElementById('exPiMode').value;
       const colorDiff = document.getElementById('exPiColorDiff').checked;
       const sensor    = document.getElementById('exPiSensor').value;
+      const proximityThreshold = readProxThresh('exPiProxThresh');
       const sound     = document.getElementById('exPiSound').checked;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, sound } };
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, sound, proximityThreshold } };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -3908,12 +4008,13 @@
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sensor = document.getElementById('exStroopSensor').value;
+      const proximityThreshold = readProxThresh('exStroopProxThresh');
       const sound  = document.getElementById('exStroopSound').checked;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
       const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval,sensor,proximityThreshold}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -3993,6 +4094,7 @@
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
+      const proximityThreshold = readProxThresh('exDiscProxThresh');
       const sound  = document.getElementById('exDiscSound')?.checked ?? true;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
 
@@ -4003,8 +4105,8 @@
         sequence.push({ nodes: discNodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
 
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -4111,6 +4213,7 @@
       const delay   = Math.round(parseFloat(document.getElementById('exPdDelay').value) * 1000);
       const timeout = readTimeout('exPdTimeout');
       const sensor  = document.getElementById('exPdSensor').value;
+      const proximityThreshold = readProxThresh('exPdProxThresh');
       const sound   = document.getElementById('exPdSound').checked;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const nodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
@@ -4131,7 +4234,7 @@
         const distShapes = otherIds.map((_, i) => i === targetIdx ? modelShape : shuffled[i % shuffled.length]);
         return { nodeIds, modelNode: nodeIds[modelIdx], targetNode, modelShape, distShapes, timeout, delay, sensor };
       });
-      state.session = { active:true, type:'patterndisc', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,crit,dur,delay,timeout,sensor} };
+      state.session = { active:true, type:'patterndisc', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,crit,dur,delay,timeout,sensor,proximityThreshold} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextPatternDisc, 600);
@@ -4194,6 +4297,7 @@
       const mode     = document.getElementById('exSimonMode').value;
       const shape    = document.getElementById('exSimonShape').value;
       const sensor   = document.getElementById('exSimonSensor').value;
+      const proximityThreshold = readProxThresh('exSimonProxThresh');
       const sound    = document.getElementById('exSimonSound').checked;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const nodeIdxMap = {};
@@ -4201,7 +4305,7 @@
       state.session = {
         active:true, type:'simon', history:[], current:0, total:reps,
         timeoutId:null, waiting:false,
-        config:{ seqLen, reps, showMs, pauseMs, mode, shape, sensor },
+        config:{ seqLen, reps, showMs, pauseMs, mode, shape, sensor, proximityThreshold },
         nodeIds, nodeIdxMap,
         simonPhase:'show', simonPtr:0, simonRespondStart:0, simonShowing:new Set(),
         sequence:[], respondOrder:[]
@@ -4406,14 +4510,15 @@
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('discDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
+      const proximityThreshold = readProxThresh('discProxThresh');
       const discNodeIds2 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
       for (let i = 0; i < reps; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds2[Math.floor(Math.random() * discNodeIds2.length)];
         sequence.push({ nodes: discNodeIds2, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -4432,7 +4537,8 @@
       const distractors = discMode === 'find_odd' ? null : document.getElementById('discDistractors').value;
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
-      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor };
+      const proximityThreshold = readProxThresh('discProxThresh');
+      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -4879,7 +4985,7 @@
         cfg.order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration'} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
       if (exerciseMode === 'time') {
         state.session.countdownId = setInterval(() => {
           if (!state.session.active) return;
@@ -4897,7 +5003,7 @@
       if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
       window._lastCfg = { _type: 'parimpar', config: cfg };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration'}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -4908,7 +5014,7 @@
       window._lastCfg = { _type: 'stroop', config: cfg };
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodesCount);
       const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(stroopNodeIds, cfg.resolveBy, cfg.timeout, cfg.interval));
-      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval, sensor:cfg.sensor||'vibration'}, nodeValues:{} };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -4953,10 +5059,11 @@
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout = readTimeout('exStimTimeout');
       const sensor = document.getElementById('exStimSensor').value;
+      const proximityThreshold = readProxThresh('exStimProxThresh');
       const sound = document.getElementById('exStimSound').checked;
       const exerciseMode = document.getElementById('exTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
-      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -4973,7 +5080,8 @@
       const piMode    = document.getElementById('exPiMode').value;
       const colorDiff = document.getElementById('exPiColorDiff').checked;
       const sensor    = document.getElementById('exPiSensor').value;
-      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor };
+      const proximityThreshold = readProxThresh('exPiProxThresh');
+      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -4990,7 +5098,8 @@
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sensor = document.getElementById('exStroopSensor').value;
-      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor };
+      const proximityThreshold = readProxThresh('exStroopProxThresh');
+      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -5011,7 +5120,8 @@
       const distractors = discMode === 'find_odd' ? null : document.getElementById('exDiscDistractors').value;
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
-      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor };
+      const proximityThreshold = readProxThresh('exDiscProxThresh');
+      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -5073,10 +5183,11 @@
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout = readTimeout('stimTimeout');
       const sensor = document.getElementById('stimSensor').value;
+      const proximityThreshold = readProxThresh('stimProxThresh');
       const sound = document.getElementById('stimSound').checked;
       const exerciseMode = document.getElementById('stimTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
-      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound };
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -5093,7 +5204,8 @@
       const piMode    = document.getElementById('piMode').value;
       const colorDiff = document.getElementById('piColorDiff').checked;
       const sensor    = document.getElementById('piSensor').value;
-      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor };
+      const proximityThreshold = readProxThresh('piProxThresh');
+      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -5110,7 +5222,8 @@
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sensor = document.getElementById('stroopSensor').value;
-      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor };
+      const proximityThreshold = readProxThresh('stroopProxThresh');
+      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
