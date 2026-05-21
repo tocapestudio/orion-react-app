@@ -324,7 +324,10 @@
     .badge.miss { background: rgba(239,68,68,0.12); color: var(--danger); }
 
     /* SECTION HEADER */
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    @media (max-width: 600px) {
+      .section-header .section-title { order: -1; width: 100%; text-align: center; margin-bottom: 2px; }
+    }
     .section-title {
       font-family: 'Syne', sans-serif;
       font-size: 1.1rem;
@@ -2879,6 +2882,7 @@
 
     // SESIÓN
     function showActiveSession() {
+      clearStarter();
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
@@ -4615,7 +4619,7 @@
       if (!window._startFn) return;
       const use = document.getElementById('useCountdown').checked;
       const secs = use ? (parseInt(document.getElementById('countdownSecs').value) || 3) : 0;
-      if (secs <= 0) { const fn = window._startFn; clearStarter(); fn(); return; }
+      if (secs <= 0) { const fn = window._startFn; fn(); return; }
       const overlay = document.getElementById('countdownOverlay');
       const numEl   = document.getElementById('countdownNumber');
       overlay.style.display = 'flex';
@@ -4626,7 +4630,7 @@
         if (rem <= 0) {
           clearInterval(_cdTimer); _cdTimer = null;
           overlay.style.display = 'none';
-          const fn = window._startFn; clearStarter(); fn();
+          const fn = window._startFn; fn();
         } else {
           numEl.textContent = rem;
         }
