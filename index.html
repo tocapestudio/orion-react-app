@@ -535,17 +535,17 @@
 
   <header class="topbar">
     <div class="logo">ORION <span>REACT</span></div>
-    <button class="bt-status" id="btBtn" onclick="connectBLE()">
+    <button class="bt-status" id="btBtn">
       <span class="bt-dot" id="btDot"></span>
       <span id="btText">Conectar nodo</span>
     </button>
   </header>
 
   <nav class="nav">
-    <button class="nav-btn" data-page="exercises" onclick="showPage('exercises')">Ejercicios</button>
-    <button class="nav-btn" data-page="create" onclick="showPage('create')">Crear</button>
-    <button class="nav-btn" data-page="data" onclick="showPage('data')">Datos</button>
-    <button class="nav-btn" data-page="config" onclick="showPage('config')">Configuración</button>
+    <button class="nav-btn" data-page="exercises">Ejercicios</button>
+    <button class="nav-btn" data-page="create">Crear</button>
+    <button class="nav-btn" data-page="data">Datos</button>
+    <button class="nav-btn" data-page="config">Configuración</button>
   </nav>
 
   <main class="main">
@@ -3310,10 +3310,15 @@
     }
 
     function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
+      const el = document.documentElement;
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!isFs) {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (req) req.call(el).catch(() => toast('Pantalla completa no disponible en este navegador'));
+        else toast('Pantalla completa no disponible en este navegador');
       } else {
-        document.exitFullscreen();
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) exit.call(document);
       }
     }
 
