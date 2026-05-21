@@ -81,6 +81,11 @@
       overflow-x: auto; scrollbar-width: none;
     }
     .nav::-webkit-scrollbar { display: none; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    * { scrollbar-width: thin; scrollbar-color: var(--border2) var(--bg2); }
     .nav-btn {
       padding: 8px 16px; border-radius: 10px; background: transparent;
       color: var(--muted); font-size: 0.85rem; font-weight: 500;
@@ -530,17 +535,17 @@
 
   <header class="topbar">
     <div class="logo">ORION <span>REACT</span></div>
-    <button class="bt-status" id="btBtn">
+    <button class="bt-status" id="btBtn" onclick="connectBLE()">
       <span class="bt-dot" id="btDot"></span>
       <span id="btText">Conectar nodo</span>
     </button>
   </header>
 
   <nav class="nav">
-    <button class="nav-btn" data-page="exercises">Ejercicios</button>
-    <button class="nav-btn" data-page="create">Crear</button>
-    <button class="nav-btn" data-page="data">Datos</button>
-    <button class="nav-btn" data-page="config">Configuración</button>
+    <button class="nav-btn" data-page="exercises" onclick="showPage('exercises')">Ejercicios</button>
+    <button class="nav-btn" data-page="create" onclick="showPage('create')">Crear</button>
+    <button class="nav-btn" data-page="data" onclick="showPage('data')">Datos</button>
+    <button class="nav-btn" data-page="config" onclick="showPage('config')">Configuración</button>
   </nav>
 
   <main class="main">
