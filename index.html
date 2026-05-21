@@ -127,6 +127,12 @@
     }
     .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(59,130,246,0.35); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-save {
+      background: linear-gradient(135deg, #0f2150, #1a3a8f) !important;
+      border: 1px solid rgba(255,255,255,0.35) !important;
+      box-shadow: 0 4px 16px rgba(15,33,80,0.4) !important;
+    }
+    .btn-save:hover { box-shadow: 0 6px 24px rgba(15,33,80,0.55) !important; border-color: rgba(255,255,255,0.6) !important; }
     .btn-secondary {
       padding: 12px 20px; border-radius: 14px; background: var(--bg3);
       color: var(--text); font-weight: 500; font-size: 0.9rem;
@@ -384,6 +390,10 @@
     .home-grid-main { grid-template-columns: 1fr; }
     .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
     .home-grid-main .home-button span { font-size: 1.1rem; }
+    .home-btn-exercises { border-color: #22d3ee !important; }
+    .home-btn-exercises:hover { border-color: #22d3ee !important; box-shadow: 0 0 18px rgba(34,211,238,0.25) !important; }
+    .home-btn-data { border-color: #1d4ed8 !important; }
+    .home-btn-data:hover { border-color: #3b82f6 !important; box-shadow: 0 0 18px rgba(29,78,216,0.3) !important; }
     .home-btn-config { border-color: var(--border2) !important; color: var(--muted) !important; }
     .home-btn-config:hover { border-color: var(--border2) !important; box-shadow: none !important; color: var(--text) !important; }
     @media (min-width: 1024px) {
@@ -506,9 +516,13 @@
     #startBar label { display: flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; color: var(--muted); }
     #startBar label input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
     #startBarBtn {
-      padding: 15px 36px; font-size: 1.05rem; font-weight: 700;
+      padding: 18px 48px; font-size: 1.15rem; font-weight: 700;
       letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0;
+      background: linear-gradient(135deg, #16a34a, #22c55e) !important;
+      border-color: #22c55e !important;
+      box-shadow: 0 4px 20px rgba(34,197,94,0.35) !important;
     }
+    #startBarBtn:hover { box-shadow: 0 6px 28px rgba(34,197,94,0.5) !important; }
     /* COUNTDOWN OVERLAY */
     #countdownOverlay {
       position: fixed; inset: 0; z-index: 300;
@@ -556,11 +570,11 @@
       </div>
       <div class="home-grid home-grid-main">
 
-        <button class="home-button" onclick="showPage('exercises')">
+        <button class="home-button home-btn-exercises" onclick="showPage('exercises')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <span>Ejercicios</span>
         </button>
-        <button class="home-button" onclick="showPage('data')">
+        <button class="home-button home-btn-data" onclick="showPage('data')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           <span>Datos</span>
         </button>
@@ -806,7 +820,7 @@
                 <label>Nombre del ejercicio</label>
                 <input type="text" id="exFlashSaveName" placeholder="Reacción Flash — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
-              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveFlashExConfig()">Guardar como ejercicio</button>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveFlashExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -896,7 +910,7 @@
                 <label>Nombre del ejercicio</label>
                 <input type="text" id="exPiSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
-              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveParImparExConfig()">Guardar como ejercicio</button>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveParImparExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -987,7 +1001,7 @@
                 <label>Nombre del ejercicio</label>
                 <input type="text" id="exStroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
-              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveStroopExConfig()">Guardar como ejercicio</button>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveStroopExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -1119,7 +1133,7 @@
                 <label>Nombre del ejercicio</label>
                 <input type="text" id="exDiscSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
-              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveDiscriminationExConfig()">Guardar como ejercicio</button>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveDiscriminationExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -1235,7 +1249,7 @@
                 <label>Nombre del ejercicio</label>
                 <input type="text" id="exChronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
-              <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="saveChronoExConfig()">Guardar como ejercicio</button>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveChronoExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -1652,7 +1666,7 @@
               <input type="text" id="flashSaveName" placeholder="Reacción Flash — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
             </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveFlashConfig()">Guardar ejercicio</button>
+              <button class="btn-primary btn-save" onclick="saveFlashConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -1739,7 +1753,7 @@
               <input type="text" id="piSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
             </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveParImparConfig()">Guardar ejercicio</button>
+              <button class="btn-primary btn-save" onclick="saveParImparConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -1828,7 +1842,7 @@
               <input type="text" id="stroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
             </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveStroopConfig()">Guardar ejercicio</button>
+              <button class="btn-primary btn-save" onclick="saveStroopConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -1955,7 +1969,7 @@
               <input type="text" id="discSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
             </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
+              <button class="btn-primary btn-save" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -2071,7 +2085,7 @@
               <input type="text" id="chronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
             </div>
             <div class="btn-row">
-              <button class="btn-primary" onclick="saveChronoConfig()">Guardar ejercicio</button>
+              <button class="btn-primary btn-save" onclick="saveChronoConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -2118,7 +2132,7 @@
           </div>
 
           <div class="btn-row">
-            <button class="btn-primary" onclick="saveCustomExercise()">Guardar ejercicio</button>
+            <button class="btn-primary btn-save" onclick="saveCustomExercise()">Guardar ejercicio</button>
           </div>
         </div>
       </div>
