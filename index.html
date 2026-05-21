@@ -402,10 +402,12 @@
       position: fixed; bottom: 90px; left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: var(--bg3); border: 1px solid var(--border2);
+      color: #fff;
       border-radius: 12px; padding: 10px 18px; font-size: 0.85rem;
       opacity: 0; transition: all .3s; z-index: 300; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.toast-error { background: #5c1a1a; border-color: #f87171; color: #fff; }
 
     .bottom-nav {
       display: flex;
@@ -528,15 +530,11 @@
       <div class="section-header">
         <div class="section-title">Inicio</div>
       </div>
-      <div class="home-grid">
+      <div class="home-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));">
 
         <button class="home-button" onclick="showPage('exercises')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           <span>Ejercicios</span>
-        </button>
-        <button class="home-button" onclick="showPage('create')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
-          <span>Crear ejercicio</span>
         </button>
         <button class="home-button" onclick="showPage('data')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -572,6 +570,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:42px;height:42px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             <span style="font-size:1.05rem;">Mis ejercicios</span>
           </button>
+          <button class="home-button" style="min-height:160px;border-color:#d4af37;color:#d4af37;" onclick="openCreateExercise()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:42px;height:42px;"><path d="M12 5v14M5 12h14"/></svg>
+            <span style="font-size:1.05rem;">Crear ejercicio</span>
+          </button>
+          <button class="home-button" style="min-height:160px;" onclick="openExerciseConfig('chrono')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:42px;height:42px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span style="font-size:1.05rem;">Chrono</span>
+          </button>
         </div>
 
         <!-- Ejercicios predeterminados -->
@@ -605,13 +611,6 @@
                 <p>Encuentra el estímulo objetivo entre distractores · Configurable por color/forma/número</p>
               </div>
               <span class="ex-item-arrow">›</span>
-            </div>
-            <div class="ex-item" onclick="openExerciseConfig('chrono')" style="border-color:#d4af37;">
-              <div class="ex-item-info">
-                <h3>Chrono</h3>
-                <p>Tiempo de sprint y reacción · Inicio y final · 3 modos</p>
-              </div>
-              <span class="ex-item-arrow" style="color:#d4af37;">›</span>
             </div>
             <div class="ex-item" onclick="openExerciseConfig('patterndisc')">
               <div class="ex-item-info">
@@ -2679,9 +2678,9 @@
 
     // FLASH
     function startFlash() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodes    = parseInt(document.getElementById('nodesCount').value);
-      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
       const exerciseMode = document.getElementById('stimTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps     = parseInt(document.getElementById('repsCount').value);
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
@@ -2925,7 +2924,7 @@
     }
 
     function startStroop() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
@@ -2985,8 +2984,8 @@
       }
     }
     function startParImpar() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
       const reps      = parseInt(document.getElementById('piReps').value);
       const duration  = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('piInterval').value) * 1000);
@@ -3190,7 +3189,7 @@
 
     function restartSession() {
       if (!window._lastCfg) { toast('No hay ejercicio para reiniciar'); return; }
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       document.getElementById('sessionSummary').style.display = 'none';
       sendBLE({ cmd: 'off' });
       launchCustomExercise({ steps: window._lastCfg });
@@ -3679,7 +3678,7 @@
 
     function showExCategory(name) {
       state.exCategory = name || null;
-      document.getElementById('exCategoryView').style.display = name ? 'none' : 'flex';
+      document.getElementById('exCategoryView').style.display = name ? 'none' : 'grid';
       document.getElementById('exPredeterminadosView').style.display = name === 'predeterminados' ? 'block' : 'none';
       document.getElementById('exMisView').style.display = name === 'mis' ? 'block' : 'none';
     }
@@ -3719,9 +3718,9 @@
     }
 
     function startFlashEx() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodes    = parseInt(document.getElementById('exNodesCount').value);
-      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
       const exerciseMode = document.getElementById('exTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps     = parseInt(document.getElementById('exRepsCount').value);
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
@@ -3756,8 +3755,8 @@
     }
 
     function startParImparEx() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
       const reps      = parseInt(document.getElementById('exPiReps').value);
       const duration  = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('exPiInterval').value) * 1000);
@@ -3776,7 +3775,7 @@
     }
 
     function startStroopEx() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
@@ -3857,7 +3856,7 @@
     }
 
     function startDiscrimination() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
       const timeout = readTimeout('exDiscTimeout');
@@ -3978,9 +3977,9 @@
     // DISCRIMINACIÓN DE PATRONES
     // ═══════════════════════════════════════════════
     function startPatternDisc() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodes   = parseInt(document.getElementById('exPdNodes').value);
-      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
       const reps    = parseInt(document.getElementById('exPdReps').value);
       const crit    = document.getElementById('exPdCriterion').value;
       const dur     = Math.round(parseFloat(document.getElementById('exPdDuration').value) * 1000);
@@ -4060,9 +4059,9 @@
     const SIMON_COLORS = ['green','red','blue','yellow','white','cyan','purple','orange'];
 
     function startSimon() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodeIds  = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b);
-      if (nodeIds.length < 2) { toast('Necesitas al menos 2 nodos conectados'); return; }
+      if (nodeIds.length < 2) { toast('Necesitas al menos 2 nodos conectados', 'error'); return; }
       const seqLen   = parseInt(document.getElementById('exSimonSeqLen').value);
       const reps     = parseInt(document.getElementById('exSimonReps').value);
       const showMs   = Math.round(parseFloat(document.getElementById('exSimonShowSpeed').value) * 1000);
@@ -4184,7 +4183,7 @@
     }
 
     function startChronoEx() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const mode = document.getElementById('exChronoMode').value;
       const startNode = parseInt(document.getElementById('exChronoStartNode').value);
       const endNode = parseInt(document.getElementById('exChronoEndNode').value);
@@ -4205,7 +4204,7 @@
     }
 
     function startChrono() {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const mode = document.getElementById('chronoMode').value;
       const startNode = parseInt(document.getElementById('chronoStartNode').value);
       const endNode = parseInt(document.getElementById('chronoEndNode').value);
@@ -4570,7 +4569,7 @@
     }
 
     function launchCustomExercise(exercise) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
 
       const stepsData = typeof exercise.steps === 'string' ? JSON.parse(exercise.steps) : exercise.steps;
 
@@ -4744,8 +4743,8 @@
 
     // ── Launch-from-saved-config helpers ─────────────────────────────────
     function startFlashWithConfig(cfg) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      if (state.bleNodes.length < cfg.numNodes) { toast(`Necesitas ${cfg.numNodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < cfg.numNodes) { toast(`Necesitas ${cfg.numNodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
       window._lastCfg = { _type: 'flash', config: cfg };
       const exerciseMode = cfg.exerciseMode || 'reps';
       const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
@@ -4769,8 +4768,8 @@
     }
 
     function startParImparWithConfig(cfg) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
-      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
       window._lastCfg = { _type: 'parimpar', config: cfg };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
       state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration'}, correctNode:null, nodeIds:piNodeIds };
@@ -4780,7 +4779,7 @@
     }
 
     function startStroopWithConfig(cfg) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       window._lastCfg = { _type: 'stroop', config: cfg };
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodesCount);
       const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(stroopNodeIds, cfg.resolveBy, cfg.timeout, cfg.interval));
@@ -4791,7 +4790,7 @@
     }
 
     function startDiscriminationWithConfig(cfg) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       window._lastCfg = { _type: 'discrimination', config: cfg };
       const discMode = cfg.discMode || 'find_target';
       const discNodeIds3 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodes);
@@ -4807,7 +4806,7 @@
     }
 
     function startChronoWithConfig(cfg) {
-      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       window._lastCfg = { _type: 'chrono', config: cfg };
       const sequence = Array.from({ length: cfg.reps }, () => ({ mode: cfg.mode, startNode: cfg.startNode, endNode: cfg.endNode, delay: cfg.delay, finalMode: cfg.finalMode, greenMin: cfg.greenMin, greenMax: cfg.greenMax }));
       state.session = { active:true, type:'chrono', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{mode:cfg.mode, startNode:cfg.startNode, endNode:cfg.endNode, delay:cfg.delay, finalMode:cfg.finalMode, greenMin:cfg.greenMin, greenMax:cfg.greenMax, startDuration:cfg.startDuration, endDuration:cfg.endDuration}, chrono:{} };
@@ -5059,9 +5058,10 @@
       document.getElementById('countdownOverlay').style.display = 'none';
     }
 
-    function toast(msg) {
+    function toast(msg, type) {
       const el = document.getElementById('toast');
       el.textContent = msg;
+      el.classList.toggle('toast-error', type === 'error');
       el.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(()=>el.classList.remove('show'), 2800);
