@@ -613,6 +613,20 @@
               </div>
               <span class="ex-item-arrow" style="color:#d4af37;">›</span>
             </div>
+            <div class="ex-item" onclick="openExerciseConfig('patterndisc')">
+              <div class="ex-item-info">
+                <h3>Se Busca</h3>
+                <p>Un nodo modelo · Encuentra el nodo que muestra la misma forma · Aciertos y fallos</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
+            <div class="ex-item" onclick="openExerciseConfig('simon')">
+              <div class="ex-item-info">
+                <h3>Simón dice</h3>
+                <p>Memoriza y repite la secuencia · Directo, inverso o aleatorio</p>
+              </div>
+              <span class="ex-item-arrow">›</span>
+            </div>
           </div>
         </div>
 
@@ -744,15 +758,16 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Apagado</label>
+                <label>Detección</label>
                 <select id="exStimSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
                 <input type="checkbox" id="exStimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
-                <label for="exStimSound" style="margin:0;cursor:pointer;">Sonido</label>
+                <label for="exStimSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -821,11 +836,16 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Apagado</label>
+                <label>Detección</label>
                 <select id="exPiSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exPiSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exPiSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
             <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
@@ -903,11 +923,16 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Apagado</label>
+                <label>Detección</label>
                 <select id="exStroopSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exStroopSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exStroopSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1022,11 +1047,16 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Apagado</label>
+                <label>Detección</label>
                 <select id="exDiscSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exDiscSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exDiscSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1154,6 +1184,166 @@
             </div>
           </div>
         </div>
+
+        <!-- Se Busca -->
+        <div id="exPatternDiscConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Se Busca</div>
+            </div>
+            <div class="card-sub">Un nodo modelo muestra la forma de referencia. Toca el nodo que muestra la misma forma entre los distractores.</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Nodos activos</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdNodes',-1,3,8)">−</button>
+                  <input type="number" min="3" max="8" value="4" id="exPdNodes" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdNodes',1,3,8)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exPdReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdReps',1,1,50)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Tipo de estímulo</label>
+                <select id="exPdCriterion">
+                  <option value="shape">Formas</option>
+                  <option value="number">Números</option>
+                  <option value="arrow">Flechas</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Duración del estímulo (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdDuration',-0.1,0.5,10)">−</button>
+                  <input type="number" min="0.5" max="10" step="0.1" value="3" id="exPdDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdDuration',0.1,0.5,10)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Delay entre rondas (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdDelay',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="exPdDelay" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdDelay',0.1,0,5)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdTimeout',-0.5,0,30)">−</button>
+                  <input type="number" min="0" max="30" step="0.5" value="0" id="exPdTimeout" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdTimeout',0.5,0,30)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Detección</label>
+                <select id="exPdSensor">
+                  <option value="vibration">Vibración (toque)</option>
+                  <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exPdSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exPdSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simón dice -->
+        <div id="exSimonConfig" style="display:none;">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
+              <div class="card-title" style="margin:0;">Simón dice</div>
+            </div>
+            <div class="card-sub">El sistema muestra una secuencia de nodos. El deportista debe repetirla en el mismo orden (o inverso).</div>
+            <div class="field-row">
+              <div class="field">
+                <label>Longitud de secuencia</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonSeqLen',-1,2,12)">−</button>
+                  <input type="number" min="2" max="12" value="4" id="exSimonSeqLen" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonSeqLen',1,2,12)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Repeticiones</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="5" id="exSimonReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonReps',1,1,50)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Velocidad presentación (s/nodo)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonShowSpeed',-0.1,0.3,3)">−</button>
+                  <input type="number" min="0.3" max="3" step="0.1" value="0.8" id="exSimonShowSpeed" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonShowSpeed',0.1,0.3,3)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Pausa entre nodos (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonPause',-0.1,0.1,2)">−</button>
+                  <input type="number" min="0.1" max="2" step="0.1" value="0.3" id="exSimonPause" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonPause',0.1,0.1,2)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Modo</label>
+                <select id="exSimonMode">
+                  <option value="direct">Directo — mismo orden</option>
+                  <option value="inverse">Inverso — orden contrario</option>
+                  <option value="random">Aleatorio — orden distinto cada vez</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Tipo de estímulo</label>
+                <select id="exSimonShape">
+                  <option value="circle">Círculo</option>
+                  <option value="square_filled">Cuadrado</option>
+                  <option value="plus">Cruz</option>
+                  <option value="triangle">Triángulo</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Detección</label>
+                <select id="exSimonSensor">
+                  <option value="vibration">Vibración (toque)</option>
+                  <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exSimonSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exSimonSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div id="activeSession" style="display:none;">
@@ -2474,6 +2664,14 @@
         completeDiscrimination(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else if (state.session.type === 'chrono') {
         handleChronoReaction(data);
+      } else if (state.session.type === 'patterndisc') {
+        if (state.session.waiting) {
+          const step = state.session.sequence[state.session.current];
+          const ok = data.reaction_ms >= 0 && data.node_id === step.targetNode;
+          completePatternDisc(data.reaction_ms >= 0 ? data.reaction_ms : null, ok);
+        }
+      } else if (state.session.type === 'simon') {
+        if (state.session.simonPhase === 'respond') handleSimonReaction(data);
       } else {
         completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
       }
@@ -3499,7 +3697,9 @@
         document.getElementById('exStroopConfig').style.display = type === 'stroop' ? 'block' : 'none';
         document.getElementById('exDiscriminationConfig').style.display = type === 'discrimination' ? 'block' : 'none';
         document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
-        const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx };
+        document.getElementById('exPatternDiscConfig').style.display = type === 'patterndisc' ? 'block' : 'none';
+        document.getElementById('exSimonConfig').style.display = type === 'simon' ? 'block' : 'none';
+        const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx, patterndisc: startPatternDisc, simon: startSimon };
         setStarter(fns[type]);
       }
     }
@@ -3511,6 +3711,8 @@
       document.getElementById('exStroopConfig').style.display = 'none';
       document.getElementById('exDiscriminationConfig').style.display = 'none';
       document.getElementById('exChronoConfig').style.display = 'none';
+      document.getElementById('exPatternDiscConfig').style.display = 'none';
+      document.getElementById('exSimonConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
       showExCategory(state.exCategory || null);
       clearStarter();
@@ -3563,7 +3765,9 @@
       const piMode    = document.getElementById('exPiMode').value;
       const colorDiff = document.getElementById('exPiColorDiff').checked;
       const sensor    = document.getElementById('exPiSensor').value;
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor } };
+      const sound     = document.getElementById('exPiSound').checked;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, sound } };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
       state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null, nodeIds:piNodeIds };
       closePresetConfig();
@@ -3580,6 +3784,8 @@
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sensor = document.getElementById('exStroopSensor').value;
+      const sound  = document.getElementById('exStroopSound').checked;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
       const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
       window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor } };
@@ -3663,6 +3869,8 @@
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
+      const sound  = document.getElementById('exDiscSound')?.checked ?? true;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
 
       const discNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
@@ -3761,6 +3969,215 @@
       state.session.current++;
       if (state.session.current < state.session.total) {
         setTimeout(nextDiscrimination, step.delay);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // DISCRIMINACIÓN DE PATRONES
+    // ═══════════════════════════════════════════════
+    function startPatternDisc() {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const nodes   = parseInt(document.getElementById('exPdNodes').value);
+      if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`); return; }
+      const reps    = parseInt(document.getElementById('exPdReps').value);
+      const crit    = document.getElementById('exPdCriterion').value;
+      const dur     = Math.round(parseFloat(document.getElementById('exPdDuration').value) * 1000);
+      const delay   = Math.round(parseFloat(document.getElementById('exPdDelay').value) * 1000);
+      const timeout = readTimeout('exPdTimeout');
+      const sensor  = document.getElementById('exPdSensor').value;
+      const sound   = document.getElementById('exPdSound').checked;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      const nodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
+      const pools = {
+        shape:  ['circle','square_filled','plus','triangle','x','ring','square'],
+        number: ['0','1','2','3','4','5','6','7','8','9'],
+        arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
+      };
+      const sequence = Array.from({ length: reps }, () => {
+        const pool = pools[crit] || pools.shape;
+        const modelShape = pool[Math.floor(Math.random() * pool.length)];
+        const distPool   = pool.filter(s => s !== modelShape);
+        const shuffled   = [...distPool].sort(() => Math.random() - 0.5);
+        const modelIdx   = Math.floor(Math.random() * nodeIds.length);
+        const otherIds   = nodeIds.filter((_, i) => i !== modelIdx);
+        const targetIdx  = Math.floor(Math.random() * otherIds.length);
+        const targetNode = otherIds[targetIdx];
+        const distShapes = otherIds.map((_, i) => i === targetIdx ? modelShape : shuffled[i % shuffled.length]);
+        return { nodeIds, modelNode: nodeIds[modelIdx], targetNode, modelShape, distShapes, timeout, delay, sensor };
+      });
+      state.session = { active:true, type:'patterndisc', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,crit,dur,delay,timeout,sensor} };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextPatternDisc, 600);
+    }
+
+    function nextPatternDisc() {
+      if (!state.session.active) return;
+      const { sequence, current } = state.session;
+      const step = sequence[current];
+      const dur  = state.session.config.dur;
+      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      document.getElementById('liveHint').textContent = 'Toca el nodo con la misma forma que el modelo (CIAN)';
+      document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+      const otherIds = step.nodeIds.filter(id => id !== step.modelNode);
+      step.nodeIds.forEach(nodeId => {
+        const isModel  = nodeId === step.modelNode;
+        const otherIdx = otherIds.indexOf(nodeId);
+        const shape    = isModel ? step.modelShape : step.distShapes[otherIdx];
+        const color    = isModel ? 'cyan' : 'green';
+        sendBLE({ cmd:'show', node_id:nodeId, shape, color, duration:dur, sensor:step.sensor });
+      });
+      state.session.waiting = true;
+      const waitMs = step.timeout > 0 && step.timeout < dur ? step.timeout : dur + 1500;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completePatternDisc(null, false);
+      }, waitMs);
+    }
+
+    function completePatternDisc(reactionMs, ok) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      sendBLE({ cmd:'off' });
+      const step = state.session.sequence[state.session.current];
+      state.session.history.push({ repetition:state.session.current+1, node_id:step.targetNode, shape:step.modelShape, reaction_ms:reactionMs, result:ok?'ok':'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
+      document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : '✗ Fallo o sin respuesta';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        setTimeout(nextPatternDisc, step.delay);
+      } else {
+        setTimeout(endSession, 800);
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // SIMÓN DICE
+    // ═══════════════════════════════════════════════
+    const SIMON_COLORS = ['green','red','blue','yellow','white','cyan','purple','orange'];
+
+    function startSimon() {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
+      const nodeIds  = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b);
+      if (nodeIds.length < 2) { toast('Necesitas al menos 2 nodos conectados'); return; }
+      const seqLen   = parseInt(document.getElementById('exSimonSeqLen').value);
+      const reps     = parseInt(document.getElementById('exSimonReps').value);
+      const showMs   = Math.round(parseFloat(document.getElementById('exSimonShowSpeed').value) * 1000);
+      const pauseMs  = Math.round(parseFloat(document.getElementById('exSimonPause').value) * 1000);
+      const mode     = document.getElementById('exSimonMode').value;
+      const shape    = document.getElementById('exSimonShape').value;
+      const sensor   = document.getElementById('exSimonSensor').value;
+      const sound    = document.getElementById('exSimonSound').checked;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      const nodeIdxMap = {};
+      nodeIds.forEach((id, i) => { nodeIdxMap[id] = i; });
+      state.session = {
+        active:true, type:'simon', history:[], current:0, total:reps,
+        timeoutId:null, waiting:false,
+        config:{ seqLen, reps, showMs, pauseMs, mode, shape, sensor },
+        nodeIds, nodeIdxMap,
+        simonPhase:'show', simonPtr:0, simonRespondStart:0, simonShowing:new Set(),
+        sequence:[], respondOrder:[]
+      };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(simonNextRound, 600);
+    }
+
+    function simonNextRound() {
+      if (!state.session.active) return;
+      const { config, nodeIds, nodeIdxMap } = state.session;
+      const seq = Array.from({ length: config.seqLen }, () => nodeIds[Math.floor(Math.random() * nodeIds.length)]);
+      const respondOrder = config.mode === 'inverse' ? [...seq].reverse()
+        : config.mode === 'random' ? [...nodeIds].sort(() => Math.random() - 0.5).concat(
+            nodeIds.length < config.seqLen ? [...nodeIds].sort(() => Math.random() - 0.5) : []
+          ).slice(0, config.seqLen)
+        : seq;
+      state.session.sequence     = seq;
+      state.session.respondOrder = respondOrder;
+      state.session.simonPhase   = 'show';
+      state.session.simonPtr     = 0;
+      const round = state.session.current + 1;
+      document.getElementById('liveNode').textContent = `Ronda ${round}`;
+      document.getElementById('liveHint').textContent = 'Observa la secuencia…';
+      document.getElementById('statProgress').textContent = `${round}/${state.session.total}`;
+      simonShowStep(0);
+    }
+
+    function simonShowStep(idx) {
+      if (!state.session.active) return;
+      const { sequence, config, nodeIdxMap } = state.session;
+      if (idx >= sequence.length) {
+        document.getElementById('liveHint').textContent = 'Repite la secuencia tocando los nodos en orden';
+        setTimeout(simonRespondPhase, config.pauseMs + 200);
+        return;
+      }
+      const nodeId = sequence[idx];
+      const color  = SIMON_COLORS[nodeIdxMap[nodeId] % SIMON_COLORS.length];
+      // duration=0 para que el firmware no lo ponga en WAITING_RESPONSE durante la fase de show
+      sendBLE({ cmd:'show', node_id:nodeId, shape:config.shape, color, duration:config.showMs, sensor:'vibration' });
+      setTimeout(() => {
+        sendBLE({ cmd:'off', node_id:nodeId });
+        setTimeout(() => simonShowStep(idx + 1), config.pauseMs);
+      }, config.showMs);
+    }
+
+    function simonRespondPhase() {
+      if (!state.session.active) return;
+      state.session.simonPhase       = 'respond';
+      state.session.simonPtr         = 0;
+      state.session.simonRespondStart = Date.now();
+      state.session.simonShowing     = new Set();
+      const { respondOrder, config, nodeIdxMap } = state.session;
+      const uniqueNodes = [...new Set(respondOrder)];
+      uniqueNodes.forEach(nodeId => {
+        const color = SIMON_COLORS[nodeIdxMap[nodeId] % SIMON_COLORS.length];
+        sendBLE({ cmd:'show', node_id:nodeId, shape:config.shape, color, duration:60000, sensor:config.sensor });
+        state.session.simonShowing.add(nodeId);
+      });
+      state.session.waiting = true;
+    }
+
+    function handleSimonReaction(data) {
+      if (!state.session.active || state.session.simonPhase !== 'respond' || !state.session.waiting) return;
+      const { respondOrder, config, nodeIdxMap } = state.session;
+      const expected = respondOrder[state.session.simonPtr];
+      if (data.node_id === expected && data.reaction_ms >= 0) {
+        sendBLE({ cmd:'off', node_id:data.node_id });
+        state.session.simonShowing?.delete(data.node_id);
+        state.session.simonPtr++;
+        const appearsAgain = respondOrder.slice(state.session.simonPtr).includes(data.node_id);
+        if (appearsAgain) {
+          setTimeout(() => {
+            if (state.session.active && state.session.simonPhase === 'respond') {
+              const color = SIMON_COLORS[nodeIdxMap[data.node_id] % SIMON_COLORS.length];
+              sendBLE({ cmd:'show', node_id:data.node_id, shape:config.shape, color, duration:60000, sensor:config.sensor });
+              state.session.simonShowing?.add(data.node_id);
+            }
+          }, 350);
+        }
+        if (state.session.simonPtr >= respondOrder.length) {
+          completeSimon(true, Date.now() - state.session.simonRespondStart);
+        }
+      } else {
+        completeSimon(false, Date.now() - state.session.simonRespondStart);
+      }
+    }
+
+    function completeSimon(ok, totalMs) {
+      state.session.waiting = false;
+      sendBLE({ cmd:'off' });
+      state.session.history.push({ repetition:state.session.current+1, result:ok?'ok':'miss', reaction_ms:totalMs });
+      document.getElementById('liveTime').textContent = ok ? msToS(totalMs)+' s' : '—';
+      document.getElementById('liveHint').textContent = ok ? '✓ Secuencia correcta' : '✗ Orden incorrecto';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.current < state.session.total) {
+        state.session.simonPhase = 'idle';
+        setTimeout(simonNextRound, 1200);
       } else {
         setTimeout(endSession, 800);
       }
