@@ -920,39 +920,51 @@
             </div>
             <div class="field-row">
               <div class="field">
+                <label>Modo</label>
+                <select id="exDiscMode" onchange="updateDiscMode('exDisc')">
+                  <option value="find_target">Encontrar el objetivo</option>
+                  <option value="find_odd">Encontrar el diferente</option>
+                </select>
+              </div>
+              <div class="field">
                 <label>Tipo de estímulo</label>
                 <select id="exDiscCriterion" onchange="updateExDiscValueOptions()">
                   <option value="color">Color</option>
                   <option value="number">Número</option>
                   <option value="arrow">Flecha</option>
                   <option value="shape">Forma</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Respuesta correcta</label>
-                <select id="exDiscValue">
-                  <option value="green">Verde</option>
-                  <option value="red">Rojo</option>
-                  <option value="blue">Azul</option>
-                  <option value="yellow">Amarillo</option>
-                  <option value="white">Blanco</option>
-                  <option value="cyan">Cian</option>
+                  <option value="random" style="display:none;">Aleatorio (cambia cada ronda)</option>
                 </select>
               </div>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Distractores</label>
-                <select id="exDiscDistractors" onchange="updateDiscDistractorField('exDisc')">
-                  <option value="same">Iguales entre sí</option>
-                  <option value="different">Diferentes y aleatorios</option>
-                </select>
+            <div id="exDiscTargetFields">
+              <div class="field-row">
+                <div class="field">
+                  <label>Respuesta correcta</label>
+                  <select id="exDiscValue">
+                    <option value="green">Verde</option>
+                    <option value="red">Rojo</option>
+                    <option value="blue">Azul</option>
+                    <option value="yellow">Amarillo</option>
+                    <option value="white">Blanco</option>
+                    <option value="cyan">Cian</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Distractores</label>
+                  <select id="exDiscDistractors" onchange="updateDiscDistractorField('exDisc')">
+                    <option value="same">Iguales entre sí</option>
+                    <option value="different">Diferentes y aleatorios</option>
+                  </select>
+                </div>
               </div>
-              <div class="field" id="exDiscDistractorValueWrap">
-                <label>Valor del distractor</label>
-                <select id="exDiscDistractorValue">
-                  <option value="random">Aleatorio</option>
-                </select>
+              <div class="field-row">
+                <div class="field" id="exDiscDistractorValueWrap" style="display:none;">
+                  <label>Valor del distractor</label>
+                  <select id="exDiscDistractorValue">
+                    <option value="random">Aleatorio</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -1515,39 +1527,51 @@
             </div>
             <div class="field-row">
               <div class="field">
+                <label>Modo</label>
+                <select id="discMode" onchange="updateDiscMode('disc')">
+                  <option value="find_target">Encontrar el objetivo</option>
+                  <option value="find_odd">Encontrar el diferente</option>
+                </select>
+              </div>
+              <div class="field">
                 <label>Tipo de estímulo</label>
                 <select id="discCriterion" onchange="updateQuickDiscOptions()">
                   <option value="color">Color</option>
                   <option value="number">Número</option>
                   <option value="arrow">Flecha</option>
                   <option value="shape">Forma</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Respuesta correcta</label>
-                <select id="discValue">
-                  <option value="green">Verde</option>
-                  <option value="red">Rojo</option>
-                  <option value="blue">Azul</option>
-                  <option value="yellow">Amarillo</option>
-                  <option value="white">Blanco</option>
-                  <option value="cyan">Cian</option>
+                  <option value="random" style="display:none;">Aleatorio (cambia cada ronda)</option>
                 </select>
               </div>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label>Distractores</label>
-                <select id="discDistractors" onchange="updateDiscDistractorField('disc')">
-                  <option value="same">Iguales entre sí</option>
-                  <option value="different">Diferentes y aleatorios</option>
-                </select>
+            <div id="discTargetFields">
+              <div class="field-row">
+                <div class="field">
+                  <label>Respuesta correcta</label>
+                  <select id="discValue">
+                    <option value="green">Verde</option>
+                    <option value="red">Rojo</option>
+                    <option value="blue">Azul</option>
+                    <option value="yellow">Amarillo</option>
+                    <option value="white">Blanco</option>
+                    <option value="cyan">Cian</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Distractores</label>
+                  <select id="discDistractors" onchange="updateDiscDistractorField('disc')">
+                    <option value="same">Iguales entre sí</option>
+                    <option value="different">Diferentes y aleatorios</option>
+                  </select>
+                </div>
               </div>
-              <div class="field" id="discDistractorValueWrap">
-                <label>Valor del distractor</label>
-                <select id="discDistractorValue">
-                  <option value="random">Aleatorio</option>
-                </select>
+              <div class="field-row">
+                <div class="field" id="discDistractorValueWrap" style="display:none;">
+                  <label>Valor del distractor</label>
+                  <select id="discDistractorValue">
+                    <option value="random">Aleatorio</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="field-row">
@@ -3480,9 +3504,30 @@
       }
     }
 
+    function updateDiscMode(prefix) {
+      const mode = document.getElementById(prefix + 'Mode')?.value;
+      const targetFields = document.getElementById(prefix + 'TargetFields');
+      const criterionSel = document.getElementById(prefix + 'Criterion');
+      const randomOpt = criterionSel?.querySelector('option[value="random"]');
+      if (mode === 'find_odd') {
+        if (targetFields) targetFields.style.display = 'none';
+        if (randomOpt) randomOpt.style.display = '';
+      } else {
+        if (targetFields) targetFields.style.display = '';
+        if (randomOpt) {
+          randomOpt.style.display = 'none';
+          if (criterionSel.value === 'random') criterionSel.value = 'color';
+        }
+        updateDiscValueSel(prefix);
+        updateDiscDistractorField(prefix);
+      }
+    }
+
     function updateExDiscValueOptions() {
-      updateDiscValueSel('exDisc');
-      updateDiscDistractorField('exDisc');
+      if (document.getElementById('exDiscMode')?.value !== 'find_odd') {
+        updateDiscValueSel('exDisc');
+        updateDiscDistractorField('exDisc');
+      }
     }
 
     function startDiscriminationEx() {
@@ -3497,21 +3542,22 @@
       const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay')?.value || 0.8) * 1000);
+      const discMode = document.getElementById('exDiscMode')?.value || 'find_target';
       const criterion = document.getElementById('exDiscCriterion')?.value || 'color';
-      const correctValue = document.getElementById('exDiscValue')?.value || 'green';
-      const distractors = document.getElementById('exDiscDistractors')?.value || 'different';
-      const distractorValue = document.getElementById('exDiscDistractorValue')?.value || 'random';
+      const correctValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscValue')?.value || 'green');
+      const distractors = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractors')?.value || 'different');
+      const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
 
       const sequence = [];
       for (let i = 0; i < reps; i++) {
         const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
-        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
 
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors, distractorValue, sensor } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -3522,7 +3568,7 @@
       const { sequence, current } = state.session;
       const step = sequence[current];
       document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
-      document.getElementById('liveHint').textContent = 'Toca el nodo correcto';
+      document.getElementById('liveHint').textContent = step.disc_mode === 'find_odd' ? 'Toca el diferente' : 'Toca el nodo correcto';
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
 
       const pools = {
@@ -3533,30 +3579,51 @@
       };
       const criterionColor = { color: null, number: 'blue', arrow: 'red', shape: 'green' };
 
-      const { nodes, correct_node, criterion, correct_value, distractors, distractor_value, timeout, sensor } = step;
-      const pool = (pools[criterion] || []).filter(v => v !== correct_value);
-
-      let distractorVals;
-      if (distractors === 'same') {
-        const v = distractor_value && distractor_value !== 'random'
-          ? distractor_value
-          : pool[Math.floor(Math.random() * pool.length)];
-        distractorVals = nodes.map(() => v);
-      } else {
-        const shuffled = [...pool].sort(() => Math.random() - 0.5);
-        distractorVals = nodes.map((_, i) => shuffled[i % shuffled.length]);
-      }
-
+      const { nodes, criterion, timeout, sensor } = step;
       const dur = state.session.config.duration;
       const sens = sensor || 'vibration';
-      const fixedColor = criterionColor[criterion];
-      nodes.forEach((nodeId, idx) => {
-        const val = nodeId === correct_node ? correct_value : distractorVals[idx];
-        const cmd = criterion === 'color'
-          ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
-          : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
-        sendBLE(cmd);
-      });
+
+      if (step.disc_mode === 'find_odd') {
+        const allCriteria = ['color','number','arrow','shape'];
+        const crit = criterion === 'random'
+          ? allCriteria[Math.floor(Math.random() * allCriteria.length)]
+          : criterion;
+        const pool = pools[crit] || [];
+        const commonVal = pool[Math.floor(Math.random() * pool.length)];
+        const oddPool = pool.filter(v => v !== commonVal);
+        const oddVal = oddPool[Math.floor(Math.random() * oddPool.length)];
+        const oddNode = nodes[Math.floor(Math.random() * nodes.length)];
+        step.correct_node = oddNode;
+        const fixedColor = criterionColor[crit];
+        nodes.forEach(nodeId => {
+          const val = nodeId === oddNode ? oddVal : commonVal;
+          const cmd = crit === 'color'
+            ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
+            : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
+          sendBLE(cmd);
+        });
+      } else {
+        const { correct_node, correct_value, distractors, distractor_value } = step;
+        const pool = (pools[criterion] || []).filter(v => v !== correct_value);
+        let distractorVals;
+        if (distractors === 'same') {
+          const v = distractor_value && distractor_value !== 'random'
+            ? distractor_value
+            : pool[Math.floor(Math.random() * pool.length)];
+          distractorVals = nodes.map(() => v);
+        } else {
+          const shuffled = [...pool].sort(() => Math.random() - 0.5);
+          distractorVals = nodes.map((_, i) => shuffled[i % shuffled.length]);
+        }
+        const fixedColor = criterionColor[criterion];
+        nodes.forEach((nodeId, idx) => {
+          const val = nodeId === correct_node ? correct_value : distractorVals[idx];
+          const cmd = criterion === 'color'
+            ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
+            : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
+          sendBLE(cmd);
+        });
+      }
 
       state.session.waiting = true;
       const waitMs = timeout > 0 && timeout < dur ? timeout : dur + 1500;
@@ -3664,8 +3731,10 @@
     }
 
     function updateQuickDiscOptions() {
-      updateDiscValueSel('disc');
-      updateDiscDistractorField('disc');
+      if (document.getElementById('discMode')?.value !== 'find_odd') {
+        updateDiscValueSel('disc');
+        updateDiscDistractorField('disc');
+      }
     }
 
     function startQuickDiscrimination() {
@@ -3674,19 +3743,20 @@
       const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay')?.value || 0.8) * 1000);
+      const discMode = document.getElementById('discMode')?.value || 'find_target';
       const criterion = document.getElementById('discCriterion')?.value || 'color';
-      const correctValue = document.getElementById('discValue')?.value || 'green';
-      const distractors = document.getElementById('discDistractors')?.value || 'different';
-      const distractorValue = document.getElementById('discDistractorValue')?.value || 'random';
+      const correctValue = discMode === 'find_odd' ? null : (document.getElementById('discValue')?.value || 'green');
+      const distractors = discMode === 'find_odd' ? null : (document.getElementById('discDistractors')?.value || 'different');
+      const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
       const sequence = [];
       for (let i = 0; i < reps; i++) {
         const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
-        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors, distractorValue, sensor } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
+      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -3699,12 +3769,13 @@
       const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay').value) * 1000);
+      const discMode = document.getElementById('discMode')?.value || 'find_target';
       const criterion = document.getElementById('discCriterion').value;
-      const correctValue = document.getElementById('discValue').value;
-      const distractors = document.getElementById('discDistractors').value;
-      const distractorValue = document.getElementById('discDistractorValue')?.value || 'random';
+      const correctValue = discMode === 'find_odd' ? null : document.getElementById('discValue').value;
+      const distractors = discMode === 'find_odd' ? null : document.getElementById('discDistractors').value;
+      const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
-      const cfg = { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors, distractorValue, sensor };
+      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -4186,11 +4257,12 @@
     function startDiscriminationWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       window._lastCfg = { _type: 'discrimination', config: cfg };
+      const discMode = cfg.discMode || 'find_target';
       const sequence = [];
       for (let i = 0; i < cfg.reps; i++) {
         const nodeIds = Array.from({length: cfg.nodes}, (_, idx) => idx + 1);
-        const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, criterion: cfg.criterion, correct_value: cfg.correctValue, distractors: cfg.distractors, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
+        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
       }
       state.session = { active:true, type:'discrimination', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
       showPage('exercises');
@@ -4273,12 +4345,13 @@
       const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay').value) * 1000);
+      const discMode = document.getElementById('exDiscMode')?.value || 'find_target';
       const criterion = document.getElementById('exDiscCriterion').value;
-      const correctValue = document.getElementById('exDiscValue').value;
-      const distractors = document.getElementById('exDiscDistractors').value;
-      const distractorValue = document.getElementById('exDiscDistractorValue')?.value || 'random';
+      const correctValue = discMode === 'find_odd' ? null : document.getElementById('exDiscValue').value;
+      const distractors = discMode === 'find_odd' ? null : document.getElementById('exDiscDistractors').value;
+      const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
-      const cfg = { nodes, reps, timeout, duration, delay, criterion, correctValue, distractors, distractorValue, sensor };
+      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
