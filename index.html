@@ -495,13 +495,9 @@
     /* RESPONSIVE: tablet & desktop wider layout */
     @media (min-width: 768px) {
       .main { max-width: 900px; padding-left: 28px; padding-right: 28px; }
-      .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     @media (min-width: 1100px) {
       .main { max-width: 1120px; padding-left: 40px; padding-right: 40px; }
-      .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      #exerciseList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
-      #exerciseList .card { margin-bottom: 0; }
       #exercisePresetConfig .card { max-width: 700px; }
       .live-display { padding: 36px 32px; }
     }
@@ -562,13 +558,23 @@
       </div>
 
       <div id="exerciseList">
+
+        <!-- Selector de categoría -->
+        <div id="exCategoryView" style="display:flex;gap:14px;justify-content:center;margin-top:8px;">
+          <button class="home-button" style="flex:1;max-width:240px;" onclick="showExCategory('predeterminados')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Predeterminados</span>
+          </button>
+          <button class="home-button" style="flex:1;max-width:240px;" onclick="showExCategory('mis')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Mis ejercicios</span>
+          </button>
+        </div>
+
         <!-- Ejercicios predeterminados -->
-        <div class="card">
-          <div class="card-title" onclick="toggleGroup('predeterminados')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
-            Ejercicios predeterminados
-            <span id="predeterminados-arrow" style="transition:transform 0.2s;transform:rotate(-90deg);">▼</span>
-          </div>
-          <div id="predeterminados-group" style="display:none;">
+        <div id="exPredeterminadosView" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;margin-bottom:14px;" onclick="showExCategory(null)">← Volver</button>
+          <div class="card">
             <div class="ex-item" onclick="openExerciseConfig('flash')">
               <div class="ex-item-info">
                 <h3>Reacción Flash</h3>
@@ -608,19 +614,19 @@
         </div>
 
         <!-- Mis ejercicios -->
-        <div class="card">
-          <div class="card-title" onclick="toggleGroup('mis')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
-            Mis ejercicios
-            <span id="mis-arrow" style="transition:transform 0.2s;transform:rotate(-90deg);">▼</span>
-          </div>
-          <div id="mis-group" style="display:none;">
-            <!-- Exercises will be loaded here -->
-          </div>
-          <div class="btn-row" style="margin-top:16px;">
-            <button class="btn-secondary" onclick="openCreateFolderModal()">Crear carpeta</button>
-            <button class="btn-secondary" onclick="openCreateExercise()">Crear ejercicio</button>
+        <div id="exMisView" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;margin-bottom:14px;" onclick="showExCategory(null)">← Volver</button>
+          <div class="card">
+            <div id="mis-group">
+              <!-- Exercises will be loaded here -->
+            </div>
+            <div class="btn-row" style="margin-top:16px;">
+              <button class="btn-secondary" onclick="openCreateFolderModal()">Crear carpeta</button>
+              <button class="btn-secondary" onclick="openCreateExercise()">Crear ejercicio</button>
+            </div>
           </div>
         </div>
+
       </div>
 
       <!-- CONFIG PREDETERMINADOS (inline en ejercicios) -->
@@ -2970,15 +2976,13 @@
       sendBLE({ cmd: 'off' });
       showPage('exercises');
       document.getElementById('exerciseList').style.display = 'block';
-      const knownTypes = ['flash', 'parimpar', 'stroop', 'discrimination', 'chrono'];
-      if (window._lastCfg && !Array.isArray(window._lastCfg) && knownTypes.includes(window._lastCfg._type)) {
-        expandQuickForm(window._lastCfg._type);
-      }
+      showExCategory('predeterminados');
     }
 
     function discardSession() {
       document.getElementById('sessionSummary').style.display = 'none';
       document.getElementById('exerciseList').style.display   = 'block';
+      showExCategory(state.exCategory || null);
       state.session = { active:false, history:[], current:0, total:0, sequence:[], waiting:false, config:{}, nodeValues:{} };
     }
 
@@ -3471,12 +3475,11 @@
         folders.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
     }
 
-    function toggleGroup(group) {
-      const el = document.getElementById(group + '-group');
-      const arrow = document.getElementById(group + '-arrow');
-      const isHidden = el.style.display === 'none';
-      el.style.display = isHidden ? 'block' : 'none';
-      arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+    function showExCategory(name) {
+      state.exCategory = name || null;
+      document.getElementById('exCategoryView').style.display = name ? 'none' : 'flex';
+      document.getElementById('exPredeterminadosView').style.display = name === 'predeterminados' ? 'block' : 'none';
+      document.getElementById('exMisView').style.display = name === 'mis' ? 'block' : 'none';
     }
 
     function openExerciseConfig(type, id = null) {
@@ -3505,6 +3508,7 @@
       document.getElementById('exDiscriminationConfig').style.display = 'none';
       document.getElementById('exChronoConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
+      showExCategory(state.exCategory || null);
       clearStarter();
     }
 
