@@ -3455,7 +3455,7 @@
       const opts = {
         color:  [{v:'green',l:'Verde'},{v:'red',l:'Rojo'},{v:'blue',l:'Azul'},{v:'yellow',l:'Amarillo'},{v:'white',l:'Blanco'},{v:'cyan',l:'Cian'}],
         number: Array.from({length:10},(_,i)=>({v:String(i),l:String(i)})),
-        arrow:  [{v:'up',l:'↑ Arriba'},{v:'down',l:'↓ Abajo'},{v:'left',l:'← Izquierda'},{v:'right',l:'→ Derecha'}],
+        arrow:  [{v:'up',l:'↑ Arriba'},{v:'down',l:'↓ Abajo'},{v:'left',l:'← Izquierda'},{v:'right',l:'→ Derecha'},{v:'up_left',l:'↖ Arriba izq.'},{v:'up_right',l:'↗ Arriba der.'},{v:'down_left',l:'↙ Abajo izq.'},{v:'down_right',l:'↘ Abajo der.'}],
         shape:  [{v:'circle',l:'Círculo'},{v:'square_filled',l:'Cuadrado'},{v:'plus',l:'Cruz'},{v:'triangle',l:'Triángulo'},{v:'x',l:'X'}]
       }[crit] || [];
       return opts.filter(o => o.v !== excludeVal).map(o => `<option value="${o.v}">${o.l}</option>`).join('');
@@ -3528,9 +3528,10 @@
       const pools = {
         color:  ['green','red','blue','yellow','white','cyan'],
         number: Array.from({length:10},(_,i)=>String(i)),
-        arrow:  ['up','down','left','right'],
+        arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
         shape:  ['circle','square_filled','plus','triangle','x'],
       };
+      const criterionColor = { color: null, number: 'blue', arrow: 'red', shape: 'green' };
 
       const { nodes, correct_node, criterion, correct_value, distractors, distractor_value, timeout, sensor } = step;
       const pool = (pools[criterion] || []).filter(v => v !== correct_value);
@@ -3548,11 +3549,12 @@
 
       const dur = state.session.config.duration;
       const sens = sensor || 'vibration';
+      const fixedColor = criterionColor[criterion];
       nodes.forEach((nodeId, idx) => {
         const val = nodeId === correct_node ? correct_value : distractorVals[idx];
         const cmd = criterion === 'color'
           ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
-          : { cmd:'show', node_id:nodeId, shape:val, color:'white', duration:dur, sensor:sens };
+          : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
         sendBLE(cmd);
       });
 
@@ -3820,6 +3822,10 @@
                 <option value="down">↓ Abajo</option>
                 <option value="left">← Izquierda</option>
                 <option value="right">→ Derecha</option>
+                <option value="up_left">↖ Arriba izq.</option>
+                <option value="up_right">↗ Arriba der.</option>
+                <option value="down_left">↙ Abajo izq.</option>
+                <option value="down_right">↘ Abajo der.</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -3883,7 +3889,11 @@
           { value: 'up', label: '↑ Arriba' },
           { value: 'down', label: '↓ Abajo' },
           { value: 'left', label: '← Izquierda' },
-          { value: 'right', label: '→ Derecha' }
+          { value: 'right', label: '→ Derecha' },
+          { value: 'up_left', label: '↖ Arriba izq.' },
+          { value: 'up_right', label: '↗ Arriba der.' },
+          { value: 'down_left', label: '↙ Abajo izq.' },
+          { value: 'down_right', label: '↘ Abajo der.' }
         ].map(opt => `<option value="${opt.value}">${opt.label}</option>`);
       }
 
@@ -4112,7 +4122,7 @@
       const shapeOpts = '<option value="circle">Círculo</option><option value="square_filled">Cuadrado</option><option value="plus">Cruz</option>';
       const colorOpts = '<option value="green">Verde</option><option value="red">Rojo</option><option value="blue">Azul</option><option value="yellow">Amarillo</option><option value="white">Blanco</option><option value="cyan">Cian</option>';
       const numOpts = '<option value="random">Aleatorio</option>' + [1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">${n}</option>`).join('');
-      const arrowOpts = '<option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option>';
+      const arrowOpts = '<option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option><option value="up_left">↖ Arriba izq.</option><option value="up_right">↗ Arriba der.</option><option value="down_left">↙ Abajo izq.</option><option value="down_right">↘ Abajo der.</option>';
       if (cat === 'shape')  { valSel.innerHTML = shapeOpts; if (colorRow) colorRow.style.display = ''; }
       else if (cat === 'color')  { valSel.innerHTML = colorOpts; if (colorRow) colorRow.style.display = 'none'; }
       else if (cat === 'number') { valSel.innerHTML = numOpts;   if (colorRow) colorRow.style.display = ''; }
