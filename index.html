@@ -227,6 +227,13 @@
     .stat-tile .val { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
     .stat-tile .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
+    /* MINI-LOG */
+    .mini-log { display:flex; flex-direction:column-reverse; gap:4px; }
+    .mini-log-entry { display:flex; justify-content:space-between; align-items:center; padding:5px 12px; border-radius:8px; font-size:0.78rem; font-family:'DM Mono',monospace; }
+    .mini-log-entry.ok   { background:rgba(34,197,94,0.10);  color:#22c55e; }
+    .mini-log-entry.miss { background:rgba(239,68,68,0.10);  color:var(--danger); }
+    .mini-log-entry .ml-time { opacity:.7; }
+
     /* LIVE */
     .live-display {
       background: var(--bg2); border: 1px solid var(--border2);
@@ -372,8 +379,10 @@
     .home-grid-main { grid-template-columns: 1fr; }
     .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
     .home-grid-main .home-button span { font-size: 1.1rem; }
+    .home-btn-config { border-color: var(--border2) !important; color: var(--muted) !important; }
+    .home-btn-config:hover { border-color: var(--border2) !important; box-shadow: none !important; color: var(--text) !important; }
     @media (min-width: 1024px) {
-      .home-grid-main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .home-grid-main { grid-template-columns: 5fr 5fr 3fr; }
       .home-grid-main .home-button { min-height: 300px; flex-direction: column; justify-content: center; padding: 32px 18px; }
       .home-grid-main .home-button span { font-size: 1.05rem; }
     }
@@ -549,7 +558,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           <span>Datos</span>
         </button>
-        <button class="home-button" onclick="showPage('config')">
+        <button class="home-button home-btn-config" onclick="showPage('config')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
           <span>Configuración</span>
         </button>
@@ -1367,8 +1376,14 @@
           <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
         </div>
         <div id="screenProgress" style="display:none;text-align:center;font-size:0.78rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
-        <div class="btn-row">
-          <button class="btn-danger" onclick="stopSession()">Detener sesión</button>
+        <div id="miniLogWrap" style="display:none;margin-top:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Últimas reacciones</div>
+          <div class="mini-log" id="miniLog"></div>
+        </div>
+        <div class="btn-row" style="flex-wrap:wrap;gap:8px;">
+          <button class="btn-danger" onclick="stopSession()" style="flex:1;">Detener</button>
+          <button class="btn-secondary" id="btnPause" onclick="togglePause()" style="flex:1;">⏸ Pausa</button>
+          <button class="btn-secondary" onclick="toggleFullscreen()" style="padding:10px 14px;" title="Pantalla completa">⛶</button>
         </div>
       </div>
 
@@ -1378,8 +1393,15 @@
           <div class="card-sub" id="summaryText"></div>
           <div class="stats-row" id="summaryStats"></div>
           <div id="summaryTable"></div>
-          <div class="btn-row">
-            <button class="btn-primary" id="btnSaveSession" onclick="saveSession()">Guardar en la nube</button>
+          <div class="field" style="margin-top:14px;">
+            <label style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Notas del entrenador</label>
+            <textarea id="sessionNote" placeholder="Observaciones sobre la sesión..." rows="2" style="width:100%;resize:vertical;margin-top:6px;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;box-sizing:border-box;font-family:inherit;"></textarea>
+          </div>
+          <div class="btn-row" style="flex-wrap:wrap;gap:8px;">
+            <button class="btn-primary" id="btnSaveSession" onclick="saveSession()" style="flex:1;">Guardar en la nube</button>
+            <button class="btn-secondary" onclick="exportSessionCSV()" style="flex:1;">Exportar CSV</button>
+          </div>
+          <div class="btn-row" style="flex-wrap:wrap;gap:8px;margin-top:0;">
             <button class="btn-secondary" onclick="restartSession()">Reiniciar</button>
             <button class="btn-secondary" onclick="reconfigureSession()">Reconfigurar</button>
             <button class="btn-secondary" onclick="discardSession()">Descartar</button>
@@ -3095,6 +3117,7 @@
     // SESIÓN
     function showActiveSession() {
       clearStarter();
+      state.session.paused = false;
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
@@ -3109,6 +3132,12 @@
       } else {
         updateStroopScreen(null);
       }
+      // minilog: visible solo en ejercicios sin pantalla
+      const showLog = !isScreenExercise;
+      document.getElementById('miniLogWrap').style.display = showLog ? 'block' : 'none';
+      document.getElementById('miniLog').innerHTML = '';
+      const pauseBtn = document.getElementById('btnPause');
+      if (pauseBtn) pauseBtn.textContent = '⏸ Pausa';
     }
 
     function stopSession() {
@@ -3136,6 +3165,70 @@
         document.getElementById('statAvg').textContent  = msToS(rs.reduce((a,b)=>a+b,0)/rs.length);
         document.getElementById('statBest').textContent = msToS(Math.min(...rs));
       }
+      // mini-log
+      const latest = state.session.history[state.session.history.length - 1];
+      if (latest && document.getElementById('miniLogWrap').style.display !== 'none') {
+        const ms = latest.end_reaction_ms != null ? latest.end_reaction_ms : latest.reaction_ms;
+        const timeStr = ms != null ? msToS(ms) + ' s' : '—';
+        const ok = latest.result === 'ok';
+        const log = document.getElementById('miniLog');
+        const entry = document.createElement('div');
+        entry.className = `mini-log-entry ${ok ? 'ok' : 'miss'}`;
+        entry.innerHTML = `<span>${ok ? '✓' : '✗'} Rep ${latest.repetition || state.session.history.length}</span><span class="ml-time">${timeStr}</span>`;
+        log.prepend(entry);
+        // máximo 5 entradas visibles
+        while (log.children.length > 5) log.removeChild(log.lastChild);
+      }
+    }
+
+    function togglePause() {
+      if (!state.session.active) return;
+      if (state.session.paused) {
+        state.session.paused = false;
+        document.getElementById('btnPause').textContent = '⏸ Pausa';
+        document.getElementById('liveHint').textContent = 'Reanudando...';
+        const nextFns = {
+          flash: nextStimulus, parimpar: nextParImpar, stroop: nextStroop,
+          discrimination: nextDiscrimination, custom: nextCustomStep,
+          chrono: nextChrono, patterndisc: nextPatternDisc,
+          simon: () => { state.session.simonPtr = 0; simonShowStep(0); }
+        };
+        const fn = nextFns[state.session.type];
+        if (fn) setTimeout(fn, 400);
+      } else {
+        state.session.paused = true;
+        state.session.waiting = false;
+        clearTimeout(state.session.timeoutId);
+        clearInterval(state.session.countdownId);
+        sendBLE({ cmd: 'off' });
+        document.getElementById('btnPause').textContent = '▶ Reanudar';
+        document.getElementById('liveHint').textContent = 'Sesión en pausa';
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function exportSessionCSV() {
+      const h = state.session.history;
+      const type = state.session.type;
+      const athlete = state.athlete ? state.athlete.name : 'Sin deportista';
+      const header = ['Rep', 'Nodo', 'Resultado', 'Reaccion_ms', 'Sprint_ms'];
+      const rows = h.map((r, i) => {
+        const ms = r.end_reaction_ms != null ? r.end_reaction_ms : r.reaction_ms;
+        return [r.repetition || i + 1, r.node_id != null ? r.node_id : '-', r.result, ms != null ? ms : '-', r.sprint_ms != null ? r.sprint_ms : '-'];
+      });
+      const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${athlete.replace(/\s+/g,'-')}_${type}_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
     }
 
     function showSummary() {
@@ -3168,6 +3261,8 @@
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
+      const noteEl = document.getElementById('sessionNote');
+      if (noteEl) noteEl.value = '';
       const btn = document.getElementById('btnSaveSession');
       if (btn) { btn.textContent = 'Guardar en la nube'; btn.disabled = false; }
     }
@@ -3176,7 +3271,8 @@
       const btn = document.getElementById('btnSaveSession');
       if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
       try {
-        const rows = await db.post('sessions', { athlete_id:state.athlete?.id||null, exercise_type:state.session.type, notes:JSON.stringify(state.session.config) });
+        const userNote = document.getElementById('sessionNote')?.value.trim() || null;
+        const rows = await db.post('sessions', { athlete_id:state.athlete?.id||null, exercise_type:state.session.type, notes: userNote });
         const sid  = rows[0].id;
         for (const r of state.session.history) await db.post('results', { session_id:sid, ...r });
         toast('Sesión guardada ✓');
