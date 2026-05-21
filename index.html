@@ -812,13 +812,6 @@
                   <option value="ink">Apagar color de la tinta</option>
                 </select>
               </div>
-              <div class="field">
-                <label>Reactivación</label>
-                <select id="exStroopResetMode">
-                  <option value="different">Colores distintos cada vez</option>
-                  <option value="same">Siempre mismo esquema</option>
-                </select>
-              </div>
             </div>
             <div class="field-row">
               <div class="field">
@@ -1086,8 +1079,9 @@
           <div class="stats-row" id="summaryStats"></div>
           <div id="summaryTable"></div>
           <div class="btn-row">
-            <button class="btn-primary" onclick="saveSession()">Guardar en la nube</button>
+            <button class="btn-primary" id="btnSaveSession" onclick="saveSession()">Guardar en la nube</button>
             <button class="btn-secondary" onclick="restartSession()">Reiniciar</button>
+            <button class="btn-secondary" onclick="reconfigureSession()">Reconfigurar</button>
             <button class="btn-secondary" onclick="discardSession()">Descartar</button>
           </div>
         </div>
@@ -1376,13 +1370,6 @@
                 <select id="stroopRule">
                   <option value="named">Apagar el color nombrado</option>
                   <option value="ink">Apagar el color de la tinta</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Reactivación</label>
-                <select id="stroopResetMode">
-                  <option value="different">Colores distintos cada vez</option>
-                  <option value="same">Siempre el mismo esquema</option>
                 </select>
               </div>
             </div>
@@ -2500,41 +2487,41 @@
     }
 
     function buildStroopStep(nodesCount, resolveBy, timeout, delay) {
-      const colors = ['red','green','blue','yellow'];
-      const targetColor = colors[Math.floor(Math.random() * colors.length)];
-      const nodeIds = Array.from({ length: nodesCount }, (_,i) => i + 1);
-      const correctNode = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+      const colors = ['red', 'green', 'blue', 'yellow'];
+
+      // Pick named color and ink color (always different)
+      const namedColor = colors[Math.floor(Math.random() * colors.length)];
+      const inkOptions = colors.filter(c => c !== namedColor);
+      const inkColor = inkOptions[Math.floor(Math.random() * inkOptions.length)];
+
+      // Node color list: mandatory = namedColor + inkColor, then extras, capped at unique colors
+      const extras = colors.filter(c => c !== namedColor && c !== inkColor);
+      const nodeColors = [namedColor, inkColor, ...extras].slice(0, Math.min(nodesCount, colors.length));
+      while (nodeColors.length < nodesCount) nodeColors.push(colors[nodeColors.length % colors.length]);
+
+      // Fisher-Yates shuffle
+      for (let i = nodeColors.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nodeColors[i], nodeColors[j]] = [nodeColors[j], nodeColors[i]];
+      }
+
+      // Correct node: shows inkColor (mode ink) or namedColor (mode named)
+      const correctColor = resolveBy === 'ink' ? inkColor : namedColor;
+      const nodeIds = Array.from({ length: nodesCount }, (_, i) => i + 1);
+      const correctNode = nodeIds[nodeColors.indexOf(correctColor)];
+
       const nodes = {};
-      nodeIds.forEach(id => {
-        let word;
-        let ink;
-        if (id === correctNode) {
-          if (resolveBy === 'named') {
-            word = targetColor;
-            ink = colors.filter(c => c !== targetColor)[Math.floor(Math.random() * (colors.length - 1))];
-          } else {
-            ink = targetColor;
-            word = colors.filter(c => c !== targetColor)[Math.floor(Math.random() * (colors.length - 1))];
-          }
-        } else {
-          do {
-            word = colors[Math.floor(Math.random() * colors.length)];
-            ink = colors[Math.floor(Math.random() * colors.length)];
-          } while (word === ink || (resolveBy === 'named' && word === targetColor) || (resolveBy === 'ink' && ink === targetColor));
-        }
-        nodes[id] = { shape: getSpanishColorName(word), colors: [ink], rawWord: word };
-      });
+      nodeIds.forEach((id, i) => { nodes[id] = { shape: 'square_filled', colors: [nodeColors[i]] }; });
+
       return {
         nodes,
-        correct_response: resolveBy === 'named' ? 'stroop-named' : 'stroop-ink',
+        correct_response: resolveBy === 'ink' ? 'stroop-ink' : 'stroop-named',
         correct_node: correctNode,
-        target_color: targetColor,
+        named_color: namedColor,
+        ink_color: inkColor,
         exposure_time: timeout,
-        delay: delay,
-        screen: {
-          word: getSpanishColorName(nodes[correctNode].rawWord),
-          ink: nodes[correctNode].colors[0]
-        }
+        delay,
+        screen: { word: getSpanishColorName(namedColor), ink: inkColor }
       };
     }
 
@@ -2556,19 +2543,12 @@
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
-      const resetMode = document.getElementById('stroopResetMode').value;
       const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
-      const sequence = [];
-      if (resetMode === 'same') {
-        const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
-        for (let i = 0; i < reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
-      } else {
-        for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
-      }
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,resetMode,duration}, nodeValues:{} };
+      const sequence = Array.from({ length: reps }, () => buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval } };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -2580,8 +2560,9 @@
       const step = sequence[current];
       const nodeIds = Object.keys(step.nodes).map(Number);
       document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
-      const action = step.correct_response === 'stroop-named' ? 'Apaga el color nombrado' : 'Apaga el color de la tinta';
-      document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(step.target_color)}`;
+      const hintColor = step.correct_response === 'stroop-named' ? step.named_color : step.ink_color;
+      const action = step.correct_response === 'stroop-named' ? 'Toca el color nombrado' : 'Toca el color de la tinta';
+      document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(hintColor)}`;
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
       updateStroopScreen(step.screen);
       nodeIds.forEach(nodeId => {
@@ -2648,7 +2629,7 @@
         document.getElementById('liveNode').textContent = `Nodo 1: ${node1HasCircle?'O':'X'}  ·  Nodo 2: ${node1HasCircle?'X':'O'}`;
         document.getElementById('liveHint').textContent = isEven ? 'PAR → toca O' : 'IMPAR → toca X';
         sendBLE({ cmd:'show', node_id:1, shape: node1HasCircle ? 'circle' : 'x', color:'white', duration:dur, sensor:'vibration' });
-        setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:'vibration' }), 80);
+        state.session.showNode2Id = setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:'vibration' }), 80);
       } else {
         // Modo 2: palabra en pantalla, números en nodos
         const evens = [2,4,6,8], odds = [1,3,5,7,9];
@@ -2667,7 +2648,7 @@
         const c1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
         const c2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
         sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:c1, duration:dur, sensor:'vibration' });
-        setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:c2, duration:dur, sensor:'vibration' }), 80);
+        state.session.showNode2Id = setTimeout(() => sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:c2, duration:dur, sensor:'vibration' }), 80);
       }
 
       state.session.waiting = true;
@@ -2681,6 +2662,7 @@
     function completeParImpar(correct, reactionMs) {
       state.session.waiting = false;
       clearTimeout(state.session.timeoutId);
+      clearTimeout(state.session.showNode2Id);
       sendBLE({ cmd:'off' });
       updateStroopScreen(null);
       state.session.history.push({ repetition:state.session.current+1, reaction_ms:reactionMs, result:correct?'ok':'miss' });
@@ -2765,6 +2747,8 @@
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
+      const btn = document.getElementById('btnSaveSession');
+      if (btn) { btn.textContent = 'Guardar en la nube'; btn.disabled = false; }
     }
 
     async function saveSession() {
@@ -2774,8 +2758,20 @@
         const sid  = rows[0].id;
         for (const r of state.session.history) await db.post('results', { session_id:sid, ...r });
         toast('Sesión guardada ✓');
-        discardSession();
+        const btn = document.getElementById('btnSaveSession');
+        if (btn) { btn.textContent = 'Guardado ✓'; btn.disabled = true; }
       } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    function reconfigureSession() {
+      document.getElementById('sessionSummary').style.display = 'none';
+      sendBLE({ cmd: 'off' });
+      showPage('exercises');
+      document.getElementById('exerciseList').style.display = 'block';
+      const knownTypes = ['flash', 'parimpar', 'stroop', 'discrimination', 'chrono'];
+      if (window._lastCfg && !Array.isArray(window._lastCfg) && knownTypes.includes(window._lastCfg._type)) {
+        expandQuickForm(window._lastCfg._type);
+      }
     }
 
     function discardSession() {
@@ -3367,19 +3363,12 @@
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
-      const resetMode = document.getElementById('exStroopResetMode').value;
       const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
-      const sequence = [];
-      if (resetMode === 'same') {
-        const step = buildStroopStep(nodesCount, resolveBy, timeout, interval);
-        for (let i = 0; i < reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
-      } else {
-        for (let i = 0; i < reps; i++) sequence.push(buildStroopStep(nodesCount, resolveBy, timeout, interval));
-      }
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,resetMode,duration,interval}, nodeValues:{} };
+      const sequence = Array.from({ length: reps }, () => buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval } };
+      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -3937,6 +3926,7 @@
 
       const steps = Array.isArray(stepsData) ? stepsData : [];
       const totalReps = steps.length;
+      window._lastCfg = steps;
 
       state.session = {
         active: true,
@@ -4131,14 +4121,8 @@
     function startStroopWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       window._lastCfg = { _type: 'stroop', config: cfg };
-      const sequence = [];
-      if (cfg.resetMode === 'same') {
-        const step = buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval);
-        for (let i = 0; i < cfg.reps; i++) sequence.push(JSON.parse(JSON.stringify(step)));
-      } else {
-        for (let i = 0; i < cfg.reps; i++) sequence.push(buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval));
-      }
-      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, resetMode:cfg.resetMode, duration:cfg.duration, interval:cfg.interval}, nodeValues:{} };
+      const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval));
+      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -4214,11 +4198,10 @@
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
       const resolveBy = document.getElementById('exStroopRule').value;
-      const resetMode = document.getElementById('exStroopResetMode').value;
       const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
-      const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
+      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
@@ -4330,11 +4313,10 @@
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
       const resolveBy = document.getElementById('stroopRule').value;
-      const resetMode = document.getElementById('stroopResetMode').value;
       const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
-      const cfg = { nodesCount, reps, resolveBy, resetMode, timeout, duration, interval };
+      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
         toast('Ejercicio guardado ✓');
