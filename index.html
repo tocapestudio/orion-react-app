@@ -372,7 +372,7 @@
     .home-grid-main { grid-template-columns: 1fr; }
     .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
     .home-grid-main .home-button span { font-size: 1.1rem; }
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
       .home-grid-main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .home-grid-main .home-button { min-height: 300px; flex-direction: column; justify-content: center; padding: 32px 18px; }
       .home-grid-main .home-button span { font-size: 1.05rem; }
@@ -1556,6 +1556,7 @@
                 <select id="stimSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
@@ -1634,6 +1635,7 @@
                 <select id="piSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
               </div>
             </div>
@@ -1718,6 +1720,7 @@
                 <select id="stroopSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
               </div>
             </div>
@@ -1836,6 +1839,7 @@
                 <select id="discSensor">
                   <option value="vibration">Vibración (toque)</option>
                   <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
                 </select>
               </div>
             </div>
@@ -2195,7 +2199,13 @@
   <div class="modal-overlay" id="athleteModal">
     <div class="modal">
       <div class="modal-title">Seleccionar deportista</div>
-      <div id="athleteModalList" style="margin-bottom:16px;"></div>
+      <div style="position:relative;margin-bottom:12px;">
+        <input type="text" id="athleteModalSearch" placeholder="Buscar deportista..." oninput="filterAthleteModal()"
+          style="width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
+        <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;" width="15" height="15" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <div id="athleteModalList" style="margin-bottom:16px;max-height:320px;overflow-y:auto;"></div>
       <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
     </div>
   </div>
@@ -2641,25 +2651,21 @@
       } else if (state.session.type === 'custom') {
         const step = state.session.sequence[state.session.current];
         let correct = false;
-        
-        if (step.correct_response === 'node-1') {
+        const touchedNode = step.nodes[data.node_id];
+        const nodeInStep = Object.keys(step.nodes).includes(data.node_id.toString());
+
+        if (step.correct_response_type === 'node') {
           correct = data.node_id === step.correct_node;
-        } else if (step.correct_response === 'green') {
-          correct = Object.keys(step.nodes).includes(data.node_id.toString()) && 
-                   step.nodes[data.node_id].colors.includes('green');
-        } else if (step.correct_response === 'red') {
-          correct = Object.keys(step.nodes).includes(data.node_id.toString()) && 
-                   step.nodes[data.node_id].colors.includes('red');
-        } else if (step.correct_response === 'even') {
-          correct = step.nodes[data.node_id] && 
-                   !isNaN(step.nodes[data.node_id].shape) && 
-                   parseInt(step.nodes[data.node_id].shape) % 2 === 0;
-        } else if (step.correct_response === 'odd') {
-          correct = step.nodes[data.node_id] && 
-                   !isNaN(step.nodes[data.node_id].shape) && 
-                   parseInt(step.nodes[data.node_id].shape) % 2 !== 0;
+        } else if (step.correct_response_type === 'color') {
+          correct = nodeInStep && touchedNode.colors.includes(step.correct_response_value);
+        } else if (step.correct_response_type === 'number') {
+          correct = nodeInStep && String(touchedNode.shape) === String(step.correct_response_value);
+        } else if (step.correct_response_type === 'shape') {
+          correct = nodeInStep && touchedNode.shape === step.correct_response_value;
+        } else if (step.correct_response === 'node-1') {
+          correct = data.node_id === step.correct_node;
         }
-        
+
         completeCustomStep(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else if (state.session.type === 'stroop') {
         const step = state.session.sequence[state.session.current];
@@ -3547,11 +3553,25 @@
     }
 
     function openAthleteModal() {
+      document.getElementById('athleteModalSearch').value = '';
+      renderAthleteModalList('');
+      document.getElementById('athleteModal').classList.add('open');
+      setTimeout(() => document.getElementById('athleteModalSearch').focus(), 80);
+    }
+
+    function renderAthleteModalList(query) {
       const list = document.getElementById('athleteModalList');
+      const q = query.toLowerCase().trim();
+      const filtered = q ? state.athletes.filter(a => a.name.toLowerCase().includes(q) || (a.sport||'').toLowerCase().includes(q)) : state.athletes;
       list.innerHTML = !state.athletes.length
         ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Añade deportistas en Configuración.</div>`
-        : state.athletes.map(a=>`<div class="ex-item" onclick="selectAthlete('${a.id}','${a.name}')"><div class="ex-item-info"><h3>${a.name}</h3><p>${a.sport||''}</p></div><span class="ex-item-arrow">›</span></div>`).join('');
-      document.getElementById('athleteModal').classList.add('open');
+        : !filtered.length
+          ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Sin resultados.</div>`
+          : filtered.map(a=>`<div class="ex-item" onclick="selectAthlete('${a.id}','${a.name}')"><div class="ex-item-info"><h3>${a.name}</h3><p>${a.sport||''}</p></div><span class="ex-item-arrow">›</span></div>`).join('');
+    }
+
+    function filterAthleteModal() {
+      renderAthleteModalList(document.getElementById('athleteModalSearch').value);
     }
 
     function closeAthleteModal() { document.getElementById('athleteModal').classList.remove('open'); }
@@ -4628,7 +4648,7 @@
         const node = step.nodes[nodeId];
         const shape = node.shape;
         const color = node.colors[Math.floor(Math.random() * node.colors.length)];
-        sendBLE({ cmd: 'show', node_id: parseInt(nodeId), shape, color });
+        sendBLE({ cmd: 'show', node_id: parseInt(nodeId), shape, color, duration: step.exposure_time, sensor: 'vibration' });
       });
       
       state.session.waiting = true;
