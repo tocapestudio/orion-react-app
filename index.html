@@ -2388,7 +2388,8 @@
         completeStroop(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else if (state.session.type === 'discrimination') {
         const step = state.session.sequence[state.session.current];
-        const correct = data.node_id === step.correct_node;
+        const expectedNode = step.disc_mode === 'find_odd' ? state.session.currentCorrectNode : step.correct_node;
+        const correct = data.node_id === expectedNode;
         completeDiscrimination(data.reaction_ms >= 0 ? data.reaction_ms : null, correct && data.reaction_ms >= 0);
       } else if (state.session.type === 'chrono') {
         handleChronoReaction(data);
@@ -2903,7 +2904,7 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       document.getElementById('sessionSummary').style.display = 'none';
       sendBLE({ cmd: 'off' });
-      launchCustomExercise({ steps: JSON.stringify(window._lastCfg) });
+      launchCustomExercise({ steps: window._lastCfg });
     }
 
     // DATOS
@@ -3613,7 +3614,7 @@
         const oddPool = pool.filter(v => v !== commonVal);
         const oddVal = oddPool[Math.floor(Math.random() * oddPool.length)];
         const oddNode = nodes[Math.floor(Math.random() * nodes.length)];
-        step.correct_node = oddNode;
+        state.session.currentCorrectNode = oddNode;
         const fixedColor = criterionColor[crit];
         nodes.forEach(nodeId => {
           const val = nodeId === oddNode ? oddVal : commonVal;
@@ -3658,7 +3659,8 @@
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
       const step = state.session.sequence[state.session.current];
-      state.session.history.push({ repetition:state.session.current+1, node_id:step.correct_node, shape:step.criterion, color: step.criterion === 'color' ? step.correct_value : null, reaction_ms:reactionMs, result:ok ? 'ok' : 'miss' });
+      const histNodeId = step.disc_mode === 'find_odd' ? state.session.currentCorrectNode : step.correct_node;
+      state.session.history.push({ repetition:state.session.current+1, node_id:histNodeId, shape:step.criterion, color: step.criterion === 'color' ? step.correct_value : null, reaction_ms:reactionMs, result:ok ? 'ok' : 'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
@@ -4059,7 +4061,7 @@
     function launchCustomExercise(exercise) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
 
-      const stepsData = JSON.parse(exercise.steps);
+      const stepsData = typeof exercise.steps === 'string' ? JSON.parse(exercise.steps) : exercise.steps;
 
       if (!Array.isArray(stepsData) && stepsData._type) {
         const cfg = stepsData.config;
