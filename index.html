@@ -2432,20 +2432,28 @@
       if (state.bleNodes.length >= 8) { toast('Máximo 8 nodos permitidos'); return; }
       _bleConnecting = true;
       try {
-        toast('Buscando nodo...');
-        const device = await navigator.bluetooth.requestDevice({
-          filters: [{ namePrefix: 'OrionNode' }],
-          optionalServices: [BLE_SERVICE]
-        });
-        await connectDevice(device);
-      } catch(err) {
-        if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
+        while (state.bleNodes.length < 8) {
+          toast('Selecciona un nodo en el menú del navegador...');
+          let device;
+          try {
+            device = await navigator.bluetooth.requestDevice({
+              filters: [{ namePrefix: 'OrionNode' }],
+              optionalServices: [BLE_SERVICE]
+            });
+          } catch(err) {
+            if (err.name !== 'NotFoundError' && err.name !== 'AbortError') toast('Error: ' + err.message);
+            break; // usuario canceló el picker — dejar de añadir
+          }
+          await connectDevice(device);
+          if (state.bleNodes.length >= 8) break;
+          await new Promise(r => setTimeout(r, 500));
+        }
       } finally {
         _bleConnecting = false;
       }
     }
 
-    async function connectDevice(device) {
+    async function connectDevice(device, { silent = false } = {}) {
       try {
         if (!state.bleNodes.some(n => n.device === device)) {
           device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
@@ -2460,10 +2468,28 @@
         updateNodesGrid();
         renderAvailableNodesList();
         requestNodeId(cmdChar);
-        toast('Nodo conectado ✓');
+        toast(silent ? `${device.name} reconectado ✓` : 'Nodo conectado ✓');
       } catch(err) {
         console.warn('connectDevice error', err);
-        toast('Error al conectar: ' + (err.message || err));
+        if (!silent) toast('Error al conectar: ' + (err.message || err));
+      }
+    }
+
+    async function autoReconnectKnownNodes() {
+      if (!navigator.bluetooth?.getDevices) return;
+      try {
+        const devices = await navigator.bluetooth.getDevices();
+        const orionDevices = devices.filter(d => (d.name || '').startsWith('OrionNode'));
+        if (orionDevices.length === 0) return;
+        toast(`Reconectando ${orionDevices.length} nodo${orionDevices.length > 1 ? 's' : ''} conocido${orionDevices.length > 1 ? 's' : ''}...`);
+        for (const device of orionDevices) {
+          if (state.bleNodes.length >= 8) break;
+          if (state.bleNodes.some(n => n.device?.id === device.id)) continue;
+          await connectDevice(device, { silent: true });
+          await new Promise(r => setTimeout(r, 300));
+        }
+      } catch(e) {
+        console.warn('[autoReconnect] error', e);
       }
     }
 
@@ -5267,6 +5293,7 @@
 
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
     document.getElementById('btBtn').addEventListener('click', connectBLE);
+    autoReconnectKnownNodes();
     document.getElementById('addAthleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAddAthleteModal(); });
     document.getElementById('athleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAthleteModal(); });
     document.getElementById('folderModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeFolderModal(); });
