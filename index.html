@@ -288,6 +288,32 @@
     .battery-fill.warning { background: var(--warning); }
     .battery-fill.critical { background: var(--danger); }
 
+    /* NODES GRID */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .node-grid-card {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 14px; border-radius: 14px; background: var(--bg3);
+      border: 1px solid var(--border);
+    }
+    .node-grid-card .node-grid-top { display: flex; align-items: center; justify-content: space-between; }
+    .node-grid-card .node-id { font-size: 1.05rem; }
+    .node-grid-card .node-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .node-grid-card .node-bat-row { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); }
+    .node-grid-card .battery-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--border2); overflow: hidden; }
+    .node-grid-card .battery-fill { height: 100%; background: var(--success); transition: width .3s, background .2s; }
+    .node-grid-card .battery-fill.warning { background: var(--warning); }
+    .node-grid-card .battery-fill.critical { background: var(--danger); }
+    .node-grid-card .btn-disconnect {
+      width: 100%; padding: 7px 10px; border-radius: 10px; font-size: 0.8rem;
+      background: rgba(239,68,68,0.08); color: var(--danger);
+      border: 1px solid rgba(239,68,68,0.2); cursor: pointer; transition: background .2s;
+    }
+    .node-grid-card .btn-disconnect:hover { background: rgba(239,68,68,0.18); }
+
     /* HISTORY */
     .history { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .history th { color: var(--muted); font-weight: 500; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -464,6 +490,20 @@
     #countdownNumber {
       font-family: 'DM Mono', monospace; font-size: 9rem; font-weight: 700;
       color: var(--accent); line-height: 1; text-shadow: 0 0 40px rgba(59,130,246,0.5);
+    }
+
+    /* RESPONSIVE: tablet & desktop wider layout */
+    @media (min-width: 768px) {
+      .main { max-width: 900px; padding-left: 28px; padding-right: 28px; }
+      .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1100px) {
+      .main { max-width: 1120px; padding-left: 40px; padding-right: 40px; }
+      .home-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #exerciseList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+      #exerciseList .card { margin-bottom: 0; }
+      #exercisePresetConfig .card { max-width: 700px; }
+      .live-display { padding: 36px 32px; }
     }
   </style>
 </head>
@@ -1853,8 +1893,8 @@
             <strong style="font-size:0.95rem;">Conectados</strong>
             <button class="btn-danger" style="padding:6px 12px;font-size:0.8rem;" onclick="disconnectAll()">Desconectar todos</button>
           </div>
-          <div id="connectedNodesList" style="display:flex;flex-direction:column;gap:8px;">
-            <div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>
+          <div id="connectedNodesList" class="nodes-grid">
+            <div style="color:var(--muted);font-size:0.85rem;grid-column:1/-1;">Sin nodos conectados</div>
           </div>
         </div>
 
@@ -2263,25 +2303,25 @@
       if (!container) return;
 
       if (state.bleNodes.length === 0) {
-        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Sin nodos conectados</div>';
+        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;grid-column:1/-1;">Sin nodos conectados</div>';
       } else {
         container.innerHTML = state.bleNodes.map((bleNode, index) => {
           const nodeId = bleNode.nodeId || '?';
           const voltage = bleNode.battery_v || 0;
           const batteryPercent = Math.round(Math.min(100, Math.max(0, (voltage - 3.3) / (4.2 - 3.3) * 100)));
-          const deviceName = bleNode.device?.name || 'OrionNode';
+          const batClass = batteryPercent > 50 ? '' : batteryPercent > 20 ? 'warning' : 'critical';
+          const dotColor = batteryPercent > 25 ? 'var(--success)' : 'var(--danger)';
           return `
-            <div class="node-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-              <div style="display:flex;gap:12px;align-items:center;">
-                <div style="width:10px;height:10px;border-radius:50%;background:${batteryPercent>25? 'var(--success)':'var(--danger)'}"></div>
-                <div>
-                  <div class="node-id">Node ${nodeId}</div>
-                  <div class="node-sub">${deviceName} — ${batteryPercent}%</div>
-                </div>
+            <div class="node-grid-card">
+              <div class="node-grid-top">
+                <div class="node-id">Node ${nodeId}</div>
+                <div style="width:9px;height:9px;border-radius:50%;background:${dotColor};box-shadow:0 0 5px ${dotColor};flex-shrink:0;"></div>
               </div>
-              <div style="display:flex;gap:8px;min-width:160px;">
-                <button class="btn-secondary" onclick="disconnectBLEByIndex(${index})">Desconectar</button>
+              <div class="node-bat-row">
+                <div class="battery-bar"><div class="battery-fill ${batClass}" style="width:${batteryPercent}%"></div></div>
+                <span>${batteryPercent}%</span>
               </div>
+              <button class="btn-disconnect" onclick="disconnectBLEByIndex(${index})">Desconectar</button>
             </div>
           `;
         }).join('');
