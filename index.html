@@ -246,11 +246,11 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       color: #fff;
-      font-size: 3rem;
+      font-size: 5.5rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      min-height: 120px;
+      min-height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -723,6 +723,10 @@
               <div class="card-title" style="margin:0;">Par / Impar</div>
             </div>
             <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div style="background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;line-height:1.7;border:1px solid var(--border);">
+              <strong>Modo 1 (O / X):</strong> O (círculo) = <strong>PAR</strong> &nbsp;·&nbsp; X = <strong>IMPAR</strong><br>
+              <strong>Modo 2 (números):</strong> Toca el número que coincide con la palabra en pantalla
+            </div>
             <div class="field">
               <label>Modo</label>
               <select id="exPiMode">
@@ -1110,11 +1114,12 @@
           <div class="live-hint" id="liveHint">Preparando...</div>
           <div class="stroop-stimulus" id="stroopScreen"></div>
         </div>
-        <div class="stats-row">
+        <div class="stats-row" id="statsRow">
           <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media s</span></div>
           <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor s</span></div>
           <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
         </div>
+        <div id="screenProgress" style="display:none;text-align:center;font-size:0.78rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
         <div class="btn-row">
           <button class="btn-danger" onclick="stopSession()">Detener sesión</button>
         </div>
@@ -1329,6 +1334,10 @@
               <div class="card-title" style="margin:0;">Par / Impar</div>
             </div>
             <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
+            <div style="background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;line-height:1.7;border:1px solid var(--border);">
+              <strong>Modo 1 (O / X):</strong> O (círculo) = <strong>PAR</strong> &nbsp;·&nbsp; X = <strong>IMPAR</strong><br>
+              <strong>Modo 2 (números):</strong> Toca el número que coincide con la palabra en pantalla
+            </div>
             <div class="field">
               <label>Modo</label>
               <select id="piMode">
@@ -1867,6 +1876,7 @@
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
           <div style="flex:1;min-width:140px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">+ Añadir nodo</button></div>
           <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="connectAny()" style="width:100%;">Ver todos</button></div>
+          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
         </div>
         <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">
           "Añadir nodo" abre el selector del navegador — úsalo si el escaneo no detecta algún nodo.
@@ -2439,8 +2449,9 @@
       const sensor   = document.getElementById('stimSensor').value;
       const sound    = document.getElementById('stimSound').checked;
       const total    = exerciseMode === 'reps' ? reps : 999;
+      const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = Array.from({length: total}, (_,i) =>
-        order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
+        order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
@@ -2614,7 +2625,8 @@
       }[color] || color.toUpperCase();
     }
 
-    function buildStroopStep(nodesCount, resolveBy, timeout, delay) {
+    function buildStroopStep(nodeIds, resolveBy, timeout, delay) {
+      const nodesCount = nodeIds.length;
       const colors = ['red', 'green', 'blue', 'yellow'];
 
       // Pick named color and ink color (always different)
@@ -2635,7 +2647,6 @@
 
       // Correct node: shows inkColor (mode ink) or namedColor (mode named)
       const correctColor = resolveBy === 'ink' ? inkColor : namedColor;
-      const nodeIds = Array.from({ length: nodesCount }, (_, i) => i + 1);
       const correctNode = nodeIds[nodeColors.indexOf(correctColor)];
 
       const nodes = {};
@@ -2675,7 +2686,8 @@
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sensor = document.getElementById('stroopSensor').value;
-      const sequence = Array.from({ length: reps }, () => buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
+      const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
       window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor } };
       state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration,sensor}, nodeValues:{} };
       showPage('exercises');
@@ -2693,6 +2705,7 @@
       const action = step.correct_response === 'stroop-named' ? 'Toca el color nombrado' : 'Toca el color de la tinta';
       document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(hintColor)}`;
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
+      document.getElementById('screenProgress').textContent = `${current + 1} / ${state.session.total}`;
       updateStroopScreen(step.screen);
       nodeIds.forEach(nodeId => {
         const node = step.nodes[nodeId];
@@ -2735,7 +2748,8 @@
       const colorDiff = document.getElementById('piColorDiff').checked;
       const sensor    = document.getElementById('piSensor').value;
       window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor } };
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null };
+      const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -2745,24 +2759,26 @@
       if (!state.session.active) return;
       const { config, current, total } = state.session;
       document.getElementById('statProgress').textContent = `${current+1}/${total}`;
+      document.getElementById('screenProgress').textContent = `${current+1} / ${total}`;
       const dur = config.duration;
       const diffColors = ['red','green','blue','yellow','cyan','white'];
 
+      const [nid1, nid2] = state.session.nodeIds || [1, 2];
       if (config.piMode === 'shapes') {
         // Modo 1: número en pantalla, X y O en nodos
         const num = Math.floor(Math.random() * 99) + 1;
         const isEven = num % 2 === 0;
         const node1HasCircle = Math.random() < 0.5;
-        state.session.correctNode = isEven ? (node1HasCircle ? 1 : 2) : (node1HasCircle ? 2 : 1);
+        state.session.correctNode = isEven ? (node1HasCircle ? nid1 : nid2) : (node1HasCircle ? nid2 : nid1);
         const screenColor = config.colorDiff ? ['white','green','blue'][Math.floor(Math.random()*3)] : 'white';
         updateStroopScreen({ word: String(num), ink: screenColor });
-        document.getElementById('liveNode').textContent = `Nodo 1: ${node1HasCircle?'O':'X'}  ·  Nodo 2: ${node1HasCircle?'X':'O'}`;
+        document.getElementById('liveNode').textContent = `Nodo ${nid1}: ${node1HasCircle?'O':'X'}  ·  Nodo ${nid2}: ${node1HasCircle?'X':'O'}`;
         document.getElementById('liveHint').textContent = isEven ? 'PAR → toca O' : 'IMPAR → toca X';
-        sendBLE({ cmd:'show', node_id:1, shape: node1HasCircle ? 'circle' : 'x', color:'white', duration:dur, sensor:config.sensor||'vibration' });
+        sendBLE({ cmd:'show', node_id:nid1, shape: node1HasCircle ? 'circle' : 'x', color:'white', duration:dur, sensor:config.sensor||'vibration' });
         const _piRound1 = state.session.current;
         state.session.showNode2Id = setTimeout(() => {
           if (!state.session.active || state.session.current !== _piRound1) return;
-          sendBLE({ cmd:'show', node_id:2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:config.sensor||'vibration' });
+          sendBLE({ cmd:'show', node_id:nid2, shape: node1HasCircle ? 'x' : 'circle', color:'white', duration:dur, sensor:config.sensor||'vibration' });
         }, 80);
       } else {
         // Modo 2: palabra en pantalla, números en nodos
@@ -2773,19 +2789,19 @@
         const v1 = node1HasEven ? evenNum : oddNum;
         const v2 = node1HasEven ? oddNum  : evenNum;
         const wantsEven = Math.random() < 0.5;
-        state.session.correctNode = wantsEven ? (node1HasEven ? 1 : 2) : (node1HasEven ? 2 : 1);
+        state.session.correctNode = wantsEven ? (node1HasEven ? nid1 : nid2) : (node1HasEven ? nid2 : nid1);
         const screenWord  = wantsEven ? 'PAR' : 'IMPAR';
         const screenColor = config.colorDiff ? (Math.random() < 0.5 ? 'green' : 'red') : 'white';
         updateStroopScreen({ word: screenWord, ink: screenColor });
-        document.getElementById('liveNode').textContent = `Nodo 1: ${v1}  ·  Nodo 2: ${v2}`;
+        document.getElementById('liveNode').textContent = `Nodo ${nid1}: ${v1}  ·  Nodo ${nid2}: ${v2}`;
         document.getElementById('liveHint').textContent = `Toca el número ${screenWord}`;
         const c1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
         const c2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
-        sendBLE({ cmd:'show', node_id:1, shape:String(v1), color:c1, duration:dur, sensor:config.sensor||'vibration' });
+        sendBLE({ cmd:'show', node_id:nid1, shape:String(v1), color:c1, duration:dur, sensor:config.sensor||'vibration' });
         const _piRound2 = state.session.current;
         state.session.showNode2Id = setTimeout(() => {
           if (!state.session.active || state.session.current !== _piRound2) return;
-          sendBLE({ cmd:'show', node_id:2, shape:String(v2), color:c2, duration:dur, sensor:config.sensor||'vibration' });
+          sendBLE({ cmd:'show', node_id:nid2, shape:String(v2), color:c2, duration:dur, sensor:config.sensor||'vibration' });
         }, 80);
       }
 
@@ -2820,6 +2836,11 @@
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
+      const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar');
+      document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : '';
+      document.getElementById('liveTime').style.display        = isScreenExercise ? 'none' : '';
+      document.getElementById('screenProgress').style.display  = isScreenExercise ? 'block' : 'none';
+      if (isScreenExercise) document.getElementById('screenProgress').textContent = `1 / ${state.session.total}`;
       if (state.session && state.session.type === 'stroop') {
         const step = state.session.sequence[state.session.current];
         updateStroopScreen(step ? step.screen : null);
@@ -3465,8 +3486,9 @@
       const sensor   = document.getElementById('exStimSensor').value;
       const sound    = document.getElementById('exStimSound').checked;
       const total    = exerciseMode === 'reps' ? reps : 999;
+      const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = Array.from({length: total}, (_,i) =>
-        order === 'sequential' ? (i % nodes) + 1 : Math.floor(Math.random() * nodes) + 1
+        order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound } };
@@ -3494,7 +3516,8 @@
       const colorDiff = document.getElementById('exPiColorDiff').checked;
       const sensor    = document.getElementById('exPiSensor').value;
       window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor } };
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null };
+      const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor}, correctNode:null, nodeIds:piNodeIds };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -3509,7 +3532,8 @@
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sensor = document.getElementById('exStroopSensor').value;
-      const sequence = Array.from({ length: reps }, () => buildStroopStep(nodesCount, resolveBy, timeout, interval));
+      const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
+      const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
       window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor } };
       state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval,sensor}, nodeValues:{} };
       closePresetConfig();
@@ -3592,11 +3616,11 @@
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
 
+      const discNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
       for (let i = 0; i < reps; i++) {
-        const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
-        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        const correctNode = discMode === 'find_odd' ? null : discNodeIds[Math.floor(Math.random() * discNodeIds.length)];
+        sequence.push({ nodes: discNodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
 
       window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
@@ -3793,11 +3817,11 @@
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('discDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
+      const discNodeIds2 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
       for (let i = 0; i < reps; i++) {
-        const nodeIds = Array.from({length: nodes}, (_, idx) => idx + 1);
-        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        const correctNode = discMode === 'find_odd' ? null : discNodeIds2[Math.floor(Math.random() * discNodeIds2.length)];
+        sequence.push({ nodes: discNodeIds2, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
       window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor } };
       state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor}, nodeValues:{} };
@@ -4261,8 +4285,9 @@
       const exerciseMode = cfg.exerciseMode || 'reps';
       const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
       const total = exerciseMode === 'reps' ? cfg.reps : 999;
+      const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.numNodes);
       const sequence = Array.from({length: total}, (_,i) =>
-        cfg.order === 'sequential' ? (i % cfg.numNodes) + 1 : Math.floor(Math.random() * cfg.numNodes) + 1
+        cfg.order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
       state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration'} };
@@ -4282,7 +4307,8 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados'); return; }
       window._lastCfg = { _type: 'parimpar', config: cfg };
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration'}, correctNode:null };
+      const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
+      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration'}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -4291,7 +4317,8 @@
     function startStroopWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       window._lastCfg = { _type: 'stroop', config: cfg };
-      const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(cfg.nodesCount, cfg.resolveBy, cfg.timeout, cfg.interval));
+      const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodesCount);
+      const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(stroopNodeIds, cfg.resolveBy, cfg.timeout, cfg.interval));
       state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval, sensor:cfg.sensor||'vibration'}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
@@ -4302,11 +4329,11 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero'); return; }
       window._lastCfg = { _type: 'discrimination', config: cfg };
       const discMode = cfg.discMode || 'find_target';
+      const discNodeIds3 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodes);
       const sequence = [];
       for (let i = 0; i < cfg.reps; i++) {
-        const nodeIds = Array.from({length: cfg.nodes}, (_, idx) => idx + 1);
-        const correctNode = discMode === 'find_odd' ? null : nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        sequence.push({ nodes: nodeIds, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
+        const correctNode = discMode === 'find_odd' ? null : discNodeIds3[Math.floor(Math.random() * discNodeIds3.length)];
+        sequence.push({ nodes: discNodeIds3, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
       }
       state.session = { active:true, type:'discrimination', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
       showPage('exercises');
