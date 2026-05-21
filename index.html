@@ -2015,14 +2015,14 @@
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    async function openNodeGatt(device, attempts = 3) {
+    async function openNodeGatt(device, attempts = 5) {
       let lastError;
       for (let attempt = 1; attempt <= attempts; attempt++) {
         try {
           if (attempt > 1) toast(`Reintentando conexión ${attempt}/${attempts}...`);
-          await wait(attempt === 1 ? 80 : 700);
           const server = await device.gatt.connect();
-          await wait(120);
+          await wait(500);
+          if (!server.connected) throw new Error('El servidor GATT se desconectó nada más conectar');
           const service = await server.getPrimaryService(BLE_SERVICE);
           const cmdChar = await service.getCharacteristic(BLE_CMD_CHAR);
           const evtChar = await service.getCharacteristic(BLE_EVT_CHAR);
@@ -2031,7 +2031,7 @@
           lastError = err;
           console.warn(`BLE connect attempt ${attempt} failed`, err);
           try { if (device.gatt?.connected) device.gatt.disconnect(); } catch {}
-          await wait(700);
+          await wait(1500);
         }
       }
       throw lastError;
