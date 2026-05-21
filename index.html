@@ -2411,9 +2411,12 @@
       throw lastError;
     }
 
+    let _bleConnecting = false;
     async function connectBLE() {
-      if (!navigator.bluetooth) { toast('Web Bluetooth no disponible. Usa Chrome en Android.'); return; }
+      if (_bleConnecting) return;
+      if (!navigator.bluetooth) { toast('Web Bluetooth no disponible. Usa Chrome.'); return; }
       if (state.bleNodes.length >= 8) { toast('Máximo 8 nodos permitidos'); return; }
+      _bleConnecting = true;
       try {
         toast('Buscando nodo...');
         const device = await navigator.bluetooth.requestDevice({
@@ -2423,6 +2426,8 @@
         await connectDevice(device);
       } catch(err) {
         if (err.name !== 'NotFoundError') toast('Error: ' + err.message);
+      } finally {
+        _bleConnecting = false;
       }
     }
 
@@ -3313,12 +3318,12 @@
       const el = document.documentElement;
       const isFs = document.fullscreenElement || document.webkitFullscreenElement;
       if (!isFs) {
-        const req = el.requestFullscreen || el.webkitRequestFullscreen;
-        if (req) req.call(el).catch(() => toast('Pantalla completa no disponible en este navegador'));
-        else toast('Pantalla completa no disponible en este navegador');
+        try {
+          const result = (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen || null)?.call(el);
+          if (result && typeof result.catch === 'function') result.catch(() => toast('Pantalla completa no disponible'));
+        } catch(e) { toast('Pantalla completa no disponible'); }
       } else {
-        const exit = document.exitFullscreen || document.webkitExitFullscreen;
-        if (exit) exit.call(document);
+        try { (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || (() => {})).call(document); } catch(e) {}
       }
     }
 
@@ -4910,10 +4915,7 @@
       navHistory.push(pageId);
       navigateTo(pageId);
       if (pageId === 'data') loadDataPage();
-      if (pageId === 'config') {
-        state.availableDevices = [];
-        startLEScan(true);
-      } else {
+      if (pageId !== 'config') {
         stopLEScan(true);
       }
       clearStarter();
