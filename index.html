@@ -2012,6 +2012,14 @@
     const BLE_EVT_CHAR = '12345678-1234-1234-1234-123456789002';
 
     // BLE CONEXIÓN
+    async function requestNodeId(cmdChar) {
+      try {
+        await cmdChar.writeValue(new TextEncoder().encode(JSON.stringify({ cmd:'ping' })));
+      } catch(err) {
+        console.warn('BLE ping failed', err);
+      }
+    }
+
     async function connectBLE() {
       if (!navigator.bluetooth) { toast('Web Bluetooth no disponible. Usa Chrome en Android.'); return; }
       if (state.bleNodes.length >= 8) { toast('Máximo 8 nodos permitidos'); return; }
@@ -2042,6 +2050,7 @@
         updateBTUI();
         updateNodesGrid();
         renderAvailableNodesList();
+        requestNodeId(cmdChar);
         toast('Nodo conectado ✓');
       } catch(err) {
         console.warn('connectDevice error', err);
@@ -2115,6 +2124,7 @@
           connected++;
           updateBTUI();
           updateNodesGrid();
+          requestNodeId(cmdChar);
           await new Promise(r => setTimeout(r, 600));
         } catch(err) {
           if (err.name !== 'NotFoundError' && err.name !== 'AbortError') console.warn(err);
@@ -2174,7 +2184,10 @@
 
         // Registrar nodeId desde cualquier mensaje que lo incluya (incluyendo el "connected" inicial)
         if (data.node_id != null && bleNode) {
+          const duplicate = state.bleNodes.find(n => n !== bleNode && n.nodeId === data.node_id);
           bleNode.nodeId = data.node_id;
+          if (duplicate) toast(`ID duplicado: hay más de un nodo ${data.node_id}`);
+          updateNodesGrid();
         }
 
         // Actualizar información de batería
@@ -2201,8 +2214,11 @@
       let targetnodes = targetNodeId
         ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
         : state.bleNodes;
-      // Si se especificó node_id pero ningún nodo coincide (nodeId aún null), enviar a todos
-      if (targetNodeId && targetnodes.length === 0) targetnodes = state.bleNodes;
+      // Si se especifica un nodo que no existe, no lo convertimos en broadcast.
+      if (targetNodeId && targetnodes.length === 0) {
+        toast(`Nodo ${targetNodeId} no conectado`);
+        return;
+      }
       for (const bleNode of targetnodes) {
         if (!bleNode.cmdChar) continue;
         try {
