@@ -351,8 +351,8 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      min-height: 210px;
-      padding: 24px 18px;
+      min-height: 300px;
+      padding: 32px 18px;
       border-radius: 20px;
       background: var(--bg3);
       border: 1px solid var(--border);
@@ -368,7 +368,15 @@
     }
     .home-button svg { width: 40px; height: 40px; stroke: currentColor; }
     .home-button span { display: block; font-size: 1.05rem; font-weight: 600; }
-    #page-home { display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 200px); }
+    #page-home.active { display: flex; flex-direction: column; justify-content: center; padding-bottom: 14vh; min-height: calc(100vh - 180px); }
+    .home-grid-main { grid-template-columns: 1fr; }
+    .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
+    .home-grid-main .home-button span { font-size: 1.1rem; }
+    @media (min-width: 768px) {
+      .home-grid-main { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .home-grid-main .home-button { min-height: 300px; flex-direction: column; justify-content: center; padding: 32px 18px; }
+      .home-grid-main .home-button span { font-size: 1.05rem; }
+    }
 
     /* ATHLETE PILL */
     .athlete-pill {
@@ -531,7 +539,7 @@
       <div class="section-header">
         <div class="section-title">Inicio</div>
       </div>
-      <div class="home-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+      <div class="home-grid home-grid-main">
 
         <button class="home-button" onclick="showPage('exercises')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
