@@ -2258,8 +2258,8 @@
         <div class="card-title">Intensidad lumínica</div>
         <div class="card-sub">Ajusta el brillo de la matriz LED. Todos los nodos mostrarán el nivel actual.</div>
         <div class="field">
-          <label>Brillo <span class="slider-val" id="brightnessVal">64</span></label>
-          <input type="range" min="10" max="255" value="64" id="brightnessSlider" oninput="updateBrightnessPreview(this.value)" onchange="updateBrightness(this.value)" />
+          <label>Brillo <span class="slider-val" id="brightnessVal">25</span>%</label>
+          <input type="range" min="1" max="100" value="25" id="brightnessSlider" oninput="updateBrightnessPreview(this.value)" onchange="updateBrightness(this.value)" />
         </div>
       </div>
 
@@ -2271,6 +2271,10 @@
             <div class="toggle-sub">Feedback sonoro en cada estímulo</div>
           </div>
           <div class="toggle on" id="buzzerToggle" onclick="toggleBuzzer()"></div>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label>Volumen <span class="slider-val" id="volumeVal">100</span>%</label>
+          <input type="range" min="1" max="100" value="100" id="volumeSlider" onchange="updateVolume(this.value)" />
         </div>
       </div>
 
@@ -3868,9 +3872,14 @@
     }
 
     // CONFIG
+    function pctToBrightness(pct) {
+      // 1-100% → 3-255 (nunca completamente apagado)
+      return Math.max(3, Math.round(pct * 2.55));
+    }
+
     function updateBrightnessPreview(val) {
       document.getElementById('brightnessVal').textContent = val;
-      sendBLE({ cmd:'brightness', value:String(val) });
+      sendBLE({ cmd:'brightness', value:String(pctToBrightness(val)) });
       if (!state.session?.active && state.bleNodes.length > 0) {
         clearTimeout(window._brightnessTimer);
         window._brightnessTimer = setTimeout(() => {
@@ -3881,8 +3890,12 @@
 
     function updateBrightness(val) {
       document.getElementById('brightnessVal').textContent = val;
-      // Aplica el brillo final a todos los nodos
-      sendBLE({ cmd:'brightness', value:String(val) });
+      sendBLE({ cmd:'brightness', value:String(pctToBrightness(val)) });
+    }
+
+    function updateVolume(val) {
+      document.getElementById('volumeVal').textContent = val;
+      sendBLE({ cmd:'volume', value:String(val) });
     }
 
     function identifyNodes() {
