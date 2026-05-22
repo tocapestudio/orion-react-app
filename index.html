@@ -3913,11 +3913,20 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       document.getElementById('otaEnableBtn').disabled = true;
       const statusList = document.getElementById('otaStatusList');
-      statusList.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Conectando WiFi en los nodos...</div>';
+      statusList.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Enviando a los nodos...</div>';
       statusList.style.display = 'flex';
       document.getElementById('otaCommands').textContent = '';
       document.getElementById('otaInstructions').style.display = 'none';
-      await sendBLE({ cmd: 'ota_enable' });
+      // Envío individual con pausa — el write masivo simultáneo falla silenciosamente en BLE
+      for (const bleNode of state.bleNodes) {
+        if (!bleNode.cmdChar) continue;
+        try {
+          await bleNode.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify({ cmd: 'ota_enable' })));
+          await new Promise(r => setTimeout(r, 400));
+        } catch(e) {
+          toast(`Error enviando a Nodo ${bleNode.nodeId ?? '?'}`, 'error');
+        }
+      }
     }
 
     async function disableOTA() {
