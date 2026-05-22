@@ -2274,6 +2274,32 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="card-title">Actualización de firmware</div>
+        <div class="card-sub">Activa el WiFi en todos los nodos conectados para enviarles firmware nuevo desde PlatformIO — sin cable.</div>
+
+        <div id="otaStatusList" style="display:none;margin-bottom:12px;display:flex;flex-direction:column;gap:6px;"></div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <div style="flex:1;min-width:140px;">
+            <button class="btn-primary" id="otaEnableBtn" onclick="enableOTA()" style="width:100%;">
+              Activar WiFi OTA
+            </button>
+          </div>
+          <div style="flex:1;min-width:140px;">
+            <button class="btn-secondary" id="otaDisableBtn" onclick="disableOTA()" style="width:100%;display:none;">
+              Desactivar WiFi
+            </button>
+          </div>
+        </div>
+
+        <div id="otaInstructions" style="display:none;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+          <div style="font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:6px;">Ejecuta en PlatformIO (terminal):</div>
+          <pre id="otaCommands" style="margin:0;background:var(--bg2);padding:10px 12px;border-radius:6px;font-size:0.78rem;overflow-x:auto;white-space:pre-wrap;color:var(--text);"></pre>
+          <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">O haz doble clic en <strong>flash_all_ota.bat</strong> para actualizar todos a la vez.</div>
+        </div>
+      </div>
+
       <!-- 'Deportistas' card removed: functionality available on the Datos page -->
     </section>
 
@@ -2474,23 +2500,6 @@
       }
     }
 
-    async function autoReconnectKnownNodes() {
-      if (!navigator.bluetooth?.getDevices) return;
-      try {
-        const devices = await navigator.bluetooth.getDevices();
-        const orionDevices = devices.filter(d => (d.name || '').startsWith('OrionNode'));
-        if (orionDevices.length === 0) return;
-        toast(`Reconectando ${orionDevices.length} nodo${orionDevices.length > 1 ? 's' : ''} conocido${orionDevices.length > 1 ? 's' : ''}...`);
-        for (const device of orionDevices) {
-          if (state.bleNodes.length >= 8) break;
-          if (state.bleNodes.some(n => n.device?.id === device.id)) continue;
-          await connectDevice(device, { silent: true });
-          await new Promise(r => setTimeout(r, 300));
-        }
-      } catch(e) {
-        console.warn('[autoReconnect] error', e);
-      }
-    }
 
     function disconnectBLE(device = null) {
       if (device) {
@@ -2636,6 +2645,14 @@
 
         // Reacciones y eventos de sesión
         if (data.reaction_ms != null) onReactionReceived(data);
+
+        // OTA
+        if (data.ota_ready != null) onOtaReady(data);
+        if (data.ota_disabled != null) onOtaDisabled(data);
+        if (data.ota_error != null) {
+          toast(`Nodo ${data.node_id ?? '?'}: ${data.ota_error}`, 'error');
+          document.getElementById('otaEnableBtn').disabled = false;
+        }
       } catch {}
     }
 
@@ -3880,6 +3897,69 @@
       // Envía comando para que los nodos muestren su número
       sendBLE({ cmd:'identify' });
       toast('Identificando nodos...');
+    }
+
+    // ── OTA ──────────────────────────────────────────────────
+    async function enableOTA() {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      document.getElementById('otaEnableBtn').disabled = true;
+      const statusList = document.getElementById('otaStatusList');
+      statusList.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Conectando WiFi en los nodos...</div>';
+      statusList.style.display = 'flex';
+      document.getElementById('otaCommands').textContent = '';
+      document.getElementById('otaInstructions').style.display = 'none';
+      await sendBLE({ cmd: 'ota_enable' });
+    }
+
+    async function disableOTA() {
+      await sendBLE({ cmd: 'ota_disable' });
+    }
+
+    function onOtaReady(data) {
+      const hostname = data.hostname || `OrionNode_${data.node_id}.local`;
+      const ip       = data.ip || '—';
+      const statusList = document.getElementById('otaStatusList');
+
+      // Limpiar mensaje de "conectando..." si existe
+      const placeholder = statusList.querySelector('div[style*="muted"]');
+      if (placeholder && placeholder.textContent.includes('Conectando')) placeholder.remove();
+
+      // Añadir o actualizar entrada de este nodo
+      let entry = document.getElementById(`ota-node-${data.node_id}`);
+      if (!entry) {
+        entry = document.createElement('div');
+        entry.id = `ota-node-${data.node_id}`;
+        entry.style.cssText = 'padding:6px 10px;background:var(--bg2);border-radius:6px;font-size:0.82rem;display:flex;align-items:center;gap:8px;';
+        statusList.appendChild(entry);
+      }
+      entry.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;animation:pulse 1.2s infinite;flex-shrink:0;"></span><span style="color:var(--text);font-weight:500;">Nodo ${data.node_id}</span><span style="color:var(--muted);">${hostname} &nbsp;·&nbsp; ${ip}</span>`;
+      statusList.style.display = 'flex';
+
+      // Añadir comando PlatformIO si no estaba ya
+      const cmdsEl = document.getElementById('otaCommands');
+      const newCmd = `pio run -e node${data.node_id}_ota --target upload`;
+      const existing = cmdsEl.textContent.split('\n').filter(l => l.trim());
+      if (!existing.includes(newCmd)) existing.push(newCmd);
+      cmdsEl.textContent = existing.join('\n');
+      document.getElementById('otaInstructions').style.display = 'block';
+
+      document.getElementById('otaDisableBtn').style.display = 'block';
+      document.getElementById('otaEnableBtn').disabled = false;
+    }
+
+    function onOtaDisabled(data) {
+      const entry = document.getElementById(`ota-node-${data.node_id}`);
+      if (entry) entry.remove();
+      const statusList = document.getElementById('otaStatusList');
+      // Comprobar si quedan nodos activos
+      if (!statusList.querySelector('[id^="ota-node-"]')) {
+        statusList.style.display = 'none';
+        statusList.innerHTML = '';
+        document.getElementById('otaDisableBtn').style.display = 'none';
+        document.getElementById('otaInstructions').style.display = 'none';
+        document.getElementById('otaCommands').textContent = '';
+        document.getElementById('otaEnableBtn').disabled = false;
+      }
     }
 
     function toggleBuzzer() {
@@ -5292,7 +5372,6 @@
 
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
     document.getElementById('btBtn').addEventListener('click', connectBLE);
-    autoReconnectKnownNodes();
     document.getElementById('addAthleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAddAthleteModal(); });
     document.getElementById('athleteModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeAthleteModal(); });
     document.getElementById('folderModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeFolderModal(); });
