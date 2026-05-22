@@ -2250,7 +2250,7 @@
           <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
         </div>
         <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">
-          "Añadir nodo" abre el selector del navegador — úsalo si el escaneo no detecta algún nodo.
+          Pulsa "Añadir nodo" una vez por cada nodo a conectar.
         </div>
       </div>
 
@@ -2457,22 +2457,18 @@
       if (state.bleNodes.length >= 8) { toast('Máximo 8 nodos permitidos'); return; }
       _bleConnecting = true;
       try {
-        while (state.bleNodes.length < 8) {
-          toast('Selecciona un nodo en el menú del navegador...');
-          let device;
-          try {
-            device = await navigator.bluetooth.requestDevice({
-              filters: [{ namePrefix: 'OrionNode' }],
-              optionalServices: [BLE_SERVICE]
-            });
-          } catch(err) {
-            if (err.name !== 'NotFoundError' && err.name !== 'AbortError') toast('Error: ' + err.message);
-            break; // usuario canceló el picker — dejar de añadir
-          }
-          await connectDevice(device);
-          if (state.bleNodes.length >= 8) break;
-          await new Promise(r => setTimeout(r, 500));
+        // Un clic = un nodo. Vuelve a pulsar para añadir otro.
+        let device;
+        try {
+          device = await navigator.bluetooth.requestDevice({
+            filters: [{ namePrefix: 'OrionNode' }],
+            optionalServices: [BLE_SERVICE]
+          });
+        } catch(err) {
+          if (err.name !== 'NotFoundError' && err.name !== 'AbortError') toast('Error: ' + err.message);
+          return;
         }
+        await connectDevice(device);
       } finally {
         _bleConnecting = false;
       }
