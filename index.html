@@ -1519,27 +1519,40 @@
       </div>
 
       <div id="activeSession" style="display:none;">
-        <div class="live-display">
-          <div class="live-node" id="liveNode">--</div>
-          <div class="live-time" id="liveTime">-- s</div>
-          <div class="live-hint" id="liveHint">Preparando...</div>
-          <div class="stroop-stimulus" id="stroopScreen"></div>
+        <!-- liveNode oculto: lo usa el JS pero no se muestra al usuario -->
+        <div id="liveNode" style="display:none;"></div>
+
+        <!-- Hint + progreso para ejercicios de pantalla -->
+        <div style="text-align:center;margin-bottom:10px;">
+          <div class="live-hint" id="liveHint" style="font-size:1rem;font-weight:600;color:var(--muted);">Preparando...</div>
+          <div id="screenProgress" style="display:none;font-size:1.4rem;font-weight:700;color:var(--text);margin-top:4px;font-family:'DM Mono',monospace;"></div>
         </div>
-        <div class="stats-row" id="statsRow">
-          <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media s</span></div>
-          <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor s</span></div>
-          <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
-          <div class="stat-tile" id="statElapsedTile" style="display:none;"><span class="val" id="statElapsed">0:00</span><span class="lbl">Transcurrido</span></div>
-          <div class="stat-tile" id="statCompleteTile" style="display:none;"><span class="val" id="statComplete">0</span><span class="lbl">Completadas</span></div>
+        <div class="stroop-stimulus" id="stroopScreen"></div>
+
+        <!-- Fila 1: Media + Mejor (2 tiles grandes) -->
+        <div class="stats-row" id="statsRow" style="gap:12px;margin-bottom:8px;">
+          <div class="stat-tile" style="flex:1;"><span class="val" id="statAvg" style="font-size:2rem;">--</span><span class="lbl">Media s</span></div>
+          <div class="stat-tile" style="flex:1;"><span class="val" id="statBest" style="font-size:2rem;">--</span><span class="lbl">Mejor s</span></div>
         </div>
-        <div id="screenProgress" style="display:none;text-align:center;font-size:0.78rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
-        <div id="miniLogWrap" style="display:none;margin-top:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
-          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Últimas reacciones</div>
-          <div class="mini-log" id="miniLog"></div>
+
+        <!-- Fila 2: Progreso · Transcurrido · Tiempo actual -->
+        <div class="stats-row" id="statsRowBottom" style="gap:8px;margin-bottom:12px;">
+          <div class="stat-tile" style="flex:1;"><span class="val" id="statProgress" style="font-size:1.1rem;">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
+          <div class="stat-tile" id="statElapsedTile" style="flex:1;"><span class="val" id="statElapsed" style="font-size:1.1rem;">0:00</span><span class="lbl">Transcurrido</span></div>
+          <div class="stat-tile" id="liveTimeTile" style="flex:1;"><span class="val" id="liveTime" style="font-size:1.1rem;">-- s</span><span class="lbl">Tiempo</span></div>
+          <div class="stat-tile" id="statCompleteTile" style="display:none;flex:1;"><span class="val" id="statComplete" style="font-size:1.1rem;">0</span><span class="lbl">Completadas</span></div>
         </div>
+
+        <!-- Botones: Pausar primero, Detener después -->
         <div class="btn-row" style="flex-wrap:wrap;gap:8px;">
-          <button class="btn-danger" onclick="stopSession()" style="flex:1;">Detener</button>
           <button class="btn-secondary" id="btnPause" onclick="togglePause()" style="flex:1;">⏸ Pausa</button>
+          <button class="btn-danger" onclick="stopSession()" style="flex:1;">Detener</button>
+        </div>
+
+        <!-- Lista de tiempos al final -->
+        <div id="miniLogWrap" style="display:none;margin-top:14px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Tiempos registrados</div>
+          <div class="mini-log" id="miniLog"></div>
         </div>
       </div>
 
@@ -2453,7 +2466,7 @@
             <div class="toggle-label">Buzzer del nodo</div>
             <div class="toggle-sub">Feedback sonoro en cada estímulo</div>
           </div>
-          <div class="toggle on" id="buzzerToggle" onclick="toggleBuzzer()"></div>
+          <div class="toggle" id="buzzerToggle" onclick="toggleBuzzer()"></div>
         </div>
         <div class="field" style="margin-top:14px;">
           <label>Volumen <span class="slider-val" id="volumeVal">100</span>%</label>
@@ -2846,7 +2859,7 @@
       athlete: null,
       athletes: [],
       clubs: [],
-      buzzerOn: true,
+      buzzerOn: false,
       session: { active:false, type:null, history:[], current:0, total:0, sequence:[], timeoutId:null, waiting:false, config:{}, nodeValues:{} }
     };
 
@@ -2931,8 +2944,9 @@
         updateNodesGrid();
         renderAvailableNodesList();
         requestNodeId(cmdChar);
+        // Sincronizar estado de buzzer con el nodo recién conectado
+        try { await cmdChar.writeValue(new TextEncoder().encode(JSON.stringify({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' }))); } catch(e) {}
         toast(silent ? `${device.name} reconectado ✓` : 'Nodo conectado ✓');
-        // Devolver foco a la página — Chrome puede absorberse el primer clic tras el diálogo BT
         setTimeout(() => { try { document.activeElement?.blur(); window.focus(); } catch(e) {} }, 100);
       } catch(err) {
         console.warn('connectDevice error', err);
@@ -3715,7 +3729,9 @@
       const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar');
       const isTimeMode = state.session && state.session.exerciseMode === 'time';
       document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : '';
-      document.getElementById('liveTime').style.display        = isScreenExercise ? 'none' : '';
+      document.getElementById('statsRowBottom').style.display  = isScreenExercise ? 'none' : '';
+      const liveTimeTile = document.getElementById('liveTimeTile');
+      if (liveTimeTile) liveTimeTile.style.display = isScreenExercise ? 'none' : '';
       document.getElementById('screenProgress').style.display  = isScreenExercise ? 'block' : 'none';
       if (isScreenExercise) document.getElementById('screenProgress').textContent = `1 / ${state.session.total}`;
       if (state.session && state.session.type === 'stroop') {
@@ -3731,7 +3747,8 @@
       const pauseBtn = document.getElementById('btnPause');
       if (pauseBtn) pauseBtn.textContent = '⏸ Pausa';
       // elapsed timer + completed tile
-      document.getElementById('statElapsedTile').style.display = isScreenExercise ? 'none' : '';
+      const elapsedTile = document.getElementById('statElapsedTile');
+      if (elapsedTile) elapsedTile.style.display = isScreenExercise ? 'none' : '';
       document.getElementById('statElapsed').textContent = '0:00';
       const completeTile = document.getElementById('statCompleteTile');
       completeTile.style.display = (isTimeMode && !isScreenExercise) ? '' : 'none';
