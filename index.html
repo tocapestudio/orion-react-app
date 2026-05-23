@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Orion React</title>
   <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap');
 
@@ -2379,18 +2380,88 @@
   </nav>
 
   <div class="modal-overlay" id="addAthleteModal">
-    <div class="modal">
-      <div class="modal-title">Crear jugador</div>
+    <div class="modal" style="max-height:88vh;overflow-y:auto;padding-bottom:8px;">
+      <div class="modal-title">Nuevo jugador</div>
+
       <div class="field" style="margin-bottom:12px;">
-        <label>Nombre</label>
-        <input type="text" id="newAthleteNameModal" placeholder="Nombre" />
+        <label>Club <span style="color:#f44336;">*</span></label>
+        <select id="newPlayerClub" onchange="onNewPlayerClubChange()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;">
+          <option value="">— Seleccionar club —</option>
+        </select>
       </div>
-      <div class="field" style="margin-bottom:16px;">
-        <label>Deporte</label>
-        <input type="text" id="newAthleteSportModal" placeholder="Fútbol, pádel..." />
+
+      <div class="field" style="margin-bottom:12px;">
+        <label>Nombre completo <span style="color:#f44336;">*</span></label>
+        <input type="text" id="newPlayerName" placeholder="Nombre y apellidos"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;" />
       </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label>Email</label>
+        <input type="email" id="newPlayerEmail" placeholder="correo@ejemplo.com"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;" />
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:12px;">
+        <div class="field" style="flex:2;margin:0;">
+          <label>Modalidad</label>
+          <select id="newPlayerPosition" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;">
+            <option value="">— Seleccionar club primero —</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;margin:0;">
+          <label>Dorsal</label>
+          <input type="number" id="newPlayerDorsal" min="1" max="99" placeholder="—"
+            style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;" />
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:12px;">
+        <div class="field" style="flex:1;margin:0;">
+          <label>Fecha de nacimiento</label>
+          <input type="date" id="newPlayerBirthDate"
+            style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;" />
+        </div>
+        <div class="field" style="flex:1;margin:0;">
+          <label>Género</label>
+          <select id="newPlayerGender" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;">
+            <option value="">—</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label>Mano dominante</label>
+        <select id="newPlayerHand" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;">
+          <option value="">—</option>
+          <option value="Derecha">Derecha</option>
+          <option value="Izquierda">Izquierda</option>
+          <option value="Ambas">Ambas</option>
+        </select>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label>Notas</label>
+        <textarea id="newPlayerNotes" rows="2" placeholder="Observaciones..."
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;resize:vertical;"></textarea>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label>Foto de perfil</label>
+        <input type="file" id="newPlayerPhoto" accept="image/*" onchange="onNewPlayerPhotoChange()" style="width:100%;font-size:0.85rem;" />
+        <img id="newPlayerPhotoPreview" src="" alt="" style="display:none;width:60px;height:60px;border-radius:50%;object-fit:cover;margin-top:8px;" />
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;padding:12px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);">
+        <input type="checkbox" id="newPlayerConsent" style="margin-top:2px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;" />
+        <label for="newPlayerConsent" style="margin:0;font-size:0.82rem;color:var(--muted);cursor:pointer;">El jugador ha otorgado consentimiento para el tratamiento de sus datos conforme a la política de privacidad. <span style="color:#f44336;">*</span></label>
+      </div>
+
       <div class="btn-row">
-        <button class="btn-primary" onclick="addAthleteFromModal()">Crear</button>
+        <button class="btn-primary" onclick="addAthleteFromModal()">Crear jugador</button>
         <button class="btn-secondary" onclick="closeAddAthleteModal()">Cancelar</button>
       </div>
     </div>
@@ -2426,18 +2497,44 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- LOGIN PROFESIONAL (solo aparece si no hay sesión activa) -->
+  <div id="loginOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.94);display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:var(--bg2);border-radius:20px;padding:32px 28px;width:320px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="font-size:1.6rem;font-weight:800;color:var(--accent);margin-bottom:4px;letter-spacing:-0.5px;">ORION React</div>
+      <div style="color:var(--muted);font-size:0.82rem;margin-bottom:28px;">Acceso profesional</div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:6px;font-weight:500;">Email</label>
+        <input id="loginEmail" type="email" autocomplete="email" placeholder="correo@ejemplo.com"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()" />
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.78rem;color:var(--muted);display:block;margin-bottom:6px;font-weight:500;">Contraseña</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button onclick="doLogin()" style="width:100%;padding:12px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:0.95rem;font-weight:600;cursor:pointer;letter-spacing:0.3px;">Entrar</button>
+      <div id="loginError" style="color:#f44336;font-size:0.78rem;margin-top:10px;text-align:center;display:none;"></div>
+    </div>
+  </div>
+
   <script>
     // SUPABASE
-    const SUPABASE_URL = 'https://twalryzcwxzcfqubvwji.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_wjdjMN60g-Yy1r_479aPPA_6rqA2zTU';
+    const SUPABASE_URL  = 'https://twalryzcwxzcfqubvwji.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR3YWxyeXpjd3h6Y2ZxdWJ2d2ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTg1MTcsImV4cCI6MjA5NDE3NDUxN30.6VIQ8OK0FvhfvD7K34duCSCBnj26Ocplj2lVWFXF4Es';
+    const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentProfessional = null;
 
     const db = {
       async query(table, method='GET', body=null, filters='') {
+        const { data: { session } } = await _sb.auth.getSession();
+        const token = session?.access_token || SUPABASE_ANON_KEY;
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${filters}`, {
           method,
           headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
             'Prefer': method === 'POST' ? 'return=representation' : ''
           },
@@ -2446,9 +2543,10 @@
         if (!res.ok) throw new Error(await res.text());
         return method === 'DELETE' ? null : res.json();
       },
-      get:    (t, f='')  => db.query(t,'GET',null,f),
-      post:   (t, b)     => db.query(t,'POST',b),
-      delete: (t, f)     => db.query(t,'DELETE',null,f),
+      get:    (t, f='')     => db.query(t,'GET',null,f),
+      post:   (t, b)        => db.query(t,'POST',b),
+      patch:  (t, b, f='') => db.query(t,'PATCH',b,f),
+      delete: (t, f)        => db.query(t,'DELETE',null,f),
     };
 
     // ESTADO
@@ -2461,6 +2559,7 @@
       leScan: null,
       athlete: null,
       athletes: [],
+      clubs: [],
       buzzerOn: true,
       session: { active:false, type:null, history:[], current:0, total:0, sequence:[], timeoutId:null, waiting:false, config:{}, nodeValues:{} }
     };
@@ -3585,8 +3684,9 @@
         const athlete = state.athletes.find(a => a.id === s.athlete_id);
         if (!athlete) return;
         window.dataLastAthleteId = athlete.id;
-        document.getElementById('dataLastName').textContent = athlete.name;
-        document.getElementById('dataLastSport').textContent = athlete.sport || 'Sin deporte';
+        document.getElementById('dataLastName').textContent = athlete.full_name;
+        const dataLastClub = state.clubs.find(c => c.id === athlete.club_id);
+        document.getElementById('dataLastSport').textContent = dataLastClub?.name || athlete.position || '';
         document.getElementById('dataLastDate').textContent =
           new Date(s.date).toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
         document.getElementById('dataLastExType').textContent = getExerciseName(s.exercise_type);
@@ -3596,7 +3696,7 @@
 
     function filterDataAthletes() {
       const q = document.getElementById('dataAthleteSearch').value.toLowerCase();
-      const filtered = q ? state.athletes.filter(a => a.name.toLowerCase().includes(q)) : state.athletes;
+      const filtered = q ? state.athletes.filter(a => a.full_name.toLowerCase().includes(q)) : state.athletes;
       renderDataAthletes(filtered);
     }
 
@@ -3607,14 +3707,18 @@
         list.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:8px 0;text-align:center;">Sin jugadores guardados</div>`;
         return;
       }
-      list.innerHTML = athletes.map(a => `
-        <div class="ex-item" onclick="selectDataAthlete('${a.id}')" style="margin-bottom:8px;">
-          <div class="ex-item-info">
-            <h3 style="font-size:0.92rem;">${a.name}</h3>
-            <p>${a.sport || 'Sin deporte'}</p>
-          </div>
-          <span class="ex-item-arrow">›</span>
-        </div>`).join('');
+      list.innerHTML = athletes.map(a => {
+        const club = state.clubs.find(c => c.id === a.club_id);
+        const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
+        return `
+          <div class="ex-item" onclick="selectDataAthlete('${a.id}')" style="margin-bottom:8px;">
+            <div class="ex-item-info">
+              <h3 style="font-size:0.92rem;">${a.full_name}</h3>
+              <p>${sub}</p>
+            </div>
+            <span class="ex-item-arrow">›</span>
+          </div>`;
+      }).join('');
     }
 
     function toggleDataPlayerList() {
@@ -3628,8 +3732,9 @@
       if (!athlete) return;
       document.getElementById('dataMainView').style.display = 'none';
       document.getElementById('dataAthleteView').style.display = 'block';
-      document.getElementById('dataViewName').textContent = athlete.name;
-      document.getElementById('dataViewSport').textContent = athlete.sport || 'Sin deporte';
+      document.getElementById('dataViewName').textContent = athlete.full_name;
+      const viewClub = state.clubs.find(c => c.id === athlete.club_id);
+      document.getElementById('dataViewSport').textContent = viewClub?.name || athlete.position || '';
       window.calSelected = null;
       window.dataSessionSortDesc = true;
       const sortBtn = document.getElementById('dataSortBtn');
@@ -3807,25 +3912,116 @@
         </div>`;
     }
 
+    // AUTH
+    async function initAuth() {
+      const { data: { session } } = await _sb.auth.getSession();
+      if (session) {
+        currentProfessional = session.user;
+        document.getElementById('loginOverlay').style.display = 'none';
+        await loadInitialData();
+      } else {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      }
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pwd   = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      const { data, error } = await _sb.auth.signInWithPassword({ email, password: pwd });
+      if (error) {
+        errEl.textContent = error.message === 'Invalid login credentials' ? 'Credenciales incorrectas' : error.message;
+        errEl.style.display = 'block';
+        return;
+      }
+      currentProfessional = data.user;
+      document.getElementById('loginOverlay').style.display = 'none';
+      await loadInitialData();
+    }
+
+    async function loadInitialData() {
+      await Promise.all([loadAthletes(), loadClubs(), loadExercises(), loadFolders()]);
+    }
+
+    // POSICIONES POR DEPORTE
+    const POSITIONS_BY_SPORT = {
+      football:   ['Portero','Lateral','Central','Extremo','Mediocentro','Mediapunta','Delantero'],
+      futsal:     ['Portero','Cierre','Ala','Pívot'],
+      basketball: ['Base','Escolta','Alero','Ala-Pívot','Pívot'],
+      handball:   ['Portero','Central','Lateral','Extremo','Pivote'],
+      volleyball: ['Colocador','Opuesto','Central','Receptor','Líbero'],
+      padel:      ['Drive','Revés'],
+      tennis:     ['Fondo de pista','Saque y volea','Todoterreno'],
+      athletics:  ['Velocidad','Medio fondo','Fondo','Saltos','Lanzamientos','Pruebas combinadas'],
+      esports:    ['Carry','Support','Mid','Jungle','Top','Coach'],
+      shooting:   ['Arco','Olímpico','Pistola','Carabina','Plato'],
+      motor:      ['Moto','Bici','Coche','Fórmula 1','Karting','Rally'],
+      baseball:   ['Pitcher','Catcher','Infield','Outfield','Bateador'],
+      hockey:     ['Portero','Defensa','Medio','Delantero'],
+      cricket:    ['Batsman','Bowler','All-rounder','Wicketkeeper'],
+      golf:       ['Drive','Approach','Putt','Full game'],
+      swimming:   ['Libre','Espalda','Braza','Mariposa','Mixto'],
+      combat:     ['Boxeo','Karate','Taekwondo','Judo','MMA'],
+    };
+
+    function onNewPlayerClubChange() {
+      const clubId = document.getElementById('newPlayerClub').value;
+      const club = state.clubs.find(c => c.id === clubId);
+      const positions = club?.sport ? (POSITIONS_BY_SPORT[club.sport] || []) : [];
+      const sel = document.getElementById('newPlayerPosition');
+      sel.innerHTML = positions.length
+        ? '<option value="">—</option>' + positions.map(p => `<option value="${p}">${p}</option>`).join('')
+        : '<option value="">— Sin modalidades definidas —</option>';
+    }
+
+    function onNewPlayerPhotoChange() {
+      const file = document.getElementById('newPlayerPhoto').files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        window._newPlayerPhotoBase64 = e.target.result;
+        const preview = document.getElementById('newPlayerPhotoPreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
     // DEPORTISTAS
     async function loadAthletes() {
+      if (!currentProfessional) return;
       try {
-        state.athletes = await db.get('athletes','?order=name');
+        state.athletes = await db.get('player_profiles', `?professional_id=eq.${currentProfessional.id}&order=full_name`);
         renderAthletes();
         renderDataAthletes(state.athletes);
         updateAthleteFilter();
-      } catch {}
+      } catch(e) { console.error('loadAthletes', e); }
+    }
+
+    async function loadClubs() {
+      if (!currentProfessional) return;
+      try {
+        state.clubs = await db.get('clubs', `?professional_id=eq.${currentProfessional.id}&order=name`);
+      } catch(e) { console.error('loadClubs', e); }
     }
 
     function renderAthletes() {
       const list = document.getElementById('athletesList');
       const html = !state.athletes.length
-        ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin deportistas añadidos.</div>`
-        : state.athletes.map(a=>`
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div><div style="font-size:0.9rem;font-weight:500;">${a.name}</div><div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div></div>
-            <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
-          </div>`).join('');
+        ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin jugadores añadidos.</div>`
+        : state.athletes.map(a => {
+            const club = state.clubs.find(c => c.id === a.club_id);
+            const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
+            return `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <div>
+                  <div style="font-size:0.9rem;font-weight:500;">${a.full_name}</div>
+                  <div style="font-size:0.75rem;color:var(--muted);">${sub}</div>
+                </div>
+                <button class="btn-danger" style="padding:6px 12px;font-size:0.78rem;" onclick="deleteAthlete('${a.id}')">Eliminar</button>
+              </div>`;
+          }).join('');
       list.innerHTML = html;
     }
 
@@ -3834,14 +4030,18 @@
       const countEl = document.getElementById('athletesCount');
       if (!listContainer || !countEl) return;
       countEl.textContent = athletes.length;
-      listContainer.innerHTML = athletes.map(a=>`
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);">
-          <div>
-            <div style="font-size:0.9rem;font-weight:500;">${a.name}</div>
-            <div style="font-size:0.75rem;color:var(--muted);">${a.sport||'Sin deporte'}</div>
-          </div>
-          <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
-        </div>`).join('') || '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
+      listContainer.innerHTML = athletes.map(a => {
+        const club = state.clubs.find(c => c.id === a.club_id);
+        const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-size:0.9rem;font-weight:500;">${a.full_name}</div>
+              <div style="font-size:0.75rem;color:var(--muted);">${sub}</div>
+            </div>
+            <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
+          </div>`;
+      }).join('') || '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
     }
 
     async function addAthlete() {
@@ -3850,8 +4050,21 @@
     }
 
     function openCreateAthleteModal() {
-      document.getElementById('newAthleteNameModal').value = '';
-      document.getElementById('newAthleteSportModal').value = '';
+      ['newPlayerName','newPlayerEmail','newPlayerDorsal','newPlayerNotes'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      ['newPlayerClub','newPlayerPosition','newPlayerGender','newPlayerHand'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      document.getElementById('newPlayerBirthDate').value = '';
+      document.getElementById('newPlayerConsent').checked = false;
+      const preview = document.getElementById('newPlayerPhotoPreview');
+      if (preview) { preview.style.display = 'none'; preview.src = ''; }
+      window._newPlayerPhotoBase64 = null;
+      const clubSel = document.getElementById('newPlayerClub');
+      clubSel.innerHTML = '<option value="">— Seleccionar club —</option>' +
+        state.clubs.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      document.getElementById('newPlayerPosition').innerHTML = '<option value="">— Seleccionar club primero —</option>';
       document.getElementById('addAthleteModal').classList.add('open');
     }
 
@@ -3860,15 +4073,46 @@
     }
 
     async function addAthleteFromModal() {
-      const name  = document.getElementById('newAthleteNameModal').value.trim();
-      const sport = document.getElementById('newAthleteSportModal').value.trim();
-      if (!name) { toast('Introduce un nombre'); return; }
+      const full_name = document.getElementById('newPlayerName').value.trim();
+      const club_id   = document.getElementById('newPlayerClub').value;
+      const consent   = document.getElementById('newPlayerConsent').checked;
+      if (!full_name) { toast('El nombre es obligatorio', 'error'); return; }
+      if (!club_id)   { toast('Selecciona un club', 'error'); return; }
+      if (!consent)   { toast('El consentimiento de privacidad es obligatorio', 'error'); return; }
+
+      const uuid = crypto.randomUUID();
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const invitation_code = Array.from({length: 8}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      const short_id = uuid.replace(/-/g,'').substring(0, 8).toUpperCase();
+
+      const birthInput = document.getElementById('newPlayerBirthDate').value;
+      const birth_date = birthInput ? birthInput.split('-').reverse().join('/') : null;
+
+      const player = {
+        id: uuid,
+        short_id,
+        invitation_code,
+        professional_id: currentProfessional.id,
+        club_id,
+        full_name,
+        email:         document.getElementById('newPlayerEmail').value.trim() || null,
+        position:      document.getElementById('newPlayerPosition').value || null,
+        dorsal:        parseInt(document.getElementById('newPlayerDorsal').value) || null,
+        birth_date,
+        gender:        document.getElementById('newPlayerGender').value || null,
+        dominant_hand: document.getElementById('newPlayerHand').value || null,
+        notes:         document.getElementById('newPlayerNotes').value.trim() || null,
+        profile_image: window._newPlayerPhotoBase64 || null,
+        privacy_consent:      true,
+        privacy_consent_date: new Date().toISOString(),
+        created_at:           new Date().toISOString(),
+      };
       try {
-        await db.post('athletes', {name, sport});
+        await db.post('player_profiles', player);
         closeAddAthleteModal();
         await loadAthletes();
         toast('Jugador creado ✓');
-      } catch(err) { toast('Error: '+err.message); }
+      } catch(err) { toast('Error: ' + err.message, 'error'); }
     }
 
     function toggleAthletesList() {
@@ -3884,13 +4128,13 @@
       const input = document.getElementById('athleteSearchDataInput');
       if (!input) return;
       const q = input.value.toLowerCase();
-      renderAthletesInData(q ? state.athletes.filter(a => a.name.toLowerCase().includes(q)) : state.athletes);
+      renderAthletesInData(q ? state.athletes.filter(a => a.full_name.toLowerCase().includes(q)) : state.athletes);
     }
 
     async function deleteAthlete(id) {
       try {
-        await db.delete('athletes',`?id=eq.${id}`);
-        if (state.athlete?.id===id) { state.athlete=null; updateAthletePill(); }
+        await db.delete('player_profiles', `?id=eq.${id}`);
+        if (state.athlete?.id === id) { state.athlete = null; updateAthletePill(); }
         await loadAthletes();
       } catch {}
     }
@@ -3898,7 +4142,7 @@
     function updateAthleteFilter() {
       const el = document.getElementById('filterAthlete');
       if (el) el.innerHTML = '<option value="">Todos</option>' +
-        state.athletes.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+        state.athletes.map(a => `<option value="${a.id}">${a.full_name}</option>`).join('');
     }
 
     function openAthleteModal() {
@@ -3911,12 +4155,19 @@
     function renderAthleteModalList(query) {
       const list = document.getElementById('athleteModalList');
       const q = query.toLowerCase().trim();
-      const filtered = q ? state.athletes.filter(a => a.name.toLowerCase().includes(q) || (a.sport||'').toLowerCase().includes(q)) : state.athletes;
+      const filtered = q
+        ? state.athletes.filter(a => a.full_name.toLowerCase().includes(q) || (a.position||'').toLowerCase().includes(q))
+        : state.athletes;
       list.innerHTML = !state.athletes.length
-        ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Añade deportistas en Configuración.</div>`
+        ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Añade jugadores en Configuración.</div>`
         : !filtered.length
           ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Sin resultados.</div>`
-          : filtered.map(a=>`<div class="ex-item" onclick="selectAthlete('${a.id}','${a.name}')"><div class="ex-item-info"><h3>${a.name}</h3><p>${a.sport||''}</p></div><span class="ex-item-arrow">›</span></div>`).join('');
+          : filtered.map(a => {
+              const club = state.clubs.find(c => c.id === a.club_id);
+              const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
+              const safeName = a.full_name.replace(/'/g, "\\'");
+              return `<div class="ex-item" onclick="selectAthlete('${a.id}','${safeName}')"><div class="ex-item-info"><h3>${a.full_name}</h3><p>${sub}</p></div><span class="ex-item-arrow">›</span></div>`;
+            }).join('');
     }
 
     function filterAthleteModal() {
@@ -3926,7 +4177,8 @@
     function closeAthleteModal() { document.getElementById('athleteModal').classList.remove('open'); }
 
     function selectAthlete(id, name) {
-      state.athlete = {id, name};
+      const player = state.athletes.find(a => a.id === id);
+      state.athlete = { id, name, ...(player || {}) };
       updateAthletePill();
       closeAthleteModal();
     }
@@ -5528,7 +5780,7 @@
     // INIT
     navHistory = ['home'];
     navigateTo('home');
-    loadAthletes();
+    initAuth();
     loadExercises();
     loadFolders();
   </script>
