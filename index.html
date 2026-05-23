@@ -544,6 +544,64 @@
       #exercisePresetConfig .card { max-width: 700px; margin-left: auto; margin-right: auto; }
       .live-display { padding: 36px 32px; }
     }
+
+    /* ── CLUBS / PLAYERS / PROFILE ─────────────────────────── */
+    .club-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 18px;
+      padding: 18px; cursor: pointer; position: relative; overflow: hidden;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .club-card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+    .clubs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; margin-top: 14px; }
+    .player-row {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 14px; background: var(--bg3); border: 1px solid var(--border);
+      margin-bottom: 8px; cursor: pointer; transition: border-color .2s;
+    }
+    .player-row:hover { border-color: var(--accent); }
+    .player-avatar {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem; overflow: hidden;
+    }
+    .player-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .profile-header {
+      display: flex; align-items: flex-start; gap: 16px; padding: 18px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
+      margin-bottom: 14px; overflow: hidden; flex-wrap: wrap;
+    }
+    .profile-avatar {
+      width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; font-weight: 700; overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.12);
+    }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-tab-bar {
+      display: flex; gap: 3px; padding: 4px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+      margin-bottom: 14px; overflow-x: auto; scrollbar-width: none;
+    }
+    .profile-tab-bar::-webkit-scrollbar { display: none; }
+    .profile-tab-btn {
+      flex: 1; min-width: 76px; padding: 9px 8px; border-radius: 10px; border: none;
+      background: transparent; color: var(--muted); font-size: 0.74rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; white-space: nowrap; font-family: inherit; text-align: center;
+    }
+    .profile-tab-btn.active { color: #fff; }
+    .profile-tab-pane { display: none; }
+    .profile-tab-pane.active { display: block; animation: fadeIn .2s ease; }
+    .eval-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 10px; background: var(--bg3);
+      border: 1px solid var(--border); margin-bottom: 6px; font-size: 0.85rem; flex-wrap: wrap; gap: 6px;
+    }
+    .trend-up   { color: #22d3a0; }
+    .trend-down { color: var(--danger); }
+    .notes-item {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px; margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -2191,73 +2249,132 @@
 
     <!-- DATOS -->
     <section class="page" id="page-data">
-      <div class="section-header">
-        <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
-        <div class="section-title">Datos</div>
-        <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
+
+      <!-- ── SUB-VIEW: Clubs (default) ── -->
+      <div id="dv-clubs">
+        <div class="section-header">
+          <div><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button></div>
+          <div class="section-title">Datos</div>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openClubModal()">+ Club</button>
+        </div>
+
+        <button onclick="showAllPlayers()" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 18px;border-radius:14px;background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:0.9rem;font-weight:500;cursor:pointer;margin-bottom:4px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span>Todos los jugadores</span>
+          </div>
+          <span id="allPlayersCount" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:3px 10px;font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;">0</span>
+        </button>
+
+        <div class="clubs-grid" id="clubsGrid"></div>
+        <div class="empty" id="clubsEmpty" style="display:none;">
+          <div class="empty-icon">🏟️</div>
+          <h3>Sin clubs</h3>
+          <p>Pulsa "+ Club" para empezar</p>
+        </div>
       </div>
 
-      <!-- Vista principal: buscador + último evaluado + lista de jugadores -->
-      <div id="dataMainView">
-        <!-- Buscador -->
+      <!-- ── SUB-VIEW: Club Detail ── -->
+      <div id="dv-clubDetail" style="display:none;">
+        <div class="section-header" style="flex-wrap:wrap;gap:8px;">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          <div id="clubDetailTitle" class="section-title" style="flex:1;"></div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-secondary" style="padding:8px 12px;font-size:0.8rem;" onclick="editCurrentClub()">Editar</button>
+            <button class="btn-danger" style="padding:8px 12px;font-size:0.8rem;" onclick="deleteCurrentClub()">Eliminar</button>
+          </div>
+        </div>
+        <div id="clubDetailMeta" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:0.85rem;color:var(--muted);" id="clubPlayerCount">0 jugadores</span>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
+        </div>
+        <div id="clubDetailPlayers"></div>
+      </div>
+
+      <!-- ── SUB-VIEW: All Players ── -->
+      <div id="dv-allPlayers" style="display:none;">
+        <div class="section-header">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          <div class="section-title">Todos los jugadores</div>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
+        </div>
         <div style="position:relative;margin-bottom:14px;">
-          <input type="text" id="dataAthleteSearch" placeholder="Buscar jugador..." oninput="filterDataAthletes()"
+          <input type="text" id="allPlayersSearch" placeholder="Nombre, modalidad o dorsal..."
+            oninput="filterAllPlayers()"
             style="width:100%;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
           <svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </div>
+        <div id="allPlayersList"></div>
+      </div>
 
-        <!-- Último evaluado -->
-        <div id="dataLastEvaluated" style="display:none;margin-bottom:16px;">
-          <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;font-family:'DM Mono',monospace;">Último evaluado</div>
-          <div class="card" style="cursor:pointer;border-color:var(--border2);margin-bottom:0;" onclick="selectDataAthlete(window.dataLastAthleteId)">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <div id="dataLastName" style="font-weight:600;font-size:0.95rem;"></div>
-                <div id="dataLastSport" style="font-size:0.78rem;color:var(--muted);margin-top:3px;"></div>
+      <!-- ── SUB-VIEW: Player Profile ── -->
+      <div id="dv-playerProfile" style="display:none;">
+        <div style="margin-bottom:12px;">
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" id="profileBackBtn" onclick="backFromProfile()">← Volver</button>
+        </div>
+
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar"></div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;line-height:1.2;" id="profileName">—</div>
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;" id="profileClubSport"></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
+              <span style="font-family:'DM Mono',monospace;font-size:0.75rem;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:3px 8px;color:var(--muted);" id="profileCode"></span>
+              <span style="font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;" id="profileDorsal"></span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+            <button class="btn-secondary" style="padding:7px 12px;font-size:0.8rem;" onclick="editCurrentPlayer()">Editar</button>
+            <button class="btn-danger" style="padding:7px 12px;font-size:0.8rem;" onclick="deleteCurrentPlayer()">Eliminar</button>
+          </div>
+        </div>
+
+        <div class="profile-tab-bar">
+          <button class="profile-tab-btn active" id="tab-btn-resumen"       onclick="switchProfileTab('resumen')">Resumen</button>
+          <button class="profile-tab-btn"         id="tab-btn-evaluaciones"  onclick="switchProfileTab('evaluaciones')">Evaluaciones</button>
+          <button class="profile-tab-btn"         id="tab-btn-entrenamiento" onclick="switchProfileTab('entrenamiento')">Entreno</button>
+          <button class="profile-tab-btn"         id="tab-btn-notas"         onclick="switchProfileTab('notas')">Notas</button>
+          <button class="profile-tab-btn"         id="tab-btn-historial"     onclick="switchProfileTab('historial')">Historial</button>
+        </div>
+
+        <div class="profile-tab-pane active" id="tab-pane-resumen">
+          <div id="tabResumenContent"></div>
+        </div>
+        <div class="profile-tab-pane" id="tab-pane-evaluaciones">
+          <div id="tabEvalContent"><div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando...</div></div>
+        </div>
+        <div class="profile-tab-pane" id="tab-pane-entrenamiento">
+          <div id="tabExContent"><div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando...</div></div>
+        </div>
+        <div class="profile-tab-pane" id="tab-pane-notas">
+          <div style="margin-bottom:14px;">
+            <textarea id="newNoteText" rows="3" placeholder="Escribe una nota sobre este jugador..."
+              style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;resize:vertical;font-family:inherit;box-sizing:border-box;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+            <button class="btn-primary" style="margin-top:8px;padding:10px 18px;font-size:0.85rem;" onclick="saveNewNote()">Guardar nota</button>
+          </div>
+          <div id="tabNotesContent"></div>
+        </div>
+        <div class="profile-tab-pane" id="tab-pane-historial">
+          <div class="athlete-layout">
+            <div class="athlete-cal-col">
+              <div id="profileCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;"></div>
+            </div>
+            <div class="athlete-sessions-col">
+              <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+                <button id="profileSortBtn" onclick="toggleProfileSessionSort()"
+                  style="flex:1;white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
+                <button onclick="selectProfileCalDay(null)"
+                  style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">Ver todo</button>
               </div>
-              <div style="text-align:right;">
-                <div id="dataLastDate" style="font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;"></div>
-                <div id="dataLastExType" style="font-size:0.78rem;color:var(--accent);margin-top:3px;font-weight:500;"></div>
-              </div>
+              <div id="profileViewSessions"></div>
             </div>
           </div>
         </div>
-
-        <!-- Desplegable jugadores guardados -->
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleDataPlayerList()">
-            <span style="font-size:0.95rem;font-weight:600;">Jugadores guardados</span>
-            <span id="dataPlayerArrow" style="color:var(--muted);font-size:0.85rem;transition:transform 0.2s;">▼</span>
-          </div>
-          <div id="dataPlayerList" style="margin-top:12px;"></div>
-        </div>
       </div>
 
-      <!-- Vista de jugador: sesiones -->
-      <div id="dataAthleteView" style="display:none;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="backToDataMain()">← Volver</button>
-          <div style="flex:1;">
-            <div id="dataViewName" style="font-weight:700;font-size:1.05rem;"></div>
-            <div id="dataViewSport" style="font-size:0.78rem;color:var(--muted);margin-top:2px;"></div>
-          </div>
-        </div>
-        <div class="athlete-layout">
-          <div class="athlete-cal-col">
-            <div id="dataCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;"></div>
-          </div>
-          <div class="athlete-sessions-col">
-            <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
-              <button id="dataSortBtn" onclick="toggleSessionSort()"
-                style="flex:1;white-space:nowrap;padding:8px 12px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">↓ Recientes</button>
-              <button onclick="selectCalendarDay(null)"
-                style="padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-size:0.78rem;cursor:pointer;font-family:inherit;">Ver todo</button>
-            </div>
-            <div id="dataViewSessions"></div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- CONFIGURACIÓN -->
@@ -2478,6 +2595,53 @@
       </div>
       <div id="athleteModalList" style="margin-bottom:16px;max-height:320px;overflow-y:auto;"></div>
       <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="clubModal">
+    <div class="modal">
+      <div class="modal-title" id="clubModalTitle">Nuevo club</div>
+      <div class="field">
+        <label>Nombre <span style="color:#f44336;">*</span></label>
+        <input type="text" id="clubName" placeholder="Nombre del club" />
+      </div>
+      <div class="field">
+        <label>Deporte <span style="color:#f44336;">*</span></label>
+        <select id="clubSport">
+          <option value="">— Seleccionar —</option>
+          <option value="football">Fútbol</option>
+          <option value="futsal">Fútbol Sala</option>
+          <option value="basketball">Baloncesto</option>
+          <option value="handball">Balonmano</option>
+          <option value="volleyball">Voleibol</option>
+          <option value="padel">Pádel</option>
+          <option value="tennis">Tenis</option>
+          <option value="athletics">Atletismo</option>
+          <option value="esports">eSports</option>
+          <option value="shooting">Tiro</option>
+          <option value="motor">Motor</option>
+          <option value="baseball">Béisbol</option>
+          <option value="hockey">Hockey</option>
+          <option value="cricket">Cricket</option>
+          <option value="golf">Golf</option>
+          <option value="swimming">Natación</option>
+          <option value="combat">Combate</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Categoría</label>
+          <input type="text" id="clubCategory" placeholder="Sénior, Sub-18..." />
+        </div>
+        <div class="field">
+          <label>Liga / Competición</label>
+          <input type="text" id="clubLeague" placeholder="Primera División..." />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="saveClub()">Guardar</button>
+        <button class="btn-secondary" onclick="closeClubModal()">Cancelar</button>
+      </div>
     </div>
   </div>
 
@@ -3672,171 +3836,14 @@
     }
 
     async function loadDataPage() {
-      renderDataAthletes(state.athletes);
-      await loadLastEvaluated();
+      renderClubs();
+      showDataView('clubs');
     }
 
-    async function loadLastEvaluated() {
-      try {
-        const sessions = await db.get('sessions', '?order=date.desc&limit=1');
-        if (!sessions.length) return;
-        const s = sessions[0];
-        if (!s.athlete_id) return;
-        const athlete = state.athletes.find(a => a.id === s.athlete_id);
-        if (!athlete) return;
-        window.dataLastAthleteId = athlete.id;
-        document.getElementById('dataLastName').textContent = athlete.full_name;
-        const dataLastClub = state.clubs.find(c => c.id === athlete.club_id);
-        document.getElementById('dataLastSport').textContent = dataLastClub?.name || athlete.position || '';
-        document.getElementById('dataLastDate').textContent =
-          new Date(s.date).toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
-        document.getElementById('dataLastExType').textContent = getExerciseName(s.exercise_type);
-        document.getElementById('dataLastEvaluated').style.display = 'block';
-      } catch {}
-    }
-
-    function filterDataAthletes() {
-      const q = document.getElementById('dataAthleteSearch').value.toLowerCase();
-      const filtered = q ? state.athletes.filter(a => a.full_name.toLowerCase().includes(q)) : state.athletes;
-      renderDataAthletes(filtered);
-    }
+    function filterDataAthletes() { filterAllPlayers(); }
 
     function renderDataAthletes(athletes) {
-      const list = document.getElementById('dataPlayerList');
-      if (!list) return;
-      if (!athletes.length) {
-        list.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:8px 0;text-align:center;">Sin jugadores guardados</div>`;
-        return;
-      }
-      list.innerHTML = athletes.map(a => {
-        const club = state.clubs.find(c => c.id === a.club_id);
-        const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
-        return `
-          <div class="ex-item" onclick="selectDataAthlete('${a.id}')" style="margin-bottom:8px;">
-            <div class="ex-item-info">
-              <h3 style="font-size:0.92rem;">${a.full_name}</h3>
-              <p>${sub}</p>
-            </div>
-            <span class="ex-item-arrow">›</span>
-          </div>`;
-      }).join('');
-    }
-
-    function toggleDataPlayerList() {
-      dataPlayerListVisible = !dataPlayerListVisible;
-      document.getElementById('dataPlayerList').style.display = dataPlayerListVisible ? 'block' : 'none';
-      document.getElementById('dataPlayerArrow').style.transform = dataPlayerListVisible ? '' : 'rotate(-90deg)';
-    }
-
-    async function selectDataAthlete(athleteId) {
-      const athlete = state.athletes.find(a => String(a.id) === String(athleteId));
-      if (!athlete) return;
-      document.getElementById('dataMainView').style.display = 'none';
-      document.getElementById('dataAthleteView').style.display = 'block';
-      document.getElementById('dataViewName').textContent = athlete.full_name;
-      const viewClub = state.clubs.find(c => c.id === athlete.club_id);
-      document.getElementById('dataViewSport').textContent = viewClub?.name || athlete.position || '';
-      window.calSelected = null;
-      window.dataSessionSortDesc = true;
-      const sortBtn = document.getElementById('dataSortBtn');
-      if (sortBtn) sortBtn.textContent = '↓ Recientes';
-      const container = document.getElementById('dataViewSessions');
-      container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:32px;font-size:0.85rem;">Cargando sesiones...</div>`;
-      renderCalendar(window.calYear, window.calMonth);
-      try {
-        const sessions = await db.get('sessions', `?athlete_id=eq.${athleteId}&order=date.desc`);
-        window.dataCurrentSessions = sessions;
-        // Navigate calendar to most recent session's month
-        if (sessions.length && sessions[0].date) {
-          const d = new Date(String(sessions[0].date).slice(0, 10) + 'T00:00:00');
-          if (!isNaN(d)) { window.calYear = d.getFullYear(); window.calMonth = d.getMonth(); }
-        }
-        renderCalendar(window.calYear, window.calMonth);
-        applySessionFilters();
-      } catch {
-        container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
-      }
-    }
-
-    window.calYear  = new Date().getFullYear();
-    window.calMonth = new Date().getMonth();
-    window.calSelected = null;
-
-    function renderCalendar(year, month) {
-      const container = document.getElementById('dataCalendar');
-      if (!container || isNaN(year) || isNaN(month)) return;
-      const sessionDates = new Set((window.dataCurrentSessions || []).map(s => s.date?.slice(0,10)).filter(Boolean));
-      const today = new Date().toISOString().slice(0,10);
-      const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-      const monthLabel = `${MONTHS[month]} ${year}`;
-      const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // Mon=0
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const DAY_HEADERS = ['L','M','X','J','V','S','D'];
-
-      let cells = DAY_HEADERS.map(h => `<div class="cal-hdr">${h}</div>`).join('');
-      for (let i = 0; i < firstDow; i++) cells += `<div class="cal-empty"></div>`;
-      for (let d = 1; d <= daysInMonth; d++) {
-        const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const classes = ['cal-day',
-          sessionDates.has(ds)     ? 'has-session' : '',
-          window.calSelected === ds ? 'selected'    : '',
-          ds === today              ? 'today'        : ''
-        ].filter(Boolean).join(' ');
-        cells += `<button class="${classes}" onclick="selectCalendarDay('${ds}')">
-          <span class="cal-day-num">${d}</span>
-          ${sessionDates.has(ds) ? '<span class="cal-dot"></span>' : ''}
-        </button>`;
-      }
-
-      const navBtn = (label, fn) =>
-        `<button onclick="${fn}" style="background:var(--bg2);border:none;color:var(--text);font-size:1.2rem;line-height:1;cursor:pointer;padding:6px 14px;border-radius:10px;font-family:inherit;">${label}</button>`;
-
-      container.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          ${navBtn('‹', 'changeCalendarMonth(-1)')}
-          <span style="font-size:1rem;font-weight:700;color:var(--text);">${monthLabel}</span>
-          ${navBtn('›', 'changeCalendarMonth(1)')}
-        </div>
-        <div class="cal-grid">${cells}</div>`;
-    }
-
-    function changeCalendarMonth(delta) {
-      window.calMonth += delta;
-      if (window.calMonth > 11) { window.calMonth = 0; window.calYear++; }
-      if (window.calMonth < 0)  { window.calMonth = 11; window.calYear--; }
-      renderCalendar(window.calYear, window.calMonth);
-    }
-
-    function selectCalendarDay(dateStr) {
-      window.calSelected = (window.calSelected === dateStr || !dateStr) ? null : dateStr;
-      renderCalendar(window.calYear, window.calMonth);
-      applySessionFilters();
-    }
-
-    function toggleSessionSort() {
-      window.dataSessionSortDesc = !window.dataSessionSortDesc;
-      const btn = document.getElementById('dataSortBtn');
-      if (btn) btn.textContent = window.dataSessionSortDesc ? '↓ Recientes' : '↑ Antiguas';
-      applySessionFilters();
-    }
-
-    function applySessionFilters() {
-      let sessions = [...(window.dataCurrentSessions || [])];
-      if (window.calSelected) {
-        sessions = sessions.filter(s => s.date && s.date.startsWith(window.calSelected));
-      }
-      sessions.sort((a, b) => {
-        const da = new Date(a.date), db = new Date(b.date);
-        return window.dataSessionSortDesc ? db - da : da - db;
-      });
-      renderDataSessions(sessions, document.getElementById('dataViewSessions'));
-    }
-
-    function backToDataMain() {
-      window.calSelected = null;
-      window.dataCurrentSessions = [];
-      document.getElementById('dataAthleteView').style.display = 'none';
-      document.getElementById('dataMainView').style.display = 'block';
+      renderClubs();
     }
 
     function renderDataSessions(sessions, container) {
@@ -4059,6 +4066,9 @@
     }
 
     function openCreateAthleteModal() {
+      window._editingPlayerId = null;
+      const titleEl = document.querySelector('#addAthleteModal .modal-title');
+      if (titleEl) titleEl.textContent = 'Nuevo jugador';
       ['newPlayerName','newPlayerEmail','newPlayerDorsal','newPlayerNotes'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
@@ -4089,18 +4099,10 @@
       if (!club_id)   { toast('Selecciona un club', 'error'); return; }
       if (!consent)   { toast('El consentimiento de privacidad es obligatorio', 'error'); return; }
 
-      const uuid = crypto.randomUUID();
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      const invitation_code = Array.from({length: 8}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-      const short_id = uuid.replace(/-/g,'').substring(0, 8).toUpperCase();
-
       const birthInput = document.getElementById('newPlayerBirthDate').value;
       const birth_date = birthInput ? birthInput.split('-').reverse().join('/') : null;
 
-      const player = {
-        id: uuid,
-        short_id,
-        invitation_code,
+      const payload = {
         professional_id: currentProfessionalId,
         club_id,
         full_name,
@@ -4114,13 +4116,31 @@
         profile_image: window._newPlayerPhotoBase64 || null,
         privacy_consent:      true,
         privacy_consent_date: new Date().toISOString(),
-        created_at:           new Date().toISOString(),
       };
+
       try {
-        await db.post('player_profiles', player);
-        closeAddAthleteModal();
-        await loadAthletes();
-        toast('Jugador creado ✓');
+        if (window._editingPlayerId) {
+          await db.patch('player_profiles', payload, `?id=eq.${window._editingPlayerId}`);
+          closeAddAthleteModal();
+          await loadAthletes();
+          // Refresh profile view if still showing this player
+          if (currentPlayer && currentPlayer.id === window._editingPlayerId) {
+            currentPlayer = state.athletes.find(a => a.id === window._editingPlayerId);
+            if (currentPlayer) openPlayerProfile(currentPlayer.id, profileBackView);
+          }
+          toast('Jugador actualizado ✓');
+        } else {
+          const uuid = crypto.randomUUID();
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+          const invitation_code = Array.from({length:8}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+          const short_id = uuid.replace(/-/g,'').substring(0,8).toUpperCase();
+          await db.post('player_profiles', {
+            id: uuid, short_id, invitation_code, created_at: new Date().toISOString(), ...payload
+          });
+          closeAddAthleteModal();
+          await loadAthletes();
+          toast('Jugador creado ✓');
+        }
       } catch(err) { toast('Error: ' + err.message, 'error'); }
     }
 
@@ -5792,6 +5812,591 @@
     initAuth();
     loadExercises();
     loadFolders();
+
+    // ═══════════════════════════════════════════════════════════════
+    // DATA PAGE — CLUBS / PLAYERS / PROFILE
+    // ═══════════════════════════════════════════════════════════════
+
+    const SPORT_COLORS = {
+      football: '#32CD32', futsal: '#50C878', basketball: '#FFA500',
+      handball: '#FF4500', volleyball: '#DAA520', padel: '#4169E1',
+      tennis: '#9ACD32', athletics: '#800020', esports: '#8B5CF6',
+      shooting: '#8B4513', motor: '#4A4A4A', baseball: '#888',
+      hockey: '#FF6347', cricket: '#228B22', golf: '#2E8B57',
+      swimming: '#00BFFF', combat: '#2C2C2C'
+    };
+    const SPORT_LABELS = {
+      football: 'Fútbol', futsal: 'Fútbol Sala', basketball: 'Baloncesto',
+      handball: 'Balonmano', volleyball: 'Voleibol', padel: 'Pádel',
+      tennis: 'Tenis', athletics: 'Atletismo', esports: 'eSports',
+      shooting: 'Tiro', motor: 'Motor', baseball: 'Béisbol',
+      hockey: 'Hockey', cricket: 'Cricket', golf: 'Golf',
+      swimming: 'Natación', combat: 'Combate'
+    };
+    const PROFILE_TAB_COLORS = {
+      resumen:       { bg: 'rgba(6,182,212,0.18)',   color: '#06b6d4' },
+      evaluaciones:  { bg: 'rgba(6,182,212,0.18)',   color: '#06b6d4' },
+      entrenamiento: { bg: 'rgba(34,197,94,0.18)',   color: '#22c55e' },
+      notas:         { bg: 'rgba(245,158,11,0.18)',  color: '#f59e0b' },
+      historial:     { bg: 'rgba(139,92,246,0.18)',  color: '#8b5cf6' },
+    };
+
+    // ── View navigation ───────────────────────────────────────────
+    let currentDataView = 'clubs';
+    let currentClub     = null;
+    let currentPlayer   = null;
+    let profileBackView = 'clubs';
+    window._editingPlayerId = null;
+    window._editingClubId   = null;
+
+    function showDataView(view) {
+      ['clubs','clubDetail','allPlayers','playerProfile'].forEach(v => {
+        const el = document.getElementById(`dv-${v}`);
+        if (el) el.style.display = 'none';
+      });
+      const target = document.getElementById(`dv-${view}`);
+      if (target) target.style.display = 'block';
+      currentDataView = view;
+    }
+
+    // ── Clubs ─────────────────────────────────────────────────────
+    function renderClubs() {
+      const grid  = document.getElementById('clubsGrid');
+      const empty = document.getElementById('clubsEmpty');
+      const countEl = document.getElementById('allPlayersCount');
+      if (countEl) countEl.textContent = state.athletes.length;
+      if (!grid) return;
+      if (!state.clubs.length) {
+        grid.innerHTML = '';
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      grid.innerHTML = state.clubs.map(club => {
+        const color      = SPORT_COLORS[club.sport] || '#3b82f6';
+        const sportLabel = SPORT_LABELS[club.sport]  || club.sport || '—';
+        const cnt = state.athletes.filter(a => a.club_id === club.id).length;
+        const cat  = club.category ? `<div style="font-size:0.72rem;color:var(--muted);margin-top:1px;">${club.category}</div>` : '';
+        const liga = club.league   ? `<div style="font-size:0.7rem;color:var(--muted);font-style:italic;">${club.league}</div>` : '';
+        return `
+          <div class="club-card" onclick="openClub('${club.id}')">
+            <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 40px 40px 0;border-color:transparent ${color} transparent transparent;"></div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:6px;padding-right:28px;line-height:1.2;">${club.name}</div>
+            <div style="font-size:0.75rem;color:var(--muted);">${sportLabel}</div>
+            ${cat}${liga}
+            <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;">${cnt} jugador${cnt!==1?'es':''}</div>
+          </div>`;
+      }).join('');
+    }
+
+    async function openClub(clubId) {
+      currentClub = state.clubs.find(c => c.id === clubId);
+      if (!currentClub) return;
+      document.getElementById('clubDetailTitle').textContent = currentClub.name;
+      const sportLabel = SPORT_LABELS[currentClub.sport] || currentClub.sport || '';
+      const tags = [sportLabel, currentClub.category, currentClub.league].filter(Boolean);
+      document.getElementById('clubDetailMeta').innerHTML = tags.map(t =>
+        `<span style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:4px 12px;font-size:0.78rem;color:var(--muted);">${t}</span>`
+      ).join('');
+      const clubPlayers = state.athletes.filter(a => a.club_id === clubId);
+      document.getElementById('clubPlayerCount').textContent =
+        `${clubPlayers.length} jugador${clubPlayers.length!==1?'es':''}`;
+      renderPlayerList(clubPlayers, 'clubDetailPlayers', 'clubDetail');
+      showDataView('clubDetail');
+    }
+
+    function editCurrentClub() {
+      if (currentClub) openClubModal(currentClub.id);
+    }
+
+    async function deleteCurrentClub() {
+      if (!currentClub) return;
+      const cnt = state.athletes.filter(a => a.club_id === currentClub.id).length;
+      const msg = cnt > 0
+        ? `¿Eliminar "${currentClub.name}"? ${cnt} jugador(es) quedarán sin club.`
+        : `¿Eliminar "${currentClub.name}"?`;
+      if (!confirm(msg)) return;
+      try {
+        await db.delete('clubs', `?id=eq.${currentClub.id}`);
+        currentClub = null;
+        await Promise.all([loadClubs(), loadAthletes()]);
+        showDataView('clubs');
+        toast('Club eliminado');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // ── Players list ──────────────────────────────────────────────
+    function renderPlayerList(players, containerId, backView) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      if (!players.length) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><h3>Sin jugadores</h3><p>Aún no hay jugadores aquí.</p></div>`;
+        return;
+      }
+      el.innerHTML = players.map(p => {
+        const club  = state.clubs.find(c => c.id === p.club_id);
+        const color = SPORT_COLORS[club?.sport] || '#3b82f6';
+        const initials = (p.full_name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+        const avatar = p.profile_image
+          ? `<img src="${p.profile_image}" alt="" />`
+          : `<span style="color:#fff;">${initials}</span>`;
+        const sub = [club?.name, p.position].filter(Boolean).join(' · ');
+        const dorsalTag = p.dorsal ? `<span style="margin-left:6px;font-family:'DM Mono',monospace;font-size:0.76rem;color:var(--muted);">#${p.dorsal}</span>` : '';
+        const bv = backView || currentDataView;
+        return `
+          <div class="player-row" onclick="openPlayerProfile('${p.id}','${bv}')">
+            <div class="player-avatar" style="background:${color}22;border:2px solid ${color}55;">${avatar}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.full_name}${dorsalTag}</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${sub}</div>
+            </div>
+            <span style="color:var(--muted);font-size:1.1rem;flex-shrink:0;">›</span>
+          </div>`;
+      }).join('');
+    }
+
+    function showAllPlayers() {
+      const inp = document.getElementById('allPlayersSearch');
+      if (inp) inp.value = '';
+      renderPlayerList(state.athletes, 'allPlayersList', 'allPlayers');
+      showDataView('allPlayers');
+    }
+
+    function filterAllPlayers() {
+      const q = (document.getElementById('allPlayersSearch')?.value||'').toLowerCase().trim();
+      const filtered = q
+        ? state.athletes.filter(a =>
+            (a.full_name||'').toLowerCase().includes(q) ||
+            (a.position ||'').toLowerCase().includes(q) ||
+            String(a.dorsal||'').includes(q))
+        : state.athletes;
+      renderPlayerList(filtered, 'allPlayersList', 'allPlayers');
+    }
+
+    // ── Player profile ────────────────────────────────────────────
+    async function openPlayerProfile(playerId, backView) {
+      currentPlayer = state.athletes.find(a => a.id === playerId);
+      if (!currentPlayer) return;
+      profileBackView = backView || 'clubs';
+
+      const club  = state.clubs.find(c => c.id === currentPlayer.club_id);
+      const color = SPORT_COLORS[club?.sport] || '#3b82f6';
+      const sport = SPORT_LABELS[club?.sport]  || club?.sport || '';
+      const initials = (currentPlayer.full_name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+
+      const avatarEl = document.getElementById('profileAvatar');
+      avatarEl.style.background = `${color}33`;
+      avatarEl.style.borderColor = `${color}88`;
+      avatarEl.innerHTML = currentPlayer.profile_image
+        ? `<img src="${currentPlayer.profile_image}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`
+        : `<span style="color:#fff;font-size:1.6rem;">${initials}</span>`;
+
+      document.getElementById('profileName').textContent = currentPlayer.full_name;
+      document.getElementById('profileClubSport').textContent = [club?.name, sport].filter(Boolean).join(' · ');
+      document.getElementById('profileCode').textContent = currentPlayer.short_id
+        ? `#${currentPlayer.short_id}` : (currentPlayer.invitation_code ? `#${currentPlayer.invitation_code}` : '');
+      document.getElementById('profileDorsal').textContent = currentPlayer.dorsal ? `Dorsal ${currentPlayer.dorsal}` : '';
+
+      // Reset to resumen tab
+      switchProfileTab('resumen');
+      showDataView('playerProfile');
+    }
+
+    function backFromProfile() {
+      if (profileBackView === 'clubDetail' && currentClub) {
+        openClub(currentClub.id);
+      } else {
+        showDataView(profileBackView);
+      }
+    }
+
+    function switchProfileTab(tabName) {
+      const tabs = ['resumen','evaluaciones','entrenamiento','notas','historial'];
+      tabs.forEach(t => {
+        const btn  = document.getElementById(`tab-btn-${t}`);
+        const pane = document.getElementById(`tab-pane-${t}`);
+        const active = t === tabName;
+        if (btn) {
+          btn.classList.toggle('active', active);
+          if (active) {
+            const tc = PROFILE_TAB_COLORS[t] || {};
+            btn.style.background = tc.bg    || 'rgba(59,130,246,0.18)';
+            btn.style.color      = tc.color || '#3b82f6';
+          } else {
+            btn.style.background = '';
+            btn.style.color = '';
+          }
+        }
+        if (pane) pane.classList.toggle('active', active);
+      });
+      if (!currentPlayer) return;
+      if (tabName === 'resumen')       renderProfileResumen(currentPlayer);
+      if (tabName === 'evaluaciones')  loadProfileEvaluaciones(currentPlayer.id);
+      if (tabName === 'entrenamiento') loadProfileEntrenamiento(currentPlayer.id);
+      if (tabName === 'notas')         loadProfileNotas(currentPlayer.id);
+      if (tabName === 'historial')     loadProfileHistorial(currentPlayer.id);
+    }
+
+    // ── Resumen tab ───────────────────────────────────────────────
+    function renderProfileResumen(p) {
+      const el = document.getElementById('tabResumenContent');
+      if (!el) return;
+      const field = (label, val) => val ? `
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;flex:1;min-width:130px;">
+          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;font-weight:600;">${label}</div>
+          <div style="font-size:0.9rem;font-weight:500;word-break:break-word;">${val}</div>
+        </div>` : '';
+
+      let birthStr = '';
+      if (p.birth_date) {
+        try {
+          const raw = p.birth_date.includes('/') ? p.birth_date.split('/').reverse().join('-') : p.birth_date;
+          const bd = new Date(raw);
+          if (!isNaN(bd)) {
+            const age = Math.floor((Date.now() - bd) / (365.25*24*3600*1000));
+            birthStr = `${p.birth_date} · ${age} años`;
+          } else { birthStr = p.birth_date; }
+        } catch { birthStr = p.birth_date; }
+      }
+
+      el.innerHTML = `
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+          ${field('Email', p.email)}
+          ${field('Modalidad', p.position)}
+          ${field('Género', p.gender)}
+          ${field('Mano dominante', p.dominant_hand)}
+          ${field('Nacimiento', birthStr)}
+          ${field('Cód. invitación', p.invitation_code)}
+        </div>
+        ${p.notes ? `<div class="notes-item"><div style="font-size:0.7rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Notas del jugador</div><div style="font-size:0.88rem;line-height:1.6;">${p.notes}</div></div>` : ''}`;
+    }
+
+    // ── Evaluaciones tab ──────────────────────────────────────────
+    async function loadProfileEvaluaciones(playerId) {
+      const el = document.getElementById('tabEvalContent');
+      if (!el) return;
+      el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando evaluaciones...</div>`;
+      try {
+        const [results, templates] = await Promise.all([
+          db.get('test_results', `?player_id=eq.${playerId}&order=created_at.desc`),
+          db.get('test_templates', `?order=name`)
+        ]);
+        if (!results.length) {
+          el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin evaluaciones</h3><p>Aún no se han registrado evaluaciones para este jugador.</p></div>`;
+          return;
+        }
+        const grouped = {};
+        results.forEach(r => {
+          const tpl = templates.find(t => t.id === r.template_id);
+          const key = tpl?.name || r.template_id || 'Sin plantilla';
+          if (!grouped[key]) grouped[key] = { template: tpl, results: [] };
+          grouped[key].results.push(r);
+        });
+        el.innerHTML = Object.entries(grouped).map(([name, group]) => {
+          const tpl = group.template;
+          const rows = group.results.slice(0, 8).map((r, idx, arr) => {
+            const prev = arr[idx + 1];
+            const date = new Date(r.created_at || r.date || '').toLocaleDateString('es-ES', {day:'2-digit',month:'short',year:'numeric'});
+            const data = r.result_data || r.data || {};
+            const dataStr = typeof data === 'object'
+              ? Object.entries(data).map(([k,v]) => {
+                  const numV = parseFloat(v);
+                  let trend = '';
+                  if (prev && !isNaN(numV)) {
+                    const prevV = parseFloat((prev.result_data||prev.data||{})[k]);
+                    if (!isNaN(prevV) && numV !== prevV) {
+                      const improved = tpl?.lower_is_better ? numV < prevV : numV > prevV;
+                      trend = improved ? ' <span class="trend-up">▲</span>' : ' <span class="trend-down">▼</span>';
+                    }
+                  }
+                  const disp = isNaN(numV) ? String(v) : (Number.isInteger(numV) ? numV : numV.toFixed(2));
+                  return `<span style="margin-right:10px;"><span style="color:var(--muted);font-size:0.76rem;">${k}:</span> ${disp}${trend}</span>`;
+                }).join('')
+              : String(data);
+            return `<div class="eval-row"><span style="font-size:0.78rem;color:var(--muted);flex-shrink:0;min-width:90px;">${date}</span><div style="flex:1;font-size:0.83rem;">${dataStr||'—'}</div></div>`;
+          }).join('');
+          return `<div style="margin-bottom:18px;"><div style="font-size:0.76rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">${name}</div>${rows}</div>`;
+        }).join('');
+      } catch(e) {
+        el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
+      }
+    }
+
+    // ── Entrenamiento tab ──────────────────────────────────────────
+    async function loadProfileEntrenamiento(playerId) {
+      const el = document.getElementById('tabExContent');
+      if (!el) return;
+      el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando ejercicios...</div>`;
+      try {
+        const assigned = await db.get('assigned_exercises', `?player_id=eq.${playerId}&order=assigned_at.desc`);
+        if (!assigned.length) {
+          el.innerHTML = `<div class="empty"><div class="empty-icon">🏋️</div><h3>Sin ejercicios asignados</h3><p>Este jugador aún no tiene ejercicios asignados.</p></div>`;
+          return;
+        }
+        const SC = { completed:'#22d3a0', pending:'#f59e0b', skipped:'#ef4444' };
+        const SL = { completed:'Completado', pending:'Pendiente', skipped:'Omitido' };
+        el.innerHTML = assigned.map(ex => {
+          const date = new Date(ex.assigned_at||'').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+          const s = ex.status||'pending';
+          return `
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">${ex.exercise_name||ex.title||'Ejercicio'}</div>
+                <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">${date}</div>
+                ${ex.notes?`<div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">${ex.notes}</div>`:''}
+              </div>
+              <span style="font-size:0.74rem;font-weight:600;color:${SC[s]||'#5a7a9a'};background:${SC[s]||'#5a7a9a'}1a;border:1px solid ${SC[s]||'#5a7a9a'}33;border-radius:6px;padding:3px 8px;flex-shrink:0;">${SL[s]||s}</span>
+            </div>`;
+        }).join('');
+      } catch(e) {
+        el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
+      }
+    }
+
+    // ── Notas tab ─────────────────────────────────────────────────
+    async function loadProfileNotas(playerId) {
+      const el = document.getElementById('tabNotesContent');
+      if (!el) return;
+      el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:24px;font-size:0.85rem;">Cargando notas...</div>`;
+      try {
+        const notes = await db.get('notes', `?player_id=eq.${playerId}&order=created_at.desc`);
+        renderNotesList(notes, el);
+      } catch(e) {
+        el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
+      }
+    }
+
+    function renderNotesList(notes, el) {
+      if (!notes.length) {
+        el.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:16px;">Sin notas todavía.</div>`;
+        return;
+      }
+      el.innerHTML = notes.map(n => {
+        const date = new Date(n.created_at||'').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        return `
+          <div class="notes-item">
+            <div style="font-size:0.9rem;line-height:1.6;margin-bottom:10px;">${(n.content||n.text||'').replace(/\n/g,'<br>')}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;">${date}</span>
+              <button onclick="deleteNote('${n.id}')" style="background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;">Eliminar</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    async function saveNewNote() {
+      if (!currentPlayer) return;
+      const text = (document.getElementById('newNoteText')?.value||'').trim();
+      if (!text) { toast('Escribe una nota primero', 'error'); return; }
+      try {
+        await db.post('notes', {
+          player_id: currentPlayer.id,
+          professional_id: currentProfessionalId,
+          content: text,
+          created_at: new Date().toISOString()
+        });
+        document.getElementById('newNoteText').value = '';
+        await loadProfileNotas(currentPlayer.id);
+        toast('Nota guardada ✓');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    async function deleteNote(noteId) {
+      if (!confirm('¿Eliminar esta nota?')) return;
+      try {
+        await db.delete('notes', `?id=eq.${noteId}`);
+        await loadProfileNotas(currentPlayer.id);
+        toast('Nota eliminada');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // ── Historial tab (calendar + sessions) ───────────────────────
+    window.profileCalYear     = new Date().getFullYear();
+    window.profileCalMonth    = new Date().getMonth();
+    window.profileCalSelected = null;
+    window.profileSessions    = [];
+    window.profileSortDesc    = true;
+
+    async function loadProfileHistorial(playerId) {
+      const container = document.getElementById('profileViewSessions');
+      if (container) container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:32px;font-size:0.85rem;">Cargando sesiones...</div>`;
+      window.profileCalSelected = null;
+      window.profileSortDesc = true;
+      const sortBtn = document.getElementById('profileSortBtn');
+      if (sortBtn) sortBtn.textContent = '↓ Recientes';
+      renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
+      try {
+        const sessions = await db.get('sessions', `?athlete_id=eq.${playerId}&order=date.desc`);
+        window.profileSessions = sessions;
+        if (sessions.length && sessions[0].date) {
+          const d = new Date(String(sessions[0].date).slice(0,10) + 'T00:00:00');
+          if (!isNaN(d)) { window.profileCalYear = d.getFullYear(); window.profileCalMonth = d.getMonth(); }
+        }
+        renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
+        applyProfileSessionFilters();
+      } catch {
+        if (container) container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
+      }
+    }
+
+    function renderProfileCalendar(year, month) {
+      const container = document.getElementById('profileCalendar');
+      if (!container || isNaN(year) || isNaN(month)) return;
+      const sessionDates = new Set((window.profileSessions||[]).map(s=>s.date?.slice(0,10)).filter(Boolean));
+      const today = new Date().toISOString().slice(0,10);
+      const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      const firstDow = (new Date(year, month, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+      const DAY_HEADERS = ['L','M','X','J','V','S','D'];
+      let cells = DAY_HEADERS.map(h=>`<div class="cal-hdr">${h}</div>`).join('');
+      for (let i = 0; i < firstDow; i++) cells += `<div class="cal-empty"></div>`;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const cls = ['cal-day',
+          sessionDates.has(ds)             ? 'has-session' : '',
+          window.profileCalSelected === ds ? 'selected'    : '',
+          ds === today                     ? 'today'        : ''
+        ].filter(Boolean).join(' ');
+        cells += `<button class="${cls}" onclick="selectProfileCalDay('${ds}')">
+          <span class="cal-day-num">${d}</span>
+          ${sessionDates.has(ds)?'<span class="cal-dot"></span>':''}
+        </button>`;
+      }
+      const navBtn = (lbl,fn) =>
+        `<button onclick="${fn}" style="background:var(--bg2);border:none;color:var(--text);font-size:1.2rem;line-height:1;cursor:pointer;padding:6px 14px;border-radius:10px;font-family:inherit;">${lbl}</button>`;
+      container.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          ${navBtn('‹','changeProfileCalMonth(-1)')}
+          <span style="font-size:1rem;font-weight:700;color:var(--text);">${MONTHS[month]} ${year}</span>
+          ${navBtn('›','changeProfileCalMonth(1)')}
+        </div>
+        <div class="cal-grid">${cells}</div>`;
+    }
+
+    function changeProfileCalMonth(delta) {
+      window.profileCalMonth += delta;
+      if (window.profileCalMonth > 11) { window.profileCalMonth = 0; window.profileCalYear++; }
+      if (window.profileCalMonth < 0)  { window.profileCalMonth = 11; window.profileCalYear--; }
+      renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
+    }
+
+    function selectProfileCalDay(ds) {
+      window.profileCalSelected = (window.profileCalSelected === ds || !ds) ? null : ds;
+      renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
+      applyProfileSessionFilters();
+    }
+
+    function toggleProfileSessionSort() {
+      window.profileSortDesc = !window.profileSortDesc;
+      const btn = document.getElementById('profileSortBtn');
+      if (btn) btn.textContent = window.profileSortDesc ? '↓ Recientes' : '↑ Antiguas';
+      applyProfileSessionFilters();
+    }
+
+    function applyProfileSessionFilters() {
+      let sessions = [...(window.profileSessions||[])];
+      if (window.profileCalSelected) sessions = sessions.filter(s => s.date && s.date.startsWith(window.profileCalSelected));
+      sessions.sort((a,b) => {
+        const da = new Date(a.date), db = new Date(b.date);
+        return window.profileSortDesc ? db - da : da - db;
+      });
+      renderDataSessions(sessions, document.getElementById('profileViewSessions'));
+    }
+
+    // ── Club modal ────────────────────────────────────────────────
+    function openClubModal(clubId) {
+      window._editingClubId = clubId || null;
+      const editing = clubId ? state.clubs.find(c => c.id === clubId) : null;
+      document.getElementById('clubModalTitle').textContent = editing ? 'Editar club' : 'Nuevo club';
+      document.getElementById('clubName').value     = editing?.name     || '';
+      document.getElementById('clubSport').value    = editing?.sport    || '';
+      document.getElementById('clubCategory').value = editing?.category || '';
+      document.getElementById('clubLeague').value   = editing?.league   || '';
+      document.getElementById('clubModal').classList.add('open');
+    }
+
+    function closeClubModal() {
+      document.getElementById('clubModal').classList.remove('open');
+    }
+
+    async function saveClub() {
+      const name     = document.getElementById('clubName').value.trim();
+      const sport    = document.getElementById('clubSport').value;
+      const category = document.getElementById('clubCategory').value.trim() || null;
+      const league   = document.getElementById('clubLeague').value.trim()   || null;
+      if (!name)  { toast('El nombre es obligatorio', 'error'); return; }
+      if (!sport) { toast('Selecciona un deporte', 'error');    return; }
+      const payload = { name, sport, category, league, professional_id: currentProfessionalId };
+      try {
+        if (window._editingClubId) {
+          await db.patch('clubs', payload, `?id=eq.${window._editingClubId}`);
+        } else {
+          await db.post('clubs', { ...payload, id: crypto.randomUUID(), created_at: new Date().toISOString() });
+        }
+        closeClubModal();
+        await loadClubs();
+        renderClubs();
+        if (window._editingClubId && currentClub?.id === window._editingClubId) {
+          currentClub = state.clubs.find(c => c.id === window._editingClubId);
+          if (currentClub) openClub(window._editingClubId);
+        }
+        toast(window._editingClubId ? 'Club actualizado ✓' : 'Club creado ✓');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // ── Edit / delete player ──────────────────────────────────────
+    function editCurrentPlayer() {
+      if (!currentPlayer) return;
+      const p = currentPlayer;
+      window._editingPlayerId = p.id;
+      const titleEl = document.querySelector('#addAthleteModal .modal-title');
+      if (titleEl) titleEl.textContent = 'Editar jugador';
+      const clubSel = document.getElementById('newPlayerClub');
+      clubSel.innerHTML = '<option value="">— Seleccionar club —</option>' +
+        state.clubs.map(c => `<option value="${c.id}"${c.id===p.club_id?' selected':''}>${c.name}</option>`).join('');
+      const club = state.clubs.find(c => c.id === p.club_id);
+      const positions = club?.sport ? (POSITIONS_BY_SPORT[club.sport]||[]) : [];
+      const posSel = document.getElementById('newPlayerPosition');
+      posSel.innerHTML = positions.length
+        ? '<option value="">—</option>' + positions.map(pos => `<option value="${pos}"${pos===p.position?' selected':''}>${pos}</option>`).join('')
+        : '<option value="">— Sin modalidades —</option>';
+      document.getElementById('newPlayerName').value   = p.full_name || '';
+      document.getElementById('newPlayerEmail').value  = p.email || '';
+      document.getElementById('newPlayerDorsal').value = p.dorsal || '';
+      document.getElementById('newPlayerNotes').value  = p.notes || '';
+      document.getElementById('newPlayerGender').value = p.gender || '';
+      document.getElementById('newPlayerHand').value   = p.dominant_hand || '';
+      if (p.birth_date) {
+        const parts = p.birth_date.split('/');
+        document.getElementById('newPlayerBirthDate').value = parts.length === 3
+          ? `${parts[2]}-${parts[1]}-${parts[0]}` : p.birth_date;
+      } else { document.getElementById('newPlayerBirthDate').value = ''; }
+      const preview = document.getElementById('newPlayerPhotoPreview');
+      if (p.profile_image) {
+        preview.src = p.profile_image; preview.style.display = 'block';
+        window._newPlayerPhotoBase64 = p.profile_image;
+      } else {
+        preview.style.display = 'none'; preview.src = '';
+        window._newPlayerPhotoBase64 = null;
+      }
+      document.getElementById('newPlayerConsent').checked = true;
+      document.getElementById('addAthleteModal').classList.add('open');
+    }
+
+    async function deleteCurrentPlayer() {
+      if (!currentPlayer) return;
+      if (!confirm(`¿Eliminar a "${currentPlayer.full_name}"? Esta acción no se puede deshacer.`)) return;
+      try {
+        await db.delete('player_profiles', `?id=eq.${currentPlayer.id}`);
+        await loadAthletes();
+        toast('Jugador eliminado');
+        const bv = profileBackView;
+        currentPlayer = null;
+        if (bv === 'clubDetail' && currentClub) { openClub(currentClub.id); }
+        else { showDataView(bv); }
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
   </script>
 
   <!-- BARRA FIJA DE INICIO -->
