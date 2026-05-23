@@ -890,7 +890,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exStimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exStimSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exStimSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -976,7 +976,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exPiSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exPiSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exPiSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -1071,7 +1071,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exStroopSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exStroopSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exStroopSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -1203,7 +1203,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exDiscSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exDiscSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exDiscSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -1413,7 +1413,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exPdSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exPdSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exPdSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -1501,7 +1501,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="exSimonSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="exSimonSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="exSimonSound" style="margin:0;cursor:pointer;">Buzzer</label>
               </div>
             </div>
@@ -1797,7 +1797,7 @@
                 </select>
               </div>
               <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="stimSound" checked style="width:18px;height:18px;accent-color:var(--accent);" />
+                <input type="checkbox" id="stimSound" style="width:18px;height:18px;accent-color:var(--accent);" />
                 <label for="stimSound" style="margin:0;cursor:pointer;">Sonido</label>
               </div>
             </div>
@@ -3743,8 +3743,8 @@
       document.getElementById('sessionSummary').style.display = 'none';
       const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar');
       const isTimeMode = state.session && state.session.exerciseMode === 'time';
-      document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : '';
-      document.getElementById('statsRowBottom').style.display  = isScreenExercise ? 'none' : '';
+      document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : 'grid';
+      document.getElementById('statsRowBottom').style.display  = isScreenExercise ? 'none' : 'grid';
       const liveTimeTile = document.getElementById('liveTimeTile');
       if (liveTimeTile) liveTimeTile.style.display = isScreenExercise ? 'none' : '';
       document.getElementById('screenProgress').style.display  = isScreenExercise ? 'block' : 'none';
