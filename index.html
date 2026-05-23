@@ -2525,6 +2525,7 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR3YWxyeXpjd3h6Y2ZxdWJ2d2ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTg1MTcsImV4cCI6MjA5NDE3NDUxN30.6VIQ8OK0FvhfvD7K34duCSCBnj26Ocplj2lVWFXF4Es';
     const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentProfessional = null;
+    let currentProfessionalId = null; // puede diferir de currentProfessional.id si Track usa tabla professionals separada
 
     const db = {
       async query(table, method='GET', body=null, filters='') {
@@ -3913,10 +3914,16 @@
     }
 
     // AUTH
+    function resolveProfessionalId(user) {
+      // Track guarda el professional_id en user_metadata si la tabla professionals no está expuesta en la API
+      return user.user_metadata?.professional_id || user.id;
+    }
+
     async function initAuth() {
       const { data: { session } } = await _sb.auth.getSession();
       if (session) {
         currentProfessional = session.user;
+        currentProfessionalId = resolveProfessionalId(session.user);
         document.getElementById('loginOverlay').style.display = 'none';
         await loadInitialData();
       } else {
@@ -3936,6 +3943,7 @@
         return;
       }
       currentProfessional = data.user;
+      currentProfessionalId = resolveProfessionalId(data.user);
       document.getElementById('loginOverlay').style.display = 'none';
       await loadInitialData();
     }
@@ -3990,9 +3998,9 @@
 
     // DEPORTISTAS
     async function loadAthletes() {
-      if (!currentProfessional) return;
+      if (!currentProfessionalId) return;
       try {
-        state.athletes = await db.get('player_profiles', `?professional_id=eq.${currentProfessional.id}&order=full_name`);
+        state.athletes = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&order=full_name`);
         renderAthletes();
         renderDataAthletes(state.athletes);
         updateAthleteFilter();
@@ -4000,14 +4008,15 @@
     }
 
     async function loadClubs() {
-      if (!currentProfessional) return;
+      if (!currentProfessionalId) return;
       try {
-        state.clubs = await db.get('clubs', `?professional_id=eq.${currentProfessional.id}&order=name`);
+        state.clubs = await db.get('clubs', `?professional_id=eq.${currentProfessionalId}&order=name`);
       } catch(e) { console.error('loadClubs', e); }
     }
 
     function renderAthletes() {
       const list = document.getElementById('athletesList');
+      if (!list) return;
       const html = !state.athletes.length
         ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin jugadores añadidos.</div>`
         : state.athletes.map(a => {
@@ -4092,7 +4101,7 @@
         id: uuid,
         short_id,
         invitation_code,
-        professional_id: currentProfessional.id,
+        professional_id: currentProfessionalId,
         club_id,
         full_name,
         email:         document.getElementById('newPlayerEmail').value.trim() || null,
