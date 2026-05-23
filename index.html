@@ -2457,7 +2457,6 @@
     const state = {
       bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
       nodes: {}, // {nodeId: {name, battery, lastUpdate}}
-      selectedNodes: new Set(), // indices of selected nodes for bulk disconnect
       availableDevices: [], // devices discovered but not yet connected
       leScan: null,
       athlete: null,
@@ -2538,6 +2537,7 @@
         device.addEventListener('gattserverdisconnected', device._orionDisconnectHandler);
         const { cmdChar, evtChar } = await openNodeGatt(device);
         await evtChar.startNotifications();
+        evtChar.removeEventListener('characteristicvaluechanged', onBLEMessage);
         evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
         state.bleNodes.push({ device, cmdChar, evtChar, nodeId: null, battery: 0, lastUpdate: Date.now() });
         // remove from availableDevices if present (compare by id)
@@ -2625,36 +2625,6 @@
       toast(`${connected} nodo${connected === 1 ? '' : 's'} conectado${connected === 1 ? '' : 's'} ✓`);
     }
 
-    function toggleNodeSelection(index) {
-      if (state.selectedNodes.has(index)) {
-        state.selectedNodes.delete(index);
-      } else {
-        state.selectedNodes.add(index);
-      }
-      updateNodesGrid();
-      updateSelectDisconnectUI();
-    }
-
-    function updateSelectDisconnectUI() {
-      const row = document.getElementById('selectDisconnectRow');
-      if (state.selectedNodes.size > 0) {
-        row.style.display = 'block';
-      } else {
-        row.style.display = 'none';
-      }
-    }
-
-    function disconnectSelected() {
-      const indices = Array.from(state.selectedNodes).sort((a, b) => b - a);
-      indices.forEach(idx => {
-        if (idx < state.bleNodes.length) {
-          disconnectBLE(state.bleNodes[idx].device);
-        }
-      });
-      state.selectedNodes.clear();
-      updateSelectDisconnectUI();
-      toast('Nodos desconectados');
-    }
 
     function onBLEDisconnected(device) {
       const index = state.bleNodes.findIndex(n => n.device === device);
@@ -2665,9 +2635,23 @@
       state.bleNodes.splice(index, 1);
       updateBTUI();
       updateNodesGrid();
-      updateSelectDisconnectUI();
       if (state.bleNodes.length === 0) state.nodes = {};
       toast(`${nodeLabel} desconectado`);
+      // Si hay sesión activa esperando reacción, forzar miss inmediato
+      if (state.session.active && state.session.waiting) {
+        clearTimeout(state.session.timeoutId);
+        state.session.timeoutId = setTimeout(() => {
+          if (!state.session.active || !state.session.waiting) return;
+          switch (state.session.type) {
+            case 'flash':          completeStimulus(null, false); break;
+            case 'parimpar':       completeParImpar(false, null); break;
+            case 'stroop':         completeStroop(false, null); break;
+            case 'discrimination': completeDiscrimination(null, false); break;
+            case 'patterndisc':    completePatternDisc(null, false); break;
+            case 'custom':         completeCustomStep(null, false); break;
+          }
+        }, 300);
+      }
     }
 
     function onBLEMessage(event) {
@@ -2711,9 +2695,13 @@
     }
 
     let _bleQueue = Promise.resolve();
+    let _bleGen = 0;
+    function cancelBLEQueue() { _bleGen++; }
 
     function sendBLE(payload) {
+      const gen = _bleGen;
       const run = async () => {
+        if (gen !== _bleGen) return; // Sesión nueva o detenida — descartar
         if (payload.sensor === 'proximity' || payload.sensor === 'both') {
           const thresh = state.session?.config?.proximityThreshold ?? 30;
           payload = { ...payload, proximity_threshold: thresh };
@@ -2740,12 +2728,16 @@
       const btn = document.getElementById('btBtn');
       const hasConnected = state.bleNodes.length > 0;
       btn.className = 'bt-status' + (hasConnected ? ' connected' : '');
-      const countText = state.bleNodes.length > 0 ? ` (${state.bleNodes.length})` : '';
       document.getElementById('btText').textContent = hasConnected
         ? `${state.bleNodes.length} nodo${state.bleNodes.length === 1 ? '' : 's'} conectado${state.bleNodes.length === 1 ? '' : 's'}`
         : 'Conectar nodo';
     }
+    let _updateNodesGridTimer = null;
     function updateNodesGrid() {
+      clearTimeout(_updateNodesGridTimer);
+      _updateNodesGridTimer = setTimeout(_renderNodesGrid, 150);
+    }
+    function _renderNodesGrid() {
       const container = document.getElementById('connectedNodesList');
       if (!container) return;
 
@@ -2951,13 +2943,6 @@
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
       state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
-      if (exerciseMode === 'time') {
-        state.session.countdownId = setInterval(() => {
-          if (!state.session.active) return;
-          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
-          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
-        }, 500);
-      }
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3368,6 +3353,7 @@
       const completeTile = document.getElementById('statCompleteTile');
       completeTile.style.display = (isTimeMode && !isScreenExercise) ? '' : 'none';
       if (isTimeMode) document.getElementById('statComplete').textContent = '0';
+      clearInterval(state.session.countdownId);
       clearInterval(state.session.elapsedId);
       state.session.elapsedId = setInterval(() => {
         if (!state.session.active) return;
@@ -3375,10 +3361,15 @@
         const m = Math.floor(elapsed / 60000);
         const s = Math.floor((elapsed % 60000) / 1000);
         document.getElementById('statElapsed').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        if (state.session.exerciseMode === 'time' && state.session.timeLimit) {
+          const rem = Math.max(0, state.session.timeLimit - elapsed);
+          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
+        }
       }, 500);
     }
 
     function stopSession() {
+      cancelBLEQueue();
       clearTimeout(state.session.timeoutId);
       clearInterval(state.session.countdownId);
       state.session.active = state.session.waiting = false;
@@ -4218,13 +4209,6 @@
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
       state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
-      if (exerciseMode === 'time') {
-        state.session.countdownId = setInterval(() => {
-          if (!state.session.active) return;
-          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
-          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
-        }, 500);
-      }
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -5235,13 +5219,6 @@
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
       state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
-      if (exerciseMode === 'time') {
-        state.session.countdownId = setInterval(() => {
-          if (!state.session.active) return;
-          const rem = Math.max(0, state.session.timeLimit - (Date.now() - state.session.startTime));
-          document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
-        }, 500);
-      }
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -5484,14 +5461,6 @@
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
-    }
-
-    function launchExercise(type) { 
-      if (type === 'flash' || type === 'parimpar') {
-        showPage('create');
-        document.getElementById('createMode').value = 'rapido';
-        switchCreateMode();
-      }
     }
 
     document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page)));
