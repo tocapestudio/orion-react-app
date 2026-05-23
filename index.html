@@ -2343,6 +2343,10 @@
           <div id="tabResumenContent"></div>
         </div>
         <div class="profile-tab-pane" id="tab-pane-evaluaciones">
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap;">
+            <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openNewTemplateModal()">+ Plantilla</button>
+            <button class="btn-primary" style="padding:8px 14px;font-size:0.85rem;" onclick="openNewEvalModal()">+ Evaluación</button>
+          </div>
           <div id="tabEvalContent"><div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando...</div></div>
         </div>
         <div class="profile-tab-pane" id="tab-pane-entrenamiento">
@@ -2595,6 +2599,101 @@
       </div>
       <div id="athleteModalList" style="margin-bottom:16px;max-height:320px;overflow-y:auto;"></div>
       <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Nueva evaluación -->
+  <div class="modal-overlay" id="evalModal" style="align-items:flex-start;overflow-y:auto;padding:20px 16px;">
+    <div class="modal" style="max-height:none;overflow-y:visible;margin:0 auto;">
+      <div class="modal-title">Nueva evaluación</div>
+      <div class="field">
+        <label>Plantilla de test <span style="color:#f44336;">*</span></label>
+        <select id="evalTemplate" onchange="onEvalTemplateChange()" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;">
+          <option value="">— Seleccionar plantilla —</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fecha</label>
+        <input type="date" id="evalDate" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;" />
+      </div>
+      <div id="evalDynamicFields"></div>
+      <div class="field">
+        <label>Notas (opcional)</label>
+        <textarea id="evalNotes" rows="2" placeholder="Observaciones..." style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="saveEvaluation()">Guardar evaluación</button>
+        <button class="btn-secondary" onclick="closeEvalModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Nueva plantilla -->
+  <div class="modal-overlay" id="templateModal" style="align-items:flex-start;overflow-y:auto;padding:20px 16px;">
+    <div class="modal" style="max-height:none;overflow-y:visible;margin:0 auto;">
+      <div class="modal-title">Nueva plantilla de test</div>
+      <div class="field">
+        <label>Nombre <span style="color:#f44336;">*</span></label>
+        <input type="text" id="tplName" placeholder="Ej: Agudeza Visual Dinámica" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Tipo de test</label>
+          <input type="text" id="tplType" placeholder="visual, motor, cognitivo..." />
+        </div>
+        <div class="field">
+          <label>Unidad de medida</label>
+          <input type="text" id="tplUnit" placeholder="decimal, ms, grados..." />
+        </div>
+      </div>
+      <div class="field">
+        <label>Descripción</label>
+        <textarea id="tplDesc" rows="2" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Descripción del test..."></textarea>
+      </div>
+
+      <div class="toggle-row">
+        <div><div class="toggle-label">Menor es mejor</div><div class="toggle-sub">Para tiempos, errores — una bajada indica mejora</div></div>
+        <div class="toggle" id="tplLowerBetter" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Valores OD / OI / BIN</div><div class="toggle-sub">Pide valor para ojo derecho, izquierdo y binocular</div></div>
+        <div class="toggle" id="tplOdOiBin" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Repeticiones</div><div class="toggle-sub">Registrar múltiples intentos</div></div>
+        <div class="toggle" id="tplReps" onclick="this.classList.toggle('on');updateTplRepsUI()"></div>
+      </div>
+      <div id="tplRepsConfig" style="display:none;padding:14px;background:var(--bg3);border-radius:12px;border:1px solid var(--border);margin-bottom:12px;">
+        <div class="field" style="margin-bottom:10px;">
+          <label>Número de repeticiones</label>
+          <div class="stepper" style="max-width:150px;">
+            <button type="button" class="stepper-btn" onclick="adjustCount('tplRepCount',-1,1,20)">−</button>
+            <input type="number" id="tplRepCount" value="3" min="1" max="20" />
+            <button type="button" class="stepper-btn" onclick="adjustCount('tplRepCount',1,1,20)">+</button>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Registrar lateralidad</div></div>
+          <div class="toggle" id="tplLaterality" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row" style="border:none;">
+          <div><div class="toggle-label">Registrar éxito / fallo</div></div>
+          <div class="toggle" id="tplSuccess" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Variables personalizadas</div><div class="toggle-sub">Varios valores con nombre propio</div></div>
+        <div class="toggle" id="tplCustomVars" onclick="this.classList.toggle('on');updateTplCustomVarsUI()"></div>
+      </div>
+      <div id="tplCustomVarsConfig" style="display:none;margin-bottom:12px;">
+        <div id="tplCustomVarsList" style="margin-bottom:8px;"></div>
+        <button type="button" class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;width:100%;" onclick="addCustomVar()">+ Añadir variable</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-primary" onclick="saveTemplate()">Crear plantilla</button>
+        <button class="btn-secondary" onclick="closeTemplateModal()">Cancelar</button>
+      </div>
     </div>
   </div>
 
@@ -5848,6 +5947,9 @@
     let profileBackView = 'clubs';
     window._editingPlayerId = null;
     window._editingClubId   = null;
+    let evalTemplates    = [];
+    let _evalTemplate    = null;
+    let _customVarCount  = 0;
 
     function showDataView(view) {
       ['clubs','clubDetail','allPlayers','playerProfile'].forEach(v => {
@@ -6072,50 +6174,76 @@
     }
 
     // ── Evaluaciones tab ──────────────────────────────────────────
+    function fmt(v) {
+      if (v == null || v === '') return '—';
+      const n = parseFloat(v);
+      return isNaN(n) ? String(v) : (Number.isInteger(n) ? String(n) : n.toFixed(2));
+    }
+
     async function loadProfileEvaluaciones(playerId) {
       const el = document.getElementById('tabEvalContent');
       if (!el) return;
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando evaluaciones...</div>`;
       try {
         const [results, templates] = await Promise.all([
-          db.get('test_results', `?player_id=eq.${playerId}&order=created_at.desc`),
-          db.get('test_templates', `?order=name`)
+          db.get('test_results', `?player_id=eq.${playerId}&order=test_date.desc`),
+          db.get('test_templates', `?or=(is_default.eq.true,professional_id.eq.${currentProfessionalId})&order=name`)
         ]);
         if (!results.length) {
-          el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin evaluaciones</h3><p>Aún no se han registrado evaluaciones para este jugador.</p></div>`;
+          el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Sin evaluaciones</h3><p>Pulsa "+ Evaluación" para registrar la primera.</p></div>`;
           return;
         }
         const grouped = {};
         results.forEach(r => {
-          const tpl = templates.find(t => t.id === r.template_id);
-          const key = tpl?.name || r.template_id || 'Sin plantilla';
+          const tplId = r.test_template_id || r.template_id;
+          const tpl   = templates.find(t => t.id === tplId);
+          const key   = tpl?.name || r.test_name || tplId || 'Sin plantilla';
           if (!grouped[key]) grouped[key] = { template: tpl, results: [] };
           grouped[key].results.push(r);
         });
         el.innerHTML = Object.entries(grouped).map(([name, group]) => {
-          const tpl = group.template;
+          const tpl   = group.template;
+          const lower = tpl?.lower_is_better;
+          const unit  = tpl?.measurement_unit ? ` ${tpl.measurement_unit}` : '';
           const rows = group.results.slice(0, 8).map((r, idx, arr) => {
             const prev = arr[idx + 1];
-            const date = new Date(r.created_at || r.date || '').toLocaleDateString('es-ES', {day:'2-digit',month:'short',year:'numeric'});
-            const data = r.result_data || r.data || {};
-            const dataStr = typeof data === 'object'
-              ? Object.entries(data).map(([k,v]) => {
-                  const numV = parseFloat(v);
-                  let trend = '';
-                  if (prev && !isNaN(numV)) {
-                    const prevV = parseFloat((prev.result_data||prev.data||{})[k]);
-                    if (!isNaN(prevV) && numV !== prevV) {
-                      const improved = tpl?.lower_is_better ? numV < prevV : numV > prevV;
-                      trend = improved ? ' <span class="trend-up">▲</span>' : ' <span class="trend-down">▼</span>';
-                    }
-                  }
-                  const disp = isNaN(numV) ? String(v) : (Number.isInteger(numV) ? numV : numV.toFixed(2));
-                  return `<span style="margin-right:10px;"><span style="color:var(--muted);font-size:0.76rem;">${k}:</span> ${disp}${trend}</span>`;
-                }).join('')
-              : String(data);
-            return `<div class="eval-row"><span style="font-size:0.78rem;color:var(--muted);flex-shrink:0;min-width:90px;">${date}</span><div style="flex:1;font-size:0.83rem;">${dataStr||'—'}</div></div>`;
+            const date = new Date(r.test_date || r.created_at || '').toLocaleDateString('es-ES', {day:'2-digit',month:'short',year:'numeric'});
+            let valStr = '';
+            if (r.value_od != null || r.value_oi != null) {
+              const parts = [];
+              if (r.value_od  != null) parts.push(`OD:${fmt(r.value_od)}`);
+              if (r.value_oi  != null) parts.push(`OI:${fmt(r.value_oi)}`);
+              if (r.value_bin != null) parts.push(`BIN:${fmt(r.value_bin)}`);
+              valStr = parts.join(' · ');
+            } else if (r.rep_count > 1) {
+              valStr = `Media:${fmt(r.rep_average)}${unit} · Mejor:${fmt(r.rep_best)} · ${r.rep_count}r`;
+              if (r.success_rate != null) valStr += ` · ${parseFloat(r.success_rate).toFixed(0)}% OK`;
+            } else if (r.custom_values && typeof r.custom_values === 'object') {
+              valStr = Object.entries(r.custom_values).map(([k,v]) => `${k}:${fmt(v)}`).join(' · ');
+              if (r.custom_total != null) valStr += ` · Total:${fmt(r.custom_total)}`;
+            } else {
+              valStr = r.value != null ? `${fmt(r.value)}${unit}` : '—';
+            }
+            let trend = '';
+            if (prev != null && r.value != null && prev.value != null) {
+              const diff = parseFloat(r.value) - parseFloat(prev.value);
+              if (diff !== 0) {
+                trend = (lower ? diff < 0 : diff > 0)
+                  ? ' <span class="trend-up">▲</span>'
+                  : ' <span class="trend-down">▼</span>';
+              }
+            }
+            return `<div class="eval-row">
+              <span style="font-size:0.78rem;color:var(--muted);flex-shrink:0;min-width:88px;">${date}</span>
+              <div style="flex:1;font-size:0.83rem;">${valStr}${trend}</div>
+              ${r.notes ? `<span style="font-size:0.75rem;color:var(--muted);" title="${r.notes}">📝</span>` : ''}
+            </div>`;
           }).join('');
-          return `<div style="margin-bottom:18px;"><div style="font-size:0.76rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">${name}</div>${rows}</div>`;
+          const lowTag = lower ? `<span style="font-size:0.68rem;color:var(--muted);"> · ↓ mejor</span>` : '';
+          return `<div style="margin-bottom:18px;">
+            <div style="font-size:0.76rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">${name}${lowTag}</div>
+            ${rows}
+          </div>`;
         }).join('');
       } catch(e) {
         el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
@@ -6301,6 +6429,250 @@
         return window.profileSortDesc ? db - da : da - db;
       });
       renderDataSessions(sessions, document.getElementById('profileViewSessions'));
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // EVALUACIONES — nueva evaluación + nueva plantilla
+    // ═══════════════════════════════════════════════════════════════
+    async function openNewEvalModal() {
+      if (!currentPlayer) return;
+      if (!evalTemplates.length) {
+        try {
+          evalTemplates = await db.get('test_templates',
+            `?or=(is_default.eq.true,professional_id.eq.${currentProfessionalId})&order=name`);
+        } catch(e) { toast('Error cargando plantillas', 'error'); return; }
+      }
+      const sel = document.getElementById('evalTemplate');
+      sel.innerHTML = '<option value="">— Seleccionar plantilla —</option>' +
+        evalTemplates.map(t => {
+          const tag = t.is_default === false ? ' ★' : '';
+          const u   = t.measurement_unit ? ` (${t.measurement_unit})` : '';
+          return `<option value="${t.id}">${t.name}${u}${tag}</option>`;
+        }).join('');
+      _evalTemplate = null;
+      document.getElementById('evalDynamicFields').innerHTML = '';
+      document.getElementById('evalDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('evalNotes').value = '';
+      document.getElementById('evalModal').classList.add('open');
+    }
+
+    function closeEvalModal() {
+      document.getElementById('evalModal').classList.remove('open');
+    }
+
+    function onEvalTemplateChange() {
+      const id = document.getElementById('evalTemplate').value;
+      _evalTemplate = evalTemplates.find(t => t.id === id) || null;
+      renderEvalDynamicFields(_evalTemplate);
+    }
+
+    function renderEvalDynamicFields(tpl) {
+      const container = document.getElementById('evalDynamicFields');
+      if (!tpl) { container.innerHTML = ''; return; }
+      const unit = tpl.measurement_unit ? ` (${tpl.measurement_unit})` : '';
+      const numInp = (id, lbl, ph) =>
+        `<div class="field"><label>${lbl}</label><input type="number" step="0.001" id="${id}" placeholder="${ph}"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;box-sizing:border-box;" /></div>`;
+      let html = '';
+      if (tpl.requires_od_oi_bin) {
+        html = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          ${numInp('evalOD',  `OD${unit}`,  'Ojo Derecho')}
+          ${numInp('evalOI',  `OI${unit}`,  'Ojo Izquierdo')}
+          ${numInp('evalBIN', `BIN${unit}`, 'Binocular')}
+        </div>`;
+      } else if (tpl.has_repetitions) {
+        const repCount = tpl.repetition_count || 3;
+        html = `<div style="margin-bottom:14px;"><div style="font-size:0.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Repeticiones${unit}</div>`;
+        for (let i = 0; i < repCount; i++) {
+          html += `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <span style="font-size:0.78rem;color:var(--muted);min-width:22px;text-align:right;">${i+1}.</span>
+            <input type="number" step="0.001" id="evalRep_${i}" placeholder="Valor"
+              style="flex:2;padding:9px 12px;border-radius:9px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.88rem;" />
+            ${tpl.track_laterality ? `<select id="evalLat_${i}" style="flex:1;padding:9px 10px;border-radius:9px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.82rem;"><option value="right">Derecha</option><option value="left">Izquierda</option><option value="both">Ambas</option></select>` : ''}
+            ${tpl.track_success ? `<label style="display:flex;align-items:center;gap:4px;font-size:0.8rem;color:var(--muted);cursor:pointer;white-space:nowrap;"><input type="checkbox" id="evalSucc_${i}" checked style="accent-color:var(--accent);width:14px;height:14px;" /> OK</label>` : ''}
+          </div>`;
+        }
+        html += `</div>`;
+      } else if (tpl.has_custom_variables) {
+        const vars = tpl.custom_variables || [];
+        html = vars.map((v, i) => numInp(`evalCustom_${i}`, `${v.name || `Variable ${i+1}`}${unit}`, 'Valor')).join('');
+        if (!vars.length) html = numInp('evalValue', `Valor${unit}`, 'Introduce el valor');
+      } else {
+        html = numInp('evalValue', `Valor${unit}`, 'Introduce el valor');
+      }
+      container.innerHTML = html;
+    }
+
+    function parseFloatOrNull(id) {
+      const v = parseFloat(document.getElementById(id)?.value);
+      return isNaN(v) ? null : v;
+    }
+
+    async function saveEvaluation() {
+      if (!currentPlayer) return;
+      if (!_evalTemplate) { toast('Selecciona una plantilla', 'error'); return; }
+      const tpl     = _evalTemplate;
+      const dateVal = document.getElementById('evalDate').value;
+      const notes   = document.getElementById('evalNotes').value.trim() || null;
+      const result  = {
+        id:               crypto.randomUUID(),
+        player_id:        currentPlayer.id,
+        professional_id:  currentProfessionalId,
+        test_template_id: tpl.id,
+        test_name:        tpl.name,
+        test_type:        tpl.test_type        || null,
+        measurement_unit: tpl.measurement_unit || null,
+        notes,
+        test_date:        dateVal ? new Date(dateVal).toISOString() : new Date().toISOString(),
+        created_at:       new Date().toISOString(),
+      };
+
+      if (tpl.requires_od_oi_bin) {
+        result.value_od  = parseFloatOrNull('evalOD');
+        result.value_oi  = parseFloatOrNull('evalOI');
+        result.value_bin = parseFloatOrNull('evalBIN');
+        result.value     = result.value_bin ?? result.value_od;
+        if (result.value_od == null && result.value_oi == null && result.value_bin == null) {
+          toast('Introduce al menos un valor (OD, OI o BIN)', 'error'); return;
+        }
+      } else if (tpl.has_repetitions) {
+        const repCount = tpl.repetition_count || 3;
+        const reps = [];
+        for (let i = 0; i < repCount; i++) {
+          const v = parseFloatOrNull(`evalRep_${i}`);
+          if (v == null) continue;
+          const rep = { value: v };
+          if (tpl.track_laterality) rep.laterality = document.getElementById(`evalLat_${i}`)?.value || 'right';
+          if (tpl.track_success)    rep.success    = document.getElementById(`evalSucc_${i}`)?.checked ?? true;
+          reps.push(rep);
+        }
+        if (!reps.length) { toast('Introduce al menos una repetición', 'error'); return; }
+        const vals = reps.map(r => r.value);
+        result.repetitions = reps;
+        result.rep_count   = reps.length;
+        result.rep_average = +(vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(4);
+        result.rep_best    = tpl.lower_is_better ? Math.min(...vals) : Math.max(...vals);
+        result.rep_worst   = tpl.lower_is_better ? Math.max(...vals) : Math.min(...vals);
+        result.value       = result.rep_average;
+        if (tpl.track_success) {
+          result.success_count = reps.filter(r => r.success).length;
+          result.failure_count = reps.filter(r => !r.success).length;
+          result.success_rate  = +((result.success_count / reps.length) * 100).toFixed(2);
+        }
+      } else if (tpl.has_custom_variables) {
+        const vars = tpl.custom_variables || [];
+        const custom_values = {};
+        let total = 0, anyFilled = false;
+        vars.forEach((v, i) => {
+          const val = parseFloatOrNull(`evalCustom_${i}`);
+          if (val != null) { custom_values[v.name || `var_${i}`] = val; total += val; anyFilled = true; }
+        });
+        if (!anyFilled) { toast('Introduce al menos un valor', 'error'); return; }
+        result.custom_values = custom_values;
+        result.custom_total  = +total.toFixed(4);
+        result.value         = result.custom_total;
+      } else {
+        result.value = parseFloatOrNull('evalValue');
+        if (result.value == null) { toast('Introduce un valor', 'error'); return; }
+      }
+
+      try {
+        await db.post('test_results', result);
+        closeEvalModal();
+        await loadProfileEvaluaciones(currentPlayer.id);
+        toast('Evaluación guardada ✓');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
+    }
+
+    // ── Template modal ────────────────────────────────────────────
+    function openNewTemplateModal() {
+      ['tplName','tplType','tplDesc','tplUnit'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      ['tplLowerBetter','tplOdOiBin','tplReps','tplLaterality','tplSuccess','tplCustomVars'].forEach(id => {
+        document.getElementById(id)?.classList.remove('on');
+      });
+      document.getElementById('tplRepsConfig').style.display = 'none';
+      document.getElementById('tplCustomVarsConfig').style.display = 'none';
+      document.getElementById('tplCustomVarsList').innerHTML = '';
+      document.getElementById('tplRepCount').value = '3';
+      _customVarCount = 0;
+      document.getElementById('templateModal').classList.add('open');
+    }
+
+    function closeTemplateModal() {
+      document.getElementById('templateModal').classList.remove('open');
+    }
+
+    function updateTplRepsUI() {
+      const on = document.getElementById('tplReps').classList.contains('on');
+      document.getElementById('tplRepsConfig').style.display = on ? 'block' : 'none';
+    }
+
+    function updateTplCustomVarsUI() {
+      const on = document.getElementById('tplCustomVars').classList.contains('on');
+      document.getElementById('tplCustomVarsConfig').style.display = on ? 'block' : 'none';
+    }
+
+    function addCustomVar() {
+      const list = document.getElementById('tplCustomVarsList');
+      const idx  = _customVarCount++;
+      const div  = document.createElement('div');
+      div.id = `cvar_${idx}`;
+      div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+      div.innerHTML = `
+        <input type="text" placeholder="Nombre de la variable" id="cvarName_${idx}"
+          style="flex:2;padding:9px 12px;border-radius:9px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.85rem;" />
+        <label style="display:flex;align-items:center;gap:4px;font-size:0.78rem;color:var(--muted);cursor:pointer;white-space:nowrap;">
+          <input type="checkbox" id="cvarLow_${idx}" style="accent-color:var(--accent);" /> ↓ mejor
+        </label>
+        <button onclick="document.getElementById('cvar_${idx}').remove()"
+          style="background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:0.85rem;flex-shrink:0;font-family:inherit;">×</button>`;
+      list.appendChild(div);
+    }
+
+    async function saveTemplate() {
+      const name = document.getElementById('tplName').value.trim();
+      if (!name) { toast('El nombre es obligatorio', 'error'); return; }
+      const lower_is_better      = document.getElementById('tplLowerBetter').classList.contains('on');
+      const requires_od_oi_bin   = document.getElementById('tplOdOiBin').classList.contains('on');
+      const has_repetitions      = document.getElementById('tplReps').classList.contains('on');
+      const has_custom_variables = document.getElementById('tplCustomVars').classList.contains('on');
+      let custom_variables = null;
+      if (has_custom_variables) {
+        custom_variables = [];
+        document.querySelectorAll('[id^="cvarName_"]').forEach(inp => {
+          const n   = inp.value.trim();
+          const idx = inp.id.replace('cvarName_', '');
+          const lb  = document.getElementById(`cvarLow_${idx}`)?.checked || false;
+          if (n) custom_variables.push({ name: n, lower_is_better: lb });
+        });
+        if (!custom_variables.length) { toast('Añade al menos una variable', 'error'); return; }
+      }
+      const tpl = {
+        id:                  crypto.randomUUID(),
+        name,
+        test_type:           document.getElementById('tplType').value.trim() || null,
+        description:         document.getElementById('tplDesc').value.trim() || null,
+        measurement_unit:    document.getElementById('tplUnit').value.trim() || null,
+        is_default:          false,
+        lower_is_better,
+        requires_od_oi_bin,
+        has_repetitions,
+        repetition_count:    has_repetitions ? (parseInt(document.getElementById('tplRepCount').value)||3) : null,
+        track_laterality:    has_repetitions && document.getElementById('tplLaterality').classList.contains('on'),
+        track_success:       has_repetitions && document.getElementById('tplSuccess').classList.contains('on'),
+        has_custom_variables,
+        custom_variables,
+        professional_id:     currentProfessionalId,
+        created_at:          new Date().toISOString(),
+      };
+      try {
+        await db.post('test_templates', tpl);
+        evalTemplates = [];
+        closeTemplateModal();
+        toast('Plantilla creada ✓');
+      } catch(e) { toast('Error: ' + e.message, 'error'); }
     }
 
     // ── Club modal ────────────────────────────────────────────────
