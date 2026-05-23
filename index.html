@@ -233,7 +233,7 @@
     .toggle.on::after { transform: translateX(20px); }
 
     /* STATS */
-    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-bottom: 14px; }
     .stat-tile { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; }
     .stat-tile .val { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
     .stat-tile .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -776,12 +776,36 @@
                   <button type="button" class="stepper-btn" onclick="adjustCount('exStimDuration',0.1,0.5,10)">+</button>
                 </div>
               </div>
-              <div class="field">
+              <div class="field" id="exIntervalFixedField">
                 <label>Intervalo (s)</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('exStimInterval',-0.1,0,5)">−</button>
                   <input type="number" min="0" max="5" step="0.1" value="1.2" id="exStimInterval" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exStimInterval',0.1,0,5)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row" style="align-items:center;">
+              <div class="field" style="display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="exIntervalRandom" onchange="toggleIntervalRandom('ex')" style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exIntervalRandom" style="margin:0;cursor:pointer;font-size:0.88rem;">Intervalo aleatorio</label>
+              </div>
+            </div>
+            <div id="exIntervalRandomRow" style="display:none;" class="field-row">
+              <div class="field">
+                <label>Mín (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exIntervalMin',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="0.5" id="exIntervalMin" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exIntervalMin',0.1,0,10)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Máx (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exIntervalMax',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="2" id="exIntervalMax" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exIntervalMax',0.1,0,10)">+</button>
                 </div>
               </div>
             </div>
@@ -1442,6 +1466,8 @@
           <div class="stat-tile"><span class="val" id="statAvg">--</span><span class="lbl">Media s</span></div>
           <div class="stat-tile"><span class="val" id="statBest">--</span><span class="lbl">Mejor s</span></div>
           <div class="stat-tile"><span class="val" id="statProgress">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
+          <div class="stat-tile" id="statElapsedTile" style="display:none;"><span class="val" id="statElapsed">0:00</span><span class="lbl">Transcurrido</span></div>
+          <div class="stat-tile" id="statCompleteTile" style="display:none;"><span class="val" id="statComplete">0</span><span class="lbl">Completadas</span></div>
         </div>
         <div id="screenProgress" style="display:none;text-align:center;font-size:0.78rem;color:var(--muted);margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
         <div id="miniLogWrap" style="display:none;margin-top:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
@@ -1583,12 +1609,36 @@
                   <button type="button" class="stepper-btn" onclick="adjustCount('stimDuration',0.1,0.5,10)">+</button>
                 </div>
               </div>
-              <div class="field">
+              <div class="field" id="stimIntervalFixedField">
                 <label>Intervalo (s)</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('stimInterval',-0.1,0,5)">−</button>
                   <input type="number" min="0" max="5" step="0.1" value="1.2" id="stimInterval" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('stimInterval',0.1,0,5)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row" style="align-items:center;">
+              <div class="field" style="display:flex;align-items:center;gap:10px;">
+                <input type="checkbox" id="stimIntervalRandom" onchange="toggleIntervalRandom('stim')" style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="stimIntervalRandom" style="margin:0;cursor:pointer;font-size:0.88rem;">Intervalo aleatorio</label>
+              </div>
+            </div>
+            <div id="stimIntervalRandomRow" style="display:none;" class="field-row">
+              <div class="field">
+                <label>Mín (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimIntervalMin',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="0.5" id="stimIntervalMin" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimIntervalMin',0.1,0,10)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Máx (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimIntervalMax',-0.1,0,10)">−</button>
+                  <input type="number" min="0" max="10" step="0.1" value="2" id="stimIntervalMax" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stimIntervalMax',0.1,0,10)">+</button>
                 </div>
               </div>
             </div>
@@ -2480,9 +2530,12 @@
 
     async function connectDevice(device, { silent = false } = {}) {
       try {
-        if (!state.bleNodes.some(n => n.device === device)) {
-          device.addEventListener('gattserverdisconnected', (event) => onBLEDisconnected(device));
+        // Remove previous listener (if any) so reconnects don't accumulate handlers
+        if (device._orionDisconnectHandler) {
+          device.removeEventListener('gattserverdisconnected', device._orionDisconnectHandler);
         }
+        device._orionDisconnectHandler = () => onBLEDisconnected(device);
+        device.addEventListener('gattserverdisconnected', device._orionDisconnectHandler);
         const { cmdChar, evtChar } = await openNodeGatt(device);
         await evtChar.startNotifications();
         evtChar.addEventListener('characteristicvaluechanged', onBLEMessage);
@@ -2502,16 +2555,18 @@
 
 
     function disconnectBLE(device = null) {
+      const cleanNode = (n) => {
+        try { n.evtChar?.removeEventListener('characteristicvaluechanged', onBLEMessage); } catch(e) {}
+        try { n.device?.gatt?.disconnect(); } catch(e) {}
+      };
       if (device) {
-        // Desconectar un nodo específico
         const index = state.bleNodes.findIndex(n => n.device === device);
         if (index !== -1) {
-          state.bleNodes[index].device?.gatt.disconnect();
+          cleanNode(state.bleNodes[index]);
           state.bleNodes.splice(index, 1);
         }
       } else {
-        // Desconectar todos los nodos
-        state.bleNodes.forEach(n => n.device?.gatt.disconnect());
+        state.bleNodes.forEach(cleanNode);
         state.bleNodes = [];
       }
       if (state.bleNodes.length === 0) state.nodes = {};
@@ -2603,12 +2658,11 @@
 
     function onBLEDisconnected(device) {
       const index = state.bleNodes.findIndex(n => n.device === device);
-      const nodeLabel = index !== -1
-        ? `Nodo ${state.bleNodes[index].nodeId || state.bleNodes[index].device?.name || '?'}`
-        : (device?.name || 'Nodo');
-      if (index !== -1) {
-        state.bleNodes.splice(index, 1);
-      }
+      if (index === -1) return; // Already removed by manual disconnect — nothing to do
+      const bleNode = state.bleNodes[index];
+      const nodeLabel = `Nodo ${bleNode.nodeId || device?.name || '?'}`;
+      try { bleNode.evtChar?.removeEventListener('characteristicvaluechanged', onBLEMessage); } catch(e) {}
+      state.bleNodes.splice(index, 1);
       updateBTUI();
       updateNodesGrid();
       updateSelectDisconnectUI();
@@ -2656,27 +2710,30 @@
       } catch {}
     }
 
-    async function sendBLE(payload) {
-      // Auto-inject proximity_threshold when using proximity-based detection
-      if (payload.sensor === 'proximity' || payload.sensor === 'both') {
-        const thresh = state.session?.config?.proximityThreshold ?? 30;
-        payload = { ...payload, proximity_threshold: thresh };
-      }
-      const targetNodeId = payload.node_id;
-      let targetnodes = targetNodeId
-        ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
-        : state.bleNodes;
-      // Si se especifica un nodo que no existe, no lo convertimos en broadcast.
-      if (targetNodeId && targetnodes.length === 0) {
-        toast(`Nodo ${targetNodeId} no conectado`);
-        return;
-      }
-      for (const bleNode of targetnodes) {
-        if (!bleNode.cmdChar) continue;
-        try {
-          await bleNode.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify(payload)));
-        } catch(e) { console.warn('BLE write to node', bleNode.nodeId, ':', e); }
-      }
+    let _bleQueue = Promise.resolve();
+
+    function sendBLE(payload) {
+      const run = async () => {
+        if (payload.sensor === 'proximity' || payload.sensor === 'both') {
+          const thresh = state.session?.config?.proximityThreshold ?? 30;
+          payload = { ...payload, proximity_threshold: thresh };
+        }
+        const targetNodeId = payload.node_id;
+        const targetnodes = targetNodeId
+          ? state.bleNodes.filter(n => n.nodeId === targetNodeId)
+          : state.bleNodes;
+        if (targetNodeId && targetnodes.length === 0) {
+          toast(`Nodo ${targetNodeId} no conectado`);
+          return;
+        }
+        for (const bleNode of targetnodes) {
+          if (!bleNode.cmdChar) continue;
+          try {
+            await bleNode.cmdChar.writeValue(new TextEncoder().encode(JSON.stringify(payload)));
+          } catch(e) { console.warn('BLE write to node', bleNode.nodeId, ':', e); }
+        }
+      };
+      return (_bleQueue = _bleQueue.then(run, run));
     }
 
     function updateBTUI() {
@@ -2877,7 +2934,10 @@
       const value    = document.getElementById('stimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
       const { shape, color } = resolveStimContent(category, value, displayColor);
-      const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
+      const isRandIv = document.getElementById('stimIntervalRandom')?.checked;
+      const interval = isRandIv
+        ? { random:true, min:Math.round(parseFloat(document.getElementById('stimIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('stimIntervalMax').value)*1000) }
+        : Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout  = readTimeout('stimTimeout');
       const sensor   = document.getElementById('stimSensor').value;
@@ -2938,12 +2998,20 @@
       document.getElementById('liveHint').textContent = ok ? '✓ Reacción registrada' : 'Sin respuesta';
       updateLiveStats();
       state.session.current++;
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
       const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
       const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
       if (timeUp || repsUp) {
         setTimeout(endSession, 800);
       } else {
-        setTimeout(nextStimulus, state.session.config.interval);
+        const iv = state.session.config.interval;
+        const delay = (iv && typeof iv === 'object' && iv.random)
+          ? Math.round(iv.min + Math.random() * (iv.max - iv.min))
+          : (iv || 0);
+        setTimeout(nextStimulus, delay);
       }
     }
 
@@ -3200,18 +3268,21 @@
       const diffColors = ['red','green','blue','yellow','cyan','white'];
 
       const [nid1, nid2] = state.session.nodeIds || [1, 2];
+      // Color confusion: un nodo rojo, otro verde, asignados aleatoriamente
+      const node1IsRed = Math.random() < 0.5;
+      const nc1 = config.colorDiff ? (node1IsRed ? 'red' : 'green') : 'white';
+      const nc2 = config.colorDiff ? (node1IsRed ? 'green' : 'red') : 'white';
+      const screenColorDiff = config.colorDiff ? (Math.random() < 0.5 ? 'red' : 'green') : 'white';
+
       if (config.piMode === 'shapes') {
         // Modo 1: número en pantalla, X y O en nodos
         const num = Math.floor(Math.random() * 99) + 1;
         const isEven = num % 2 === 0;
         const node1HasCircle = Math.random() < 0.5;
         state.session.correctNode = isEven ? (node1HasCircle ? nid1 : nid2) : (node1HasCircle ? nid2 : nid1);
-        const screenColor = config.colorDiff ? ['white','green','blue'][Math.floor(Math.random()*3)] : 'white';
-        updateStroopScreen({ word: String(num), ink: screenColor });
+        updateStroopScreen({ word: String(num), ink: screenColorDiff });
         document.getElementById('liveNode').textContent = '';
         document.getElementById('liveHint').textContent = isEven ? 'PAR → toca O' : 'IMPAR → toca X';
-        const nc1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
-        const nc2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
         sendBLE({ cmd:'show', node_id:nid1, shape: node1HasCircle ? 'ring' : 'x', color:nc1, duration:dur, sensor:config.sensor||'vibration' });
         const _piRound1 = state.session.current;
         state.session.showNode2Id = setTimeout(() => {
@@ -3228,18 +3299,15 @@
         const v2 = node1HasEven ? oddNum  : evenNum;
         const wantsEven = Math.random() < 0.5;
         state.session.correctNode = wantsEven ? (node1HasEven ? nid1 : nid2) : (node1HasEven ? nid2 : nid1);
-        const screenWord  = wantsEven ? 'PAR' : 'IMPAR';
-        const screenColor = config.colorDiff ? (Math.random() < 0.5 ? 'green' : 'red') : 'white';
-        updateStroopScreen({ word: screenWord, ink: screenColor });
+        const screenWord = wantsEven ? 'PAR' : 'IMPAR';
+        updateStroopScreen({ word: screenWord, ink: screenColorDiff });
         document.getElementById('liveNode').textContent = '';
         document.getElementById('liveHint').textContent = `Toca el número ${screenWord}`;
-        const c1 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
-        const c2 = config.colorDiff ? diffColors[Math.floor(Math.random()*diffColors.length)] : 'white';
-        sendBLE({ cmd:'show', node_id:nid1, shape:String(v1), color:c1, duration:dur, sensor:config.sensor||'vibration' });
+        sendBLE({ cmd:'show', node_id:nid1, shape:String(v1), color:nc1, duration:dur, sensor:config.sensor||'vibration' });
         const _piRound2 = state.session.current;
         state.session.showNode2Id = setTimeout(() => {
           if (!state.session.active || state.session.current !== _piRound2) return;
-          sendBLE({ cmd:'show', node_id:nid2, shape:String(v2), color:c2, duration:dur, sensor:config.sensor||'vibration' });
+          sendBLE({ cmd:'show', node_id:nid2, shape:String(v2), color:nc2, duration:dur, sensor:config.sensor||'vibration' });
         }, 80);
       }
 
@@ -3272,10 +3340,12 @@
     function showActiveSession() {
       clearStarter();
       state.session.paused = false;
+      if (!state.session.startTime) state.session.startTime = Date.now();
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
       const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar');
+      const isTimeMode = state.session && state.session.exerciseMode === 'time';
       document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : '';
       document.getElementById('liveTime').style.display        = isScreenExercise ? 'none' : '';
       document.getElementById('screenProgress').style.display  = isScreenExercise ? 'block' : 'none';
@@ -3292,6 +3362,20 @@
       document.getElementById('miniLog').innerHTML = '';
       const pauseBtn = document.getElementById('btnPause');
       if (pauseBtn) pauseBtn.textContent = '⏸ Pausa';
+      // elapsed timer + completed tile
+      document.getElementById('statElapsedTile').style.display = isScreenExercise ? 'none' : '';
+      document.getElementById('statElapsed').textContent = '0:00';
+      const completeTile = document.getElementById('statCompleteTile');
+      completeTile.style.display = (isTimeMode && !isScreenExercise) ? '' : 'none';
+      if (isTimeMode) document.getElementById('statComplete').textContent = '0';
+      clearInterval(state.session.elapsedId);
+      state.session.elapsedId = setInterval(() => {
+        if (!state.session.active) return;
+        const elapsed = Date.now() - state.session.startTime;
+        const m = Math.floor(elapsed / 60000);
+        const s = Math.floor((elapsed % 60000) / 1000);
+        document.getElementById('statElapsed').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+      }, 500);
     }
 
     function stopSession() {
@@ -3305,6 +3389,7 @@
     function endSession() {
       state.session.active = false;
       clearInterval(state.session.countdownId);
+      clearInterval(state.session.elapsedId);
       sendBLE({ cmd:'off' });
       document.getElementById('activeSession').style.display = 'none';
       document.getElementById('statProgressLbl').textContent = 'Progreso';
@@ -3343,6 +3428,14 @@
     function readProxThresh(inputId) {
       const v = parseInt(document.getElementById(inputId)?.value);
       return (!isNaN(v) && v >= 10 && v <= 100) ? v : 30;
+    }
+    function toggleIntervalRandom(prefix) {
+      const cb = document.getElementById(prefix + 'IntervalRandom');
+      const isRandom = cb && cb.checked;
+      const fixedField = document.getElementById(prefix + 'IntervalFixedField');
+      const randRow = document.getElementById(prefix + 'IntervalRandomRow');
+      if (fixedField) fixedField.style.display = isRandom ? 'none' : '';
+      if (randRow) randRow.style.display = isRandom ? '' : 'none';
     }
 
     function togglePause() {
@@ -3457,7 +3550,11 @@
       sendBLE({ cmd: 'off' });
       showPage('exercises');
       document.getElementById('exerciseList').style.display = 'block';
-      showExCategory('predeterminados');
+      if (window._lastCfg && window._lastCfg._type) {
+        openExerciseConfig(window._lastCfg._type);
+      } else {
+        showExCategory('predeterminados');
+      }
     }
 
     function discardSession() {
@@ -4104,7 +4201,10 @@
       const value    = document.getElementById('exStimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
       const { shape, color } = resolveStimContent(category, value, displayColor);
-      const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
+      const isRandIv = document.getElementById('exIntervalRandom')?.checked;
+      const interval = isRandIv
+        ? { random:true, min:Math.round(parseFloat(document.getElementById('exIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('exIntervalMax').value)*1000) }
+        : Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout  = readTimeout('exStimTimeout');
       const sensor   = document.getElementById('exStimSensor').value;
@@ -4264,7 +4364,7 @@
       setTimeout(nextDiscrimination, 600);
     }
 
-    function nextDiscrimination() {
+    async function nextDiscrimination() {
       if (!state.session.active) return;
       const { sequence, current } = state.session;
       const step = sequence[current];
@@ -4296,13 +4396,13 @@
         const oddNode = nodes[Math.floor(Math.random() * nodes.length)];
         state.session.currentCorrectNode = oddNode;
         const fixedColor = criterionColor[crit];
-        nodes.forEach(nodeId => {
+        for (const nodeId of nodes) {
           const val = nodeId === oddNode ? oddVal : commonVal;
           const cmd = crit === 'color'
             ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
             : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
-          sendBLE(cmd);
-        });
+          await sendBLE(cmd);
+        }
       } else {
         const { correct_node, correct_value, distractors, distractor_value } = step;
         const pool = (pools[criterion] || []).filter(v => v !== correct_value);
@@ -4317,13 +4417,13 @@
           distractorVals = nodes.map((_, i) => shuffled[i % shuffled.length]);
         }
         const fixedColor = criterionColor[criterion];
-        nodes.forEach((nodeId, idx) => {
+        for (const [idx, nodeId] of nodes.entries()) {
           const val = nodeId === correct_node ? correct_value : distractorVals[idx];
           const cmd = criterion === 'color'
             ? { cmd:'show', node_id:nodeId, shape:'circle', color:val, duration:dur, sensor:sens }
             : { cmd:'show', node_id:nodeId, shape:val, color:fixedColor, duration:dur, sensor:sens };
-          sendBLE(cmd);
-        });
+          await sendBLE(cmd);
+        }
       }
 
       state.session.waiting = true;
@@ -4334,10 +4434,10 @@
       }, waitMs);
     }
 
-    function completeDiscrimination(reactionMs, ok) {
+    async function completeDiscrimination(reactionMs, ok) {
       state.session.waiting = false;
       clearTimeout(state.session.timeoutId);
-      sendBLE({ cmd:'off' });
+      await sendBLE({ cmd:'off' });
       const step = state.session.sequence[state.session.current];
       const histNodeId = step.disc_mode === 'find_odd' ? state.session.currentCorrectNode : step.correct_node;
       state.session.history.push({ repetition:state.session.current+1, node_id:histNodeId, shape:step.criterion, color: step.criterion === 'color' ? step.correct_value : null, reaction_ms:reactionMs, result:ok ? 'ok' : 'miss' });
@@ -5204,7 +5304,10 @@
       const category = document.getElementById('exStimCategory').value;
       const value = document.getElementById('exStimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
-      const interval = Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
+      const isRandIvEx = document.getElementById('exIntervalRandom')?.checked;
+      const interval = isRandIvEx
+        ? { random:true, min:Math.round(parseFloat(document.getElementById('exIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('exIntervalMax').value)*1000) }
+        : Math.round(parseFloat(document.getElementById('exStimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('exStimDuration').value) * 1000);
       const timeout = readTimeout('exStimTimeout');
       const sensor = document.getElementById('exStimSensor').value;
@@ -5328,7 +5431,10 @@
       const category = document.getElementById('stimCategory').value;
       const value = document.getElementById('stimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
-      const interval = Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
+      const isRandIvStim = document.getElementById('stimIntervalRandom')?.checked;
+      const interval = isRandIvStim
+        ? { random:true, min:Math.round(parseFloat(document.getElementById('stimIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('stimIntervalMax').value)*1000) }
+        : Math.round(parseFloat(document.getElementById('stimInterval').value) * 1000);
       const duration = Math.round(parseFloat(document.getElementById('stimDuration').value) * 1000);
       const timeout = readTimeout('stimTimeout');
       const sensor = document.getElementById('stimSensor').value;
