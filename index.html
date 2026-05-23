@@ -1519,39 +1519,54 @@
       </div>
 
       <div id="activeSession" style="display:none;">
-        <!-- liveNode oculto: lo usa el JS pero no se muestra al usuario -->
         <div id="liveNode" style="display:none;"></div>
 
-        <!-- Hint + progreso para ejercicios de pantalla -->
-        <div style="text-align:center;margin-bottom:10px;">
-          <div class="live-hint" id="liveHint" style="font-size:1rem;font-weight:600;color:var(--muted);">Preparando...</div>
-          <div id="screenProgress" style="display:none;font-size:1.4rem;font-weight:700;color:var(--text);margin-top:4px;font-family:'DM Mono',monospace;"></div>
-        </div>
+        <!-- Hint -->
+        <div id="liveHint" style="text-align:center;font-size:0.9rem;font-weight:600;color:var(--muted);letter-spacing:0.04em;margin-bottom:18px;">Preparando...</div>
+        <div id="screenProgress" style="display:none;text-align:center;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:18px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
         <div class="stroop-stimulus" id="stroopScreen"></div>
 
-        <!-- Fila 1: Media + Mejor (2 tiles grandes) -->
-        <div class="stats-row" id="statsRow" style="gap:12px;margin-bottom:8px;">
-          <div class="stat-tile" style="flex:1;"><span class="val" id="statAvg" style="font-size:2rem;">--</span><span class="lbl">Media s</span></div>
-          <div class="stat-tile" style="flex:1;"><span class="val" id="statBest" style="font-size:2rem;">--</span><span class="lbl">Mejor s</span></div>
+        <!-- Fila 1: Media + Mejor — 2 tiles grandes -->
+        <div id="statsRow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:18px;padding:22px 12px;text-align:center;">
+            <span id="statAvg" style="font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:700;color:var(--text);display:block;line-height:1;margin-bottom:6px;">--</span>
+            <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Media s</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:18px;padding:22px 12px;text-align:center;">
+            <span id="statBest" style="font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:700;color:var(--accent);display:block;line-height:1;margin-bottom:6px;">--</span>
+            <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Mejor s</span>
+          </div>
         </div>
 
-        <!-- Fila 2: Progreso · Transcurrido · Tiempo actual -->
-        <div class="stats-row" id="statsRowBottom" style="gap:8px;margin-bottom:12px;">
-          <div class="stat-tile" style="flex:1;"><span class="val" id="statProgress" style="font-size:1.1rem;">0/0</span><span class="lbl" id="statProgressLbl">Progreso</span></div>
-          <div class="stat-tile" id="statElapsedTile" style="flex:1;"><span class="val" id="statElapsed" style="font-size:1.1rem;">0:00</span><span class="lbl">Transcurrido</span></div>
-          <div class="stat-tile" id="liveTimeTile" style="flex:1;"><span class="val" id="liveTime" style="font-size:1.1rem;">-- s</span><span class="lbl">Tiempo</span></div>
-          <div class="stat-tile" id="statCompleteTile" style="display:none;flex:1;"><span class="val" id="statComplete" style="font-size:1.1rem;">0</span><span class="lbl">Completadas</span></div>
+        <!-- Fila 2: Progreso · Sesión · Actual — 3 tiles compactos -->
+        <div id="statsRowBottom" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
+            <span id="statProgress" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0/0</span>
+            <span id="statProgressLbl" style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Progreso</span>
+          </div>
+          <div id="statElapsedTile" style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
+            <span id="statElapsed" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0:00</span>
+            <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Sesión</span>
+          </div>
+          <div id="liveTimeTile" style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
+            <span id="liveTime" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">-- s</span>
+            <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Actual</span>
+          </div>
+          <div id="statCompleteTile" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
+            <span id="statComplete" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0</span>
+            <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Hechas</span>
+          </div>
         </div>
 
-        <!-- Botones: Pausar primero, Detener después -->
-        <div class="btn-row" style="flex-wrap:wrap;gap:8px;">
-          <button class="btn-secondary" id="btnPause" onclick="togglePause()" style="flex:1;">⏸ Pausa</button>
-          <button class="btn-danger" onclick="stopSession()" style="flex:1;">Detener</button>
+        <!-- Botones -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          <button class="btn-secondary" id="btnPause" onclick="togglePause()">⏸ Pausa</button>
+          <button class="btn-danger" onclick="stopSession()">Detener</button>
         </div>
 
-        <!-- Lista de tiempos al final -->
-        <div id="miniLogWrap" style="display:none;margin-top:14px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
-          <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Tiempos registrados</div>
+        <!-- Lista de tiempos -->
+        <div id="miniLogWrap" style="display:none;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;">
+          <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Tiempos registrados</div>
           <div class="mini-log" id="miniLog"></div>
         </div>
       </div>
