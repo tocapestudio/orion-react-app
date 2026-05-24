@@ -4541,7 +4541,7 @@
 
     async function loadExercises() {
       try {
-        exercises = await db.get('exercises', '?order=name');
+        exercises = await db.get('exercises', `?professional_id=eq.${currentProfessionalId}&order=name`);
         renderExercises();
       } catch(err) { console.warn('Error loading exercises:', err); }
     }
@@ -5236,7 +5236,7 @@
       const proximityThreshold = readProxThresh('discProxThresh');
       const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5485,7 +5485,8 @@
           name,
           description,
           steps: JSON.stringify(steps),
-          folder_id: folderId || null
+          folder_id: folderId || null,
+          professional_id: currentProfessionalId
         });
         toast('Ejercicio guardado ✓');
         await loadExercises();
@@ -5754,7 +5755,7 @@
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
       const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5772,7 +5773,7 @@
       const proximityThreshold = readProxThresh('exPiProxThresh');
       const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5790,7 +5791,7 @@
       const proximityThreshold = readProxThresh('exStroopProxThresh');
       const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5812,7 +5813,7 @@
       const proximityThreshold = readProxThresh('exDiscProxThresh');
       const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5833,7 +5834,7 @@
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const cfg = { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration };
       try {
-        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5854,7 +5855,7 @@
       if (startNode === endNode) { toast('El nodo de inicio debe ser distinto al nodo final'); return; }
       const cfg = { mode, startNode, endNode, reps, delay, finalMode, greenMin, greenMax, startDuration, endDuration };
       try {
-        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Chrono · ${mode} · nodo ${startNode}→${endNode}`, steps: JSON.stringify({ _type: 'chrono', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5881,7 +5882,7 @@
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
       const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5899,7 +5900,7 @@
       const proximityThreshold = readProxThresh('piProxThresh');
       const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
@@ -5917,7 +5918,7 @@
       const proximityThreshold = readProxThresh('stroopProxThresh');
       const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
-        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null });
+        await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
