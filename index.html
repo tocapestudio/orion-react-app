@@ -1576,6 +1576,7 @@
           <div class="card-title">Sesión completada</div>
           <div class="card-sub" id="summaryText"></div>
           <div class="stats-row" id="summaryStats"></div>
+          <div id="summaryChart" style="margin:14px 0 8px;border-radius:14px;background:var(--bg3);border:1px solid var(--border);padding:12px 10px 6px;display:none;"></div>
           <div id="summaryTable"></div>
           <div class="field" style="margin-top:14px;">
             <label style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Notas del entrenador</label>
@@ -2401,6 +2402,7 @@
           <div id="tabNotesContent"></div>
         </div>
         <div class="profile-tab-pane" id="tab-pane-historial">
+          <div id="profileHistChart" style="display:none;margin-bottom:14px;border-radius:14px;background:var(--bg3);border:1px solid var(--border);padding:14px 12px 8px;"></div>
           <div class="athlete-layout">
             <div class="athlete-cal-col">
               <div id="profileCalendar" style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:16px;"></div>
@@ -2493,7 +2495,7 @@
         <div class="card-title">Actualización de firmware</div>
         <div class="card-sub">Activa el WiFi en todos los nodos conectados para enviarles firmware nuevo desde PlatformIO — sin cable.</div>
 
-        <div id="otaStatusList" style="display:none;margin-bottom:12px;display:flex;flex-direction:column;gap:6px;"></div>
+        <div id="otaStatusList" style="display:none;margin-bottom:12px;flex-direction:column;gap:6px;"></div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
           <div style="flex:1;min-width:140px;">
@@ -3899,6 +3901,45 @@
       a.click();
     }
 
+    function drawSparkLine(pts) {
+      if (pts.length < 2) return '';
+      const W = 360, H = 90;
+      const P = { top: 8, right: 8, bottom: 20, left: 38 };
+      const pw = W - P.left - P.right, ph = H - P.top - P.bottom;
+      const ys = pts.map(p => p.y).filter(y => y > 0);
+      if (!ys.length) return '';
+      let mn = Math.min(...ys), mx = Math.max(...ys);
+      if (mn === mx) { mn = Math.max(0, mn - 100); mx += 100; }
+      const ry = mx - mn;
+      const tx = i => P.left + (i / Math.max(pts.length - 1, 1)) * pw;
+      const ty = y => P.top + ph - ((y - mn) / ry) * ph;
+      const vp = pts.map((p, i) => ({ ...p, cx: tx(i), cy: p.y > 0 ? ty(p.y) : null }));
+      const seg = []; let open = false;
+      for (const p of vp) {
+        if (p.cy != null) { seg.push(`${open ? 'L' : 'M'}${p.cx.toFixed(1)} ${p.cy.toFixed(1)}`); open = true; } else open = false;
+      }
+      const line = seg.join(' ');
+      const allOk = vp.every(p => p.cy != null);
+      const area = allOk ? `${line} L${tx(pts.length-1).toFixed(1)} ${(P.top+ph).toFixed(1)} L${P.left} ${(P.top+ph).toFixed(1)}Z` : '';
+      const avg = ys.reduce((a, b) => a + b, 0) / ys.length;
+      const uid = Math.random().toString(36).slice(2, 7);
+      const gridY = [mn, avg, mx].filter((v,i,a)=>a.indexOf(v)===i).map(v=>({v,y:ty(v)})).filter(g=>g.y>=P.top&&g.y<=P.top+ph);
+      const step = Math.max(1, Math.ceil(pts.length / 8));
+      return `<svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="overflow:visible;display:block;">
+        <defs><linearGradient id="sg${uid}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+        </linearGradient></defs>
+        ${[0,0.5,1].map(t=>`<line x1="${P.left}" y1="${(P.top+ph*(1-t)).toFixed(1)}" x2="${P.left+pw}" y2="${(P.top+ph*(1-t)).toFixed(1)}" stroke="rgba(99,179,255,0.08)" stroke-width="1"/>`).join('')}
+        ${area?`<path d="${area}" fill="url(#sg${uid})"/>`:''}
+        <path d="${line}" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+        <line x1="${P.left}" y1="${ty(avg).toFixed(1)}" x2="${P.left+pw}" y2="${ty(avg).toFixed(1)}" stroke="rgba(34,211,160,0.4)" stroke-width="1" stroke-dasharray="4,3"/>
+        ${vp.filter(p=>p.cy!=null).map(p=>`<circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="3" fill="${p.ok===false?'#ef4444':'#3b82f6'}" stroke="rgba(8,12,18,0.8)" stroke-width="1.5"/>`).join('')}
+        ${gridY.map(g=>`<text x="${P.left-4}" y="${g.y.toFixed(1)}" text-anchor="end" dominant-baseline="middle" font-size="9" fill="rgba(90,122,154,0.9)">${(g.v/1000).toFixed(2)}</text>`).join('')}
+        ${vp.filter((_,i)=>i===0||i===pts.length-1||i%step===0).map(p=>`<text x="${p.cx.toFixed(1)}" y="${(P.top+ph+14).toFixed(1)}" text-anchor="middle" font-size="9" fill="rgba(90,122,154,0.8)">${p.x||p.rep||''}</text>`).join('')}
+      </svg>`;
+    }
+
     function showSummary() {
       const h  = state.session.history;
       const rs = h.map(x=> x.end_reaction_ms != null ? x.end_reaction_ms : x.reaction_ms).filter(x=>x!=null);
@@ -3919,6 +3960,21 @@
         ${avgSprint !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(avgSprint)}</span><span class="lbl">Media sprint</span></div>` : ''}
         <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
         <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>`;
+      // Gráfica de tiempos
+      const chartEl = document.getElementById('summaryChart');
+      if (chartEl) {
+        const pts = h.map((r, i) => ({
+          rep: r.repetition || i + 1,
+          y: r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : r.reaction_ms),
+          ok: r.result === 'ok'
+        })).filter(p => p.y > 0);
+        if (pts.length >= 2) {
+          chartEl.innerHTML = `<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Tiempos por repetición (s)</div>${drawSparkLine(pts)}`;
+          chartEl.style.display = '';
+        } else {
+          chartEl.style.display = 'none';
+        }
+      }
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
@@ -3965,9 +4021,9 @@
           };
           await db.post('test_results', result);
         } else {
-          const rows = await db.post('sessions', { player_id:state.athlete?.id||null, exercise_type:state.session.type, notes: userNote });
+          const rows = await db.post('sessions', { player_id:state.athlete?.id||null, exercise_type:state.session.type, notes: userNote, professional_id: currentProfessionalId, date: new Date().toISOString() });
           const sid  = rows[0].id;
-          for (const r of state.session.history) await db.post('results', { session_id:sid, ...r });
+          for (const r of state.session.history) await db.post('results', { session_id:sid, professional_id: currentProfessionalId, ...r });
         }
 
         toast('Guardado ✓');
@@ -4410,7 +4466,7 @@
       const name = document.getElementById('folderName').value.trim();
       if (!name) { toast('Introduce un nombre'); return; }
       try {
-        await db.post('folders', {name});
+        await db.post('folders', { name, professional_id: currentProfessionalId });
         closeFolderModal();
         await loadFolders();
         toast('Carpeta creada ✓');
@@ -4541,14 +4597,14 @@
 
     async function loadExercises() {
       try {
-        exercises = await db.get('exercises', `?professional_id=eq.${currentProfessionalId}&order=name`);
+        exercises = await db.get('exercises', `?professional_id=eq.${currentProfessionalId}&steps=like.*%22_type%22*&order=name`);
         renderExercises();
       } catch(err) { console.warn('Error loading exercises:', err); }
     }
 
     async function loadFolders() {
       try {
-        folders = await db.get('folders', '?order=name');
+        folders = await db.get('folders', `?professional_id=eq.${currentProfessionalId}&order=name`);
         renderFolders();
       } catch(err) { console.warn('Error loading folders:', err); }
     }
@@ -5994,8 +6050,6 @@
     navHistory = ['home'];
     navigateTo('home');
     initAuth();
-    loadExercises();
-    loadFolders();
 
     // ═══════════════════════════════════════════════════════════════
     // DATA PAGE — CLUBS / PLAYERS / PROFILE
@@ -6272,7 +6326,7 @@
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando evaluaciones...</div>`;
       try {
         const [results, templates] = await Promise.all([
-          db.get('test_results', `?player_id=eq.${playerId}&order=test_date.desc`),
+          db.get('test_results', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=test_date.desc`),
           db.get('test_templates', `?or=(is_default.eq.true,professional_id.eq.${currentProfessionalId})&order=name`)
         ]);
         if (!results.length) {
@@ -6342,7 +6396,7 @@
       if (!el) return;
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando ejercicios...</div>`;
       try {
-        const assigned = await db.get('assigned_exercises', `?player_id=eq.${playerId}&order=assigned_at.desc`);
+        const assigned = await db.get('assigned_exercises', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=assigned_at.desc`);
         if (!assigned.length) {
           el.innerHTML = `<div class="empty"><div class="empty-icon">🏋️</div><h3>Sin ejercicios asignados</h3><p>Este jugador aún no tiene ejercicios asignados.</p></div>`;
           return;
@@ -6373,7 +6427,7 @@
       if (!el) return;
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:24px;font-size:0.85rem;">Cargando notas...</div>`;
       try {
-        const notes = await db.get('notes', `?player_id=eq.${playerId}&order=created_at.desc`);
+        const notes = await db.get('notes', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=created_at.desc`);
         renderNotesList(notes, el);
       } catch(e) {
         el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
@@ -6440,7 +6494,7 @@
       if (sortBtn) sortBtn.textContent = '↓ Recientes';
       renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
       try {
-        const sessions = await db.get('sessions', `?athlete_id=eq.${playerId}&order=date.desc`);
+        const sessions = await db.get('sessions', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=date.desc`);
         window.profileSessions = sessions;
         if (sessions.length && sessions[0].date) {
           const d = new Date(String(sessions[0].date).slice(0,10) + 'T00:00:00');
@@ -6448,9 +6502,35 @@
         }
         renderProfileCalendar(window.profileCalYear, window.profileCalMonth);
         applyProfileSessionFilters();
+        renderProfileHistChart(sessions);
       } catch {
         if (container) container.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error al cargar sesiones</div>`;
       }
+    }
+
+    async function renderProfileHistChart(sessions) {
+      const chartEl = document.getElementById('profileHistChart');
+      if (!chartEl) return;
+      const valid = sessions.filter(s => s.date && s.id).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(-30);
+      if (valid.length < 2) { chartEl.style.display = 'none'; return; }
+      try {
+        const ids = valid.map(s => s.id);
+        const results = await db.get('results', `?session_id=in.(${ids.join(',')})&professional_id=eq.${currentProfessionalId}&result=eq.ok&select=session_id,reaction_ms`);
+        if (!results.length) { chartEl.style.display = 'none'; return; }
+        const bySession = {};
+        for (const r of results) {
+          if (!bySession[r.session_id]) bySession[r.session_id] = [];
+          bySession[r.session_id].push(r.reaction_ms);
+        }
+        const pts = valid.filter(s => bySession[s.id]?.length).map(s => {
+          const times = bySession[s.id];
+          const avg = times.reduce((a,b) => a+b, 0) / times.length;
+          return { x: new Date(s.date).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}), y: avg, ok: true };
+        });
+        if (pts.length < 2) { chartEl.style.display = 'none'; return; }
+        chartEl.innerHTML = `<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Evolución · Media de reacción por sesión</div>${drawSparkLine(pts)}`;
+        chartEl.style.display = '';
+      } catch(e) { chartEl.style.display = 'none'; }
     }
 
     function renderProfileCalendar(year, month) {
@@ -6862,10 +6942,10 @@
   <div id="startBar">
     <div class="cd-opts">
       <label>
-        <input type="checkbox" id="useCountdown" onchange="updateCountdownUI()">
+        <input type="checkbox" id="useCountdown" onchange="updateCountdownUI()" checked>
         Cuenta atrás
       </label>
-      <div id="countdownConfig" style="display:none;align-items:center;gap:8px;">
+      <div id="countdownConfig" style="display:flex;align-items:center;gap:8px;">
         <div class="stepper" style="margin:0;">
           <button type="button" class="stepper-btn" onclick="adjustCount('countdownSecs',-1,1,10)">−</button>
           <input type="number" id="countdownSecs" min="1" max="10" step="1" value="3" style="width:44px;" />
