@@ -105,6 +105,7 @@
 
     /* CARDS */
     .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
+    [id$="Config"] > .card { background: var(--bg); }
     .card-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
     .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
 
@@ -1595,7 +1596,7 @@
           </div>
           <div class="btn-row" style="flex-wrap:wrap;gap:8px;margin-top:12px;">
             <button class="btn-secondary" onclick="restartSession()">Reiniciar</button>
-            <button class="btn-secondary" onclick="reconfigureSession()">Reconfigurar</button>
+            <button class="btn-secondary" style="border-color:white;" onclick="reconfigureSession()">Reconfigurar</button>
             <button class="btn-secondary" onclick="discardSession()">Descartar</button>
           </div>
         </div>
@@ -3944,8 +3945,8 @@
         </defs>
         ${[0,0.33,0.66,1].map(t=>`<line x1="${P.left}" y1="${(P.top+ph*(1-t)).toFixed(1)}" x2="${P.left+pw}" y2="${(P.top+ph*(1-t)).toFixed(1)}" stroke="rgba(99,179,255,0.07)" stroke-width="1"/>`).join('')}
         ${area?`<path d="${area}" fill="url(#sg${uid})"/>`:''}
-        <path d="${line}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" filter="url(#glow${uid})"/>
-        <path d="${line}" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="${line}" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" filter="url(#glow${uid})"/>
+        <path d="${line}" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
         <line x1="${P.left}" y1="${ty(avg).toFixed(1)}" x2="${P.left+pw}" y2="${ty(avg).toFixed(1)}" stroke="#22d3a0" stroke-width="1" stroke-dasharray="5,4" opacity="0.5"/>
         ${vp.filter(p=>p.cy!=null).map(p=>`
           <circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="6" fill="${p.ok===false?'rgba(239,68,68,0.12)':'rgba(56,189,248,0.12)'}" stroke="none"/>
