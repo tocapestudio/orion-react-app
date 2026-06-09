@@ -3903,7 +3903,7 @@
 
     function drawSparkLine(pts) {
       if (pts.length < 2) return '';
-      const W = 360, H = 150;
+      const W = 720, H = 150;
       const P = { top: 12, right: 12, bottom: 26, left: 42 };
       const pw = W - P.left - P.right, ph = H - P.top - P.bottom;
       const ys = pts.map(p => p.y).filter(y => y > 0);
