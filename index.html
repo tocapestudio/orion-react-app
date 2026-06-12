@@ -2490,8 +2490,8 @@
           <div class="toggle" id="buzzerToggle" onclick="toggleBuzzer()"></div>
         </div>
         <div class="field" style="margin-top:14px;">
-          <label>Volumen <span class="slider-val" id="volumeVal">40</span>%</label>
-          <input type="range" min="1" max="100" value="40" id="volumeSlider" onchange="updateVolume(this.value)" />
+          <label>Volumen <span class="slider-val" id="volumeVal">15</span>%</label>
+          <input type="range" min="1" max="100" value="15" id="volumeSlider" onchange="updateVolume(this.value)" />
         </div>
       </div>
 
@@ -2969,7 +2969,7 @@
         try {
           const enc = new TextEncoder();
           await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' })));
-          const vol = document.getElementById('volumeSlider')?.value || '40';
+          const vol = document.getElementById('volumeSlider')?.value || '15';
           await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'volume', value: String(vol) })));
         } catch(e) {}
         toast(silent ? `${device.name} reconectado ✓` : 'Nodo conectado ✓');
@@ -3376,7 +3376,7 @@
     }
 
     function nextStimulus() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { sequence, current, config } = state.session;
       const nodeId = sequence[current];
       const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
@@ -3428,7 +3428,7 @@
     }
 
     function nextChrono() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { config, current, total, chrono } = state.session;
       document.getElementById('statProgress').textContent = `${current+1}/${total}`;
       state.session.waiting = false;
@@ -3612,7 +3612,7 @@
     }
 
     function nextStroop() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { sequence, current } = state.session;
       const step = sequence[current];
       const nodeIds = Object.keys(step.nodes).map(Number);
@@ -3672,7 +3672,7 @@
     }
 
     function nextParImpar() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { config, current, total } = state.session;
       document.getElementById('statProgress').textContent = `${current+1}/${total}`;
       document.getElementById('screenProgress').textContent = `${current+1} / ${total}`;
@@ -4890,7 +4890,7 @@
     }
 
     async function nextDiscrimination() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { sequence, current } = state.session;
       const step = sequence[current];
       document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
@@ -5018,7 +5018,7 @@
     }
 
     function nextPatternDisc() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       const { sequence, current } = state.session;
       const step = sequence[current];
       const dur  = state.session.config.dur;
@@ -5614,7 +5614,7 @@
     }
 
     function nextCustomStep() {
-      if (!state.session.active) return;
+      if (!state.session.active || state.session.paused) return;
       
       const { sequence, current } = state.session;
       const step = sequence[current];
