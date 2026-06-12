@@ -510,8 +510,12 @@
     .color-cyan { background: #06b6d4; }
     /* START BAR */
     body.has-start-bar .page { padding-bottom: 88px; }
+    @media (max-width: 600px) {
+      #startBar { bottom: calc(62px + env(safe-area-inset-bottom)) !important; }
+      body.has-start-bar .page { padding-bottom: 160px; }
+    }
     #startBar {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 260;
       transition: bottom .2s;
       background: var(--bg2); border-top: 1px solid var(--border2);
       box-shadow: 0 -6px 24px rgba(0,0,0,0.45);
@@ -1560,7 +1564,7 @@
 
         <!-- Botones -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-          <button class="btn-secondary" id="btnPause" onclick="togglePause()">⏸ Pausa</button>
+          <button class="btn-secondary" id="btnPause" onclick="togglePause()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pausa</button>
           <button class="btn-danger" onclick="stopSession()">Detener</button>
         </div>
 
@@ -2486,8 +2490,8 @@
           <div class="toggle" id="buzzerToggle" onclick="toggleBuzzer()"></div>
         </div>
         <div class="field" style="margin-top:14px;">
-          <label>Volumen <span class="slider-val" id="volumeVal">100</span>%</label>
-          <input type="range" min="1" max="100" value="100" id="volumeSlider" onchange="updateVolume(this.value)" />
+          <label>Volumen <span class="slider-val" id="volumeVal">40</span>%</label>
+          <input type="range" min="1" max="100" value="40" id="volumeSlider" onchange="updateVolume(this.value)" />
         </div>
       </div>
 
@@ -2962,7 +2966,12 @@
         renderAvailableNodesList();
         requestNodeId(cmdChar);
         // Sincronizar estado de buzzer con el nodo recién conectado
-        try { await cmdChar.writeValue(new TextEncoder().encode(JSON.stringify({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' }))); } catch(e) {}
+        try {
+          const enc = new TextEncoder();
+          await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' })));
+          const vol = document.getElementById('volumeSlider')?.value || '40';
+          await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'volume', value: String(vol) })));
+        } catch(e) {}
         toast(silent ? `${device.name} reconectado ✓` : 'Nodo conectado ✓');
         setTimeout(() => { try { document.activeElement?.blur(); window.focus(); } catch(e) {} }, 100);
       } catch(err) {
@@ -3762,7 +3771,7 @@
       document.getElementById('miniLogWrap').style.display = showLog ? 'block' : 'none';
       document.getElementById('miniLog').innerHTML = '';
       const pauseBtn = document.getElementById('btnPause');
-      if (pauseBtn) pauseBtn.textContent = '⏸ Pausa';
+      if (pauseBtn) pauseBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pausa';
       // elapsed timer + completed tile
       const elapsedTile = document.getElementById('statElapsedTile');
       if (elapsedTile) elapsedTile.style.display = isScreenExercise ? 'none' : '';
@@ -3850,7 +3859,7 @@
       if (!state.session.active) return;
       if (state.session.paused) {
         state.session.paused = false;
-        document.getElementById('btnPause').textContent = '⏸ Pausa';
+        document.getElementById('btnPause').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pausa';
         document.getElementById('liveHint').textContent = 'Reanudando...';
         const nextFns = {
           flash: nextStimulus, parimpar: nextParImpar, stroop: nextStroop,
@@ -3866,7 +3875,7 @@
         clearTimeout(state.session.timeoutId);
         clearInterval(state.session.countdownId);
         sendBLE({ cmd: 'off' });
-        document.getElementById('btnPause').textContent = '▶ Reanudar';
+        document.getElementById('btnPause').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M8 5v14l11-7z"/></svg>Reanudar';
         document.getElementById('liveHint').textContent = 'Sesión en pausa';
       }
     }
