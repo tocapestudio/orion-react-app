@@ -476,9 +476,6 @@
     }
     @media (max-width: 600px) {
       .nav { display: none; }
-      /* startBar sube por encima del bottom-nav en móvil */
-      #startBar { bottom: calc(68px + env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0; }
-      body.has-start-bar .page { padding-bottom: 160px; }
     }
 
     /* STEP ITEM */
@@ -511,7 +508,7 @@
     /* START BAR */
     body.has-start-bar .page { padding-bottom: 88px; }
     @media (max-width: 600px) {
-      #startBar { bottom: calc(62px + env(safe-area-inset-bottom)) !important; }
+      #startBar { bottom: calc(62px + env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0; }
       body.has-start-bar .page { padding-bottom: 160px; }
     }
     #startBar {
@@ -3782,7 +3779,7 @@
       clearInterval(state.session.countdownId);
       clearInterval(state.session.elapsedId);
       state.session.elapsedId = setInterval(() => {
-        if (!state.session.active) return;
+        if (!state.session.active || state.session.paused) return;
         const elapsed = Date.now() - state.session.startTime;
         const m = Math.floor(elapsed / 60000);
         const s = Math.floor((elapsed % 60000) / 1000);
@@ -3832,8 +3829,7 @@
         entry.className = `mini-log-entry ${ok ? 'ok' : 'miss'}`;
         entry.innerHTML = `<span>${ok ? '✓' : '✗'} Rep ${latest.repetition || state.session.history.length}</span><span class="ml-time">${timeStr}</span>`;
         log.prepend(entry);
-        // máximo 5 entradas visibles
-        while (log.children.length > 5) log.removeChild(log.lastChild);
+        while (log.children.length > 8) log.removeChild(log.lastChild);
       }
     }
 
@@ -3858,6 +3854,10 @@
     function togglePause() {
       if (!state.session.active) return;
       if (state.session.paused) {
+        if (state.session.pausedAt) {
+          state.session.startTime += Date.now() - state.session.pausedAt;
+          state.session.pausedAt = null;
+        }
         state.session.paused = false;
         document.getElementById('btnPause').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pausa';
         document.getElementById('liveHint').textContent = 'Reanudando...';
@@ -3871,6 +3871,7 @@
         if (fn) setTimeout(fn, 400);
       } else {
         state.session.paused = true;
+        state.session.pausedAt = Date.now();
         state.session.waiting = false;
         clearTimeout(state.session.timeoutId);
         clearInterval(state.session.countdownId);
@@ -3970,7 +3971,9 @@
       const rs = h.map(x=> x.end_reaction_ms != null ? x.end_reaction_ms : x.reaction_ms).filter(x=>x!=null);
       const avg  = rs.length ? rs.reduce((a,b)=>a+b,0)/rs.length : null;
       const best = rs.length ? Math.min(...rs) : null;
+      const worst = rs.length ? Math.max(...rs) : null;
       const hits = h.filter(x=>x.result==='ok').length;
+      const hitPct = h.length ? Math.round(hits / h.length * 100) : null;
       const sprintValues = h.filter(x=>x.sprint_ms!=null).map(x=>x.sprint_ms);
       const avgSprint = sprintValues.length ? sprintValues.reduce((a,b)=>a+b,0)/sprintValues.length : null;
       const showStimulusTotal = (state.session.type === 'flash' && state.session.exerciseMode !== 'time') || state.session.type === 'parimpar';
@@ -3984,7 +3987,9 @@
         ${totalActiveMs !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(totalActiveMs)}</span><span class="lbl">Total s</span></div>` : ''}
         ${avgSprint !== null ? `<div class="stat-tile" style="grid-column:1/-1"><span class="val">${msToS(avgSprint)}</span><span class="lbl">Media sprint</span></div>` : ''}
         <div class="stat-tile"><span class="val">${avg !== null ? msToS(avg) : '--'}</span><span class="lbl">Media s</span></div>
-        <div class="stat-tile"><span class="val">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Récord s</span></div>`;
+        <div class="stat-tile"><span class="val" style="color:var(--success)">${best !== null ? msToS(best) : '--'}</span><span class="lbl">Mejor s</span></div>
+        <div class="stat-tile"><span class="val" style="color:var(--danger)">${worst !== null ? msToS(worst) : '--'}</span><span class="lbl">Peor s</span></div>
+        <div class="stat-tile"><span class="val" style="color:${hitPct !== null && hitPct >= 80 ? 'var(--success)' : hitPct !== null && hitPct >= 50 ? 'var(--warning)' : 'var(--danger)'}">${hitPct !== null ? hitPct + '%' : '--'}</span><span class="lbl">Aciertos</span></div>`;
       // Gráfica de tiempos
       const chartEl = document.getElementById('summaryChart');
       if (chartEl) {
@@ -4005,7 +4010,8 @@
           <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
           <tbody>${h.map(r=>{
             const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : null));
-            return `<tr><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
+            const rowBg = r.result==='ok' ? 'rgba(34,211,160,0.05)' : 'rgba(239,68,68,0.05)';
+            return `<tr style="background:${rowBg}"><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
           }).join('')}</tbody>
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
@@ -4025,7 +4031,7 @@
 
         if (dest === 'evaluation') {
           if (!state.athlete?.id) { toast('Selecciona un jugador para guardar como evaluación', 'error'); if (btn) { btn.disabled = false; btn.textContent = 'Guardar en la nube'; } return; }
-          const times  = (state.session.history || []).map(r => r.reaction_ms).filter(v => v > 0);
+          const times  = (state.session.history || []).map(r => r.end_reaction_ms != null ? r.end_reaction_ms : r.reaction_ms).filter(v => v != null && v > 0);
           const result = {
             id:               crypto.randomUUID(),
             player_id:        state.athlete.id,
@@ -4048,7 +4054,9 @@
         } else {
           const rows = await db.post('sessions', { player_id:state.athlete?.id||null, exercise_type:state.session.type, notes: userNote, professional_id: currentProfessionalId, date: new Date().toISOString() });
           const sid  = rows[0].id;
-          for (const r of state.session.history) await db.post('results', { session_id:sid, professional_id: currentProfessionalId, ...r });
+          if (state.session.history.length) {
+            await db.post('results', state.session.history.map(r => ({ session_id: sid, professional_id: currentProfessionalId, ...r })));
+          }
         }
 
         toast('Guardado ✓');
