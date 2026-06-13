@@ -279,6 +279,51 @@
     .live-time { font-family: 'DM Mono', monospace; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
     .live-hint { font-size: 0.82rem; color: var(--muted); }
 
+    /* SESSION PROGRESS BAR */
+    #sessionProgressBar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.45s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 10px rgba(59,130,246,0.55);
+      margin-bottom: 22px;
+    }
+
+    /* LIVE NODE BADGE */
+    #liveNode {
+      text-align: center;
+      margin-bottom: 14px;
+      min-height: 34px;
+    }
+    #liveNode:empty { display: none; }
+    #liveNode span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(59,130,246,0.3);
+      background: rgba(59,130,246,0.07);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      transition: border-color .3s, color .3s, box-shadow .3s, background .3s;
+    }
+    #liveNode.waiting span {
+      border-color: var(--accent2);
+      color: var(--accent2);
+      background: rgba(6,182,212,0.08);
+      animation: nodeRipple 1.6s ease-out infinite;
+    }
+    @keyframes nodeRipple {
+      0%   { box-shadow: 0 0 0 0   rgba(6,182,212,0.5); }
+      70%  { box-shadow: 0 0 0 13px rgba(6,182,212,0);   }
+      100% { box-shadow: 0 0 0 0   rgba(6,182,212,0);   }
+    }
+
     /* NODE CHIPS */
     .nodes-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .node-chip {
@@ -1520,7 +1565,8 @@
       </div>
 
       <div id="activeSession" style="display:none;">
-        <div id="liveNode" style="display:none;"></div>
+        <div id="sessionProgressBar"></div>
+        <div id="liveNode"></div>
 
         <!-- Hint -->
         <div id="liveHint" style="text-align:center;font-size:0.9rem;font-weight:600;color:var(--muted);letter-spacing:0.04em;margin-bottom:18px;">Preparando...</div>
@@ -2868,6 +2914,22 @@
 
     // ESTADO
     function msToS(ms) { return (ms / 1000).toFixed(3); }
+    function setLiveNode(text) {
+      const el = document.getElementById('liveNode');
+      if (!el) return;
+      el.innerHTML = text ? `<span>${text}</span>` : '';
+    }
+    function updateProgressBar() {
+      const bar = document.getElementById('sessionProgressBar');
+      if (!bar || !state.session.active) return;
+      let pct = 0;
+      if (state.session.exerciseMode === 'time' && state.session.timeLimit) {
+        pct = Math.min(100, (Date.now() - state.session.startTime) / state.session.timeLimit * 100);
+      } else if (state.session.total > 0) {
+        pct = Math.min(100, state.session.current / state.session.total * 100);
+      }
+      bar.style.width = pct + '%';
+    }
 
     const state = {
       bleNodes: [], // Array of {nodeId, device, cmdChar, evtChar, battery, lastUpdate}
@@ -3377,7 +3439,7 @@
       const { sequence, current, config } = state.session;
       const nodeId = sequence[current];
       const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
-      document.getElementById('liveNode').textContent = `Nodo ${nodeId}`;
+      setLiveNode(`Nodo ${nodeId}`);
       document.getElementById('liveTime').textContent = '-- s';
       document.getElementById('liveHint').textContent = 'Reacciona al ver el estímulo';
       if (state.session.exerciseMode === 'time') {
@@ -3431,7 +3493,7 @@
       state.session.waiting = false;
       clearTimeout(state.session.timeoutId);
       if (config.mode === 'mode1') {
-        document.getElementById('liveNode').textContent = `Nodo ${config.endNode}`;
+        setLiveNode(`Nodo ${config.endNode}`);
         document.getElementById('liveHint').textContent = 'Toca el nodo final cuando aparezca';
         sendBLE({ cmd:'show', node_id:config.endNode, shape:'circle', color:'red', duration:config.endDuration, sensor: config.finalMode === 'proximity' ? 'proximity' : 'vibration' });
         state.session.waiting = true;
@@ -3445,7 +3507,7 @@
           ? Math.random() * Math.max(0, config.greenMax - config.greenMin) + config.greenMin
           : 0;
         state.session.chrono = { phase:'start' };
-        document.getElementById('liveNode').textContent = `Inicio ${config.startNode}`;
+        setLiveNode(`Inicio ${config.startNode}`);
         document.getElementById('liveHint').textContent = 'Toca el nodo de inicio para comenzar';
         state.session.timeoutId = setTimeout(() => {
           sendBLE({ cmd:'show', node_id:config.startNode, shape:'circle', color:'green', duration:config.startDuration });
@@ -3478,7 +3540,7 @@
           clearTimeout(state.session.timeoutId);
           state.session.chrono = { phase:'end', startReactionMs: data.reaction_ms };
           sendBLE({ cmd:'off' });
-          document.getElementById('liveNode').textContent = `Final ${config.endNode}`;
+          setLiveNode(`Final ${config.endNode}`);
           document.getElementById('liveHint').textContent = 'Toca el nodo final ahora';
           setTimeout(() => {
             state.session.chrono.startTouchTs = Date.now();
@@ -3613,7 +3675,7 @@
       const { sequence, current } = state.session;
       const step = sequence[current];
       const nodeIds = Object.keys(step.nodes).map(Number);
-      document.getElementById('liveNode').textContent = '';
+      setLiveNode('');
       const hintColor = step.correct_response === 'stroop-named' ? step.named_color : step.ink_color;
       const action = step.correct_response === 'stroop-named' ? 'Toca el color nombrado' : 'Toca el color de la tinta';
       document.getElementById('liveHint').textContent = `${action}: ${getSpanishColorName(hintColor)}`;
@@ -3684,7 +3746,7 @@
         const isEven = num % 2 === 0;
         state.session.correctNode = isEven ? (node1IsRed ? nid2 : nid1) : (node1IsRed ? nid1 : nid2);
         updateStroopScreen({ word: String(num), ink: screenColorDiff });
-        document.getElementById('liveNode').textContent = '';
+        setLiveNode('');
         document.getElementById('liveHint').textContent = isEven ? 'PAR → toca VERDE' : 'IMPAR → toca ROJO';
         sendBLE({ cmd:'show', node_id:nid1, shape:'ring', color: node1IsRed ? 'red' : 'green', duration:dur, sensor:config.sensor||'vibration' });
         const _piRound1 = state.session.current;
@@ -3706,7 +3768,7 @@
         state.session.correctNode = wantsEven ? (node1HasEven ? nid1 : nid2) : (node1HasEven ? nid2 : nid1);
         const screenWord = wantsEven ? 'PAR' : 'IMPAR';
         updateStroopScreen({ word: screenWord, ink: screenColorDiff });
-        document.getElementById('liveNode').textContent = '';
+        setLiveNode('');
         document.getElementById('liveHint').textContent = `Toca el número ${screenWord}`;
         sendBLE({ cmd:'show', node_id:nid1, shape:String(v1), color:nc1, duration:dur, sensor:config.sensor||'vibration' });
         const _piRound2 = state.session.current;
@@ -3773,6 +3835,7 @@
       const elapsedTile = document.getElementById('statElapsedTile');
       if (elapsedTile) elapsedTile.style.display = isScreenExercise ? 'none' : '';
       document.getElementById('statElapsed').textContent = '0:00';
+      const pb = document.getElementById('sessionProgressBar'); if (pb) pb.style.width = '0%';
       const completeTile = document.getElementById('statCompleteTile');
       completeTile.style.display = (isTimeMode && !isScreenExercise) ? '' : 'none';
       if (isTimeMode) document.getElementById('statComplete').textContent = '0';
@@ -3788,6 +3851,9 @@
           const rem = Math.max(0, state.session.timeLimit - elapsed);
           document.getElementById('statProgress').textContent = Math.ceil(rem / 1000) + ' s';
         }
+        // Sync waiting pulse + progress bar
+        document.getElementById('liveNode')?.classList.toggle('waiting', !!state.session.waiting);
+        updateProgressBar();
       }, 500);
     }
 
@@ -3804,6 +3870,7 @@
       state.session.active = false;
       clearInterval(state.session.countdownId);
       clearInterval(state.session.elapsedId);
+      const pb = document.getElementById('sessionProgressBar'); if (pb) pb.style.width = '100%';
       sendBLE({ cmd:'off' });
       document.getElementById('activeSession').style.display = 'none';
       document.getElementById('statProgressLbl').textContent = 'Progreso';
@@ -3811,6 +3878,7 @@
     }
 
     function updateLiveStats() {
+      updateProgressBar();
       const rs = state.session.history
         .map(h => h.end_reaction_ms != null ? h.end_reaction_ms : h.reaction_ms)
         .filter(x => x != null);
@@ -4901,7 +4969,7 @@
       if (!state.session.active || state.session.paused) return;
       const { sequence, current } = state.session;
       const step = sequence[current];
-      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      setLiveNode(`Paso ${current + 1}`);
       document.getElementById('liveHint').textContent = step.disc_mode === 'find_odd' ? 'Toca el diferente' : 'Toca el nodo correcto';
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
 
@@ -5030,7 +5098,7 @@
       const { sequence, current } = state.session;
       const step = sequence[current];
       const dur  = state.session.config.dur;
-      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      setLiveNode(`Paso ${current + 1}`);
       document.getElementById('liveHint').textContent = 'Toca el nodo con la misma forma que el modelo (CIAN)';
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
       const otherIds = step.nodeIds.filter(id => id !== step.modelNode);
@@ -5114,7 +5182,7 @@
       state.session.simonPhase   = 'show';
       state.session.simonPtr     = 0;
       const round = state.session.current + 1;
-      document.getElementById('liveNode').textContent = `Ronda ${round}`;
+      setLiveNode(`Ronda ${round}`);
       document.getElementById('liveHint').textContent = 'Observa la secuencia…';
       document.getElementById('statProgress').textContent = `${round}/${state.session.total}`;
       simonShowStep(0);
@@ -5627,7 +5695,7 @@
       const { sequence, current } = state.session;
       const step = sequence[current];
       
-      document.getElementById('liveNode').textContent = `Paso ${current + 1}`;
+      setLiveNode(`Paso ${current + 1}`);
       document.getElementById('liveHint').textContent = 'Observa los estímulos';
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
       
