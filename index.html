@@ -766,56 +766,78 @@
 
         <!-- Ejercicios predeterminados -->
         <div id="exPredeterminadosView" style="display:none;">
-          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;margin-bottom:14px;" onclick="showExCategory(null)">← Volver</button>
-          <div class="card">
-            <div class="ex-item" onclick="openExerciseConfig('flash')">
-              <div class="ex-item-info">
-                <h3>Reacción Flash</h3>
-                <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+          <div class="form-header" style="margin-bottom:16px;">
+            <button class="form-header-back" onclick="showExCategory(null)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="form-header-title">Predeterminados</div>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('flash')">
+            <div class="ex-card-icon" style="background:rgba(59,130,246,0.12);color:var(--accent);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
-            <div class="ex-item" onclick="openExerciseConfig('parimpar')">
-              <div class="ex-item-info">
-                <h3>Par / Impar</h3>
-                <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Reacción Flash</div>
+              <div class="ex-card-desc">Reacción simple · Nodos configurables · Tiempo de reacción</div>
             </div>
-            <div class="ex-item" onclick="openExerciseConfig('stroop')">
-              <div class="ex-item-info">
-                <h3>Stroop</h3>
-                <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+            <span class="ex-card-arrow">›</span>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('parimpar')">
+            <div class="ex-card-icon" style="background:rgba(34,211,160,0.12);color:var(--success);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3m0 0V4m0 3v3M17 4l-5 5m0 0l5 5m-5-5h7"/></svg>
             </div>
-            <div class="ex-item" onclick="openExerciseConfig('discrimination')">
-              <div class="ex-item-info">
-                <h3>Discriminación</h3>
-                <p>Encuentra el estímulo objetivo entre distractores · Configurable por color/forma/número</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Par / Impar</div>
+              <div class="ex-card-desc">Discriminación cognitiva · 2 nodos · Aciertos y fallos</div>
             </div>
-            <div class="ex-item" onclick="openExerciseConfig('patterndisc')">
-              <div class="ex-item-info">
-                <h3>Se Busca</h3>
-                <p>Un nodo modelo · Encuentra el nodo que muestra la misma forma · Aciertos y fallos</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+            <span class="ex-card-arrow">›</span>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('stroop')">
+            <div class="ex-card-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
             </div>
-            <div class="ex-item" onclick="openExerciseConfig('simon')">
-              <div class="ex-item-info">
-                <h3>Simón dice</h3>
-                <p>Memoriza y repite la secuencia · Directo, inverso o aleatorio</p>
-              </div>
-              <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Stroop</div>
+              <div class="ex-card-desc">Nombre de color vs color de tinta · Nodos configurables</div>
             </div>
+            <span class="ex-card-arrow">›</span>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('discrimination')">
+            <div class="ex-card-icon" style="background:rgba(6,182,212,0.12);color:var(--accent2);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Discriminación</div>
+              <div class="ex-card-desc">Objetivo entre distractores · Color / Forma / Número</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('patterndisc')">
+            <div class="ex-card-icon" style="background:rgba(168,85,247,0.12);color:#a855f7;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </div>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Se Busca</div>
+              <div class="ex-card-desc">Nodo modelo · Encuentra el que muestra la misma forma</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
+          </div>
+          <div class="ex-card" onclick="openExerciseConfig('simon')">
+            <div class="ex-card-icon" style="background:rgba(249,115,22,0.12);color:#f97316;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"/><rect x="14" y="2" width="8" height="8" rx="2"/><rect x="2" y="14" width="8" height="8" rx="2"/><rect x="14" y="14" width="8" height="8" rx="2"/></svg>
+            </div>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Simón dice</div>
+              <div class="ex-card-desc">Memoriza y repite la secuencia · Directo, inverso o aleatorio</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
         </div>
 
         <!-- Mis ejercicios -->
         <div id="exMisView" style="display:none;">
-          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;margin-bottom:14px;" onclick="showExCategory(null)">← Volver</button>
+          <div class="form-header" style="margin-bottom:16px;">
+            <button class="form-header-back" onclick="showExCategory(null)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="form-header-title">Mis ejercicios</div>
+          </div>
           <div class="card">
             <div id="mis-group">
               <!-- Exercises will be loaded here -->
@@ -834,11 +856,13 @@
         <!-- Flash -->
         <div id="exFlashConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Reacción Flash</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Reacción Flash</div>
+                <div class="form-header-sub">Configura y lanza la sesión</div>
+              </div>
             </div>
-            <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -997,11 +1021,13 @@
         <!-- ParImpar -->
         <div id="exParImparConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Par / Impar</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Par / Impar</div>
+                <div class="form-header-sub">Discriminación cognitiva con 2 nodos</div>
+              </div>
             </div>
-            <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
             <div style="background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;line-height:1.7;border:1px solid var(--border);">
               <strong>Modo 1 (colores):</strong> Nodo <strong style="color:#4CAF50;">verde</strong> = <strong>PAR</strong> &nbsp;·&nbsp; Nodo <strong style="color:#f44336;">rojo</strong> = <strong>IMPAR</strong><br>
               <strong>Modo 2 (números):</strong> Toca el número que coincide con la palabra en pantalla
@@ -1086,11 +1112,13 @@
         </div>
         <div id="exStroopConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Stroop</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Stroop</div>
+                <div class="form-header-sub">Color nombrado vs color de la tinta</div>
+              </div>
             </div>
-            <div class="card-sub">Elige si el ejercicio se resuelve por el color nombrado o por el color de la tinta.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -1178,11 +1206,13 @@
 
         <div id="exDiscriminationConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Discriminación</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Discriminación</div>
+                <div class="form-header-sub">Encuentra el objetivo entre distractores</div>
+              </div>
             </div>
-            <div class="card-sub">Encuentra el estímulo objetivo entre distractores.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -1310,11 +1340,13 @@
 
         <div id="exChronoConfig" style="display:none;">
           <div class="card" style="border-color:#d4af37;">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Chrono</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Chrono</div>
+                <div class="form-header-sub">3 modos de cronómetro · inicio y final</div>
+              </div>
             </div>
-            <div class="card-sub">Tiempo de inicio y final con 3 modos de cronómetro.</div>
             <div class="field-row">
               <div class="field">
                 <label>Modo</label>
@@ -1427,11 +1459,13 @@
         <!-- Se Busca -->
         <div id="exPatternDiscConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Se Busca</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Se Busca</div>
+                <div class="form-header-sub">Nodo modelo · encuentra el que muestra la misma forma</div>
+              </div>
             </div>
-            <div class="card-sub">Un nodo modelo muestra la forma de referencia. Toca el nodo que muestra la misma forma entre los distractores.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -1514,11 +1548,13 @@
         <!-- Simón dice -->
         <div id="exSimonConfig" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="closePresetConfig()">← Volver</button>
-              <div class="card-title" style="margin:0;">Simón dice</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Simón dice</div>
+                <div class="form-header-sub">Memoriza y repite la secuencia</div>
+              </div>
             </div>
-            <div class="card-sub">El sistema muestra una secuencia de nodos. El deportista debe repetirla en el mismo orden (o inverso).</div>
             <div class="field-row">
               <div class="field">
                 <label>Longitud de secuencia</label>
