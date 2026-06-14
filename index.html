@@ -456,6 +456,43 @@
     }
     .athlete-pill:hover { border-color: var(--accent); }
 
+    /* CREATE — MODO TABS */
+    .mode-tabs { display:flex; gap:0; background:var(--bg3); border:1px solid var(--border2); border-radius:14px; padding:4px; margin-bottom:20px; }
+    .mode-tab { flex:1; padding:10px 16px; border-radius:10px; background:transparent; color:var(--muted); font-size:0.88rem; font-weight:600; border:none; cursor:pointer; transition:all .2s; letter-spacing:0.01em; }
+    .mode-tab.active { background:var(--accent); color:#fff; box-shadow:0 2px 12px rgba(59,130,246,0.3); }
+    .mode-tab:not(.active):hover { color:var(--text); background:var(--bg2); }
+
+    /* CREATE — EXERCISE CARDS */
+    .ex-card { display:flex; align-items:center; gap:16px; padding:16px 18px; border-radius:16px; background:var(--bg2); border:1px solid var(--border); margin-bottom:10px; cursor:pointer; transition:all .2s; }
+    .ex-card:hover { border-color:var(--accent); background:var(--bg3); transform:translateX(2px); box-shadow:var(--glow); }
+    .ex-card-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.25rem; }
+    .ex-card-body { flex:1; min-width:0; }
+    .ex-card-title { font-weight:600; font-size:0.95rem; margin-bottom:3px; }
+    .ex-card-desc { font-size:0.77rem; color:var(--muted); line-height:1.4; }
+    .ex-card-arrow { color:var(--border2); font-size:1.1rem; flex-shrink:0; transition:all .2s; }
+    .ex-card:hover .ex-card-arrow { color:var(--accent); transform:translateX(3px); }
+
+    /* CREATE — FORM HEADER */
+    .form-header { display:flex; align-items:center; gap:12px; padding-bottom:16px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+    .form-header-back { width:34px; height:34px; border-radius:10px; background:var(--bg3); border:1px solid var(--border2); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; flex-shrink:0; }
+    .form-header-back:hover { color:var(--text); border-color:var(--accent); }
+    .form-header-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; }
+    .form-header-sub { font-size:0.78rem; color:var(--muted); margin-top:1px; }
+
+    /* CREATE — FIELD SECTIONS */
+    .field-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin:20px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+
+    /* CREATE — CLEAN CHECKBOX */
+    .check-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:10px; background:var(--bg3); border:1px solid var(--border); cursor:pointer; transition:border-color .2s; margin-bottom:10px; }
+    .check-row:hover { border-color:var(--border2); }
+    .check-row input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); flex-shrink:0; cursor:pointer; margin:0; }
+    .check-row label { margin:0; cursor:pointer; font-size:0.88rem; line-height:1.3; }
+
+    /* CREATE — SAVE BLOCK */
+    .save-block { margin-top:20px; padding-top:18px; border-top:1px solid var(--border); }
+    .save-block .field { margin-bottom:10px; }
+    .save-block .field label { font-size:0.75rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; }
+
     /* EMPTY */
     .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
@@ -1654,65 +1691,81 @@
       <div class="section-title" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;"><button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button>Crear ejercicio</div>
 
       <!-- Selector de modo -->
-      <div class="card">
-        <div class="card-title">Modo</div>
-        <div class="field">
-          <select id="createMode" onchange="switchCreateMode()">
-            <option value="rapido">MODO RÁPIDO</option>
-            <option value="avanzado">MODO AVANZADO — CONSTRUCTOR DE PASOS</option>
-          </select>
-        </div>
+      <select id="createMode" style="display:none;" onchange="switchCreateMode()">
+        <option value="rapido">MODO RÁPIDO</option>
+        <option value="avanzado">MODO AVANZADO</option>
+      </select>
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="modeTabRapido" onclick="document.getElementById('createMode').value='rapido';switchCreateMode();document.getElementById('modeTabRapido').classList.add('active');document.getElementById('modeTabAvanzado').classList.remove('active');">Modo Rápido</button>
+        <button class="mode-tab" id="modeTabAvanzado" onclick="document.getElementById('createMode').value='avanzado';switchCreateMode();document.getElementById('modeTabAvanzado').classList.add('active');document.getElementById('modeTabRapido').classList.remove('active');">Modo Avanzado</button>
       </div>
 
       <!-- MODO RÁPIDO -->
       <div id="modoRapido">
         <!-- Lista de tipos -->
         <div id="quickModeList">
-          <div class="ex-item" onclick="expandQuickForm('flash')">
-            <div class="ex-item-info">
-              <h3>Reacción Flash</h3>
-              <p>Reacción simple · Nodos configurables · Tiempo de reacción</p>
+          <div class="ex-card" onclick="expandQuickForm('flash')">
+            <div class="ex-card-icon" style="background:rgba(59,130,246,0.12);color:var(--accent);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
-            <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Reacción Flash</div>
+              <div class="ex-card-desc">Reacción simple · Nodos configurables · Tiempo de reacción</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
-          <div class="ex-item" onclick="expandQuickForm('parimpar')">
-            <div class="ex-item-info">
-              <h3>Par / Impar</h3>
-              <p>Discriminación cognitiva · 2 nodos · Aciertos y fallos</p>
+          <div class="ex-card" onclick="expandQuickForm('parimpar')">
+            <div class="ex-card-icon" style="background:rgba(34,211,160,0.12);color:var(--success);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3m0 0V4m0 3v3M17 4l-5 5m0 0l5 5m-5-5h7"/></svg>
             </div>
-            <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Par / Impar</div>
+              <div class="ex-card-desc">Discriminación cognitiva · 2 nodos · Aciertos y fallos</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
-          <div class="ex-item" onclick="expandQuickForm('stroop')">
-            <div class="ex-item-info">
-              <h3>Stroop</h3>
-              <p>Nombre de color vs color de tinta · Nodos configurables · Repeticiones</p>
+          <div class="ex-card" onclick="expandQuickForm('stroop')">
+            <div class="ex-card-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
             </div>
-            <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Stroop</div>
+              <div class="ex-card-desc">Nombre de color vs color de tinta · Nodos configurables</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
-          <div class="ex-item" onclick="expandQuickForm('discrimination')">
-            <div class="ex-item-info">
-              <h3>Discriminación</h3>
-              <p>Encuentra el objetivo entre distractores · Color/Forma/Número</p>
+          <div class="ex-card" onclick="expandQuickForm('discrimination')">
+            <div class="ex-card-icon" style="background:rgba(6,182,212,0.12);color:var(--accent2);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             </div>
-            <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Discriminación</div>
+              <div class="ex-card-desc">Objetivo entre distractores · Color / Forma / Número</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
-          <div class="ex-item" onclick="expandQuickForm('chrono')">
-            <div class="ex-item-info">
-              <h3>Chrono</h3>
-              <p>Inicio/Final · Buzzer, activación o reacción + sprint</p>
+          <div class="ex-card" onclick="expandQuickForm('chrono')">
+            <div class="ex-card-icon" style="background:rgba(239,68,68,0.10);color:var(--danger);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 3h4"/><path d="M12 3v2"/></svg>
             </div>
-            <span class="ex-item-arrow">›</span>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Chrono</div>
+              <div class="ex-card-desc">Inicio / Final · Buzzer, activación o reacción + sprint</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
           </div>
         </div>
 
         <!-- Formulario Flash -->
         <div id="quickFormFlash" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
-              <div class="card-title" style="margin:0;">Reacción Flash</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="collapseQuickForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Reacción Flash</div>
+                <div class="form-header-sub">Configura y lanza la sesión</div>
+              </div>
             </div>
-            <div class="card-sub">Configura los parámetros y lanza la sesión.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -1764,11 +1817,9 @@
                 </div>
               </div>
             </div>
-            <div class="field-row" style="align-items:center;">
-              <div class="field" style="display:flex;align-items:center;gap:10px;">
-                <input type="checkbox" id="stimIntervalRandom" onchange="toggleIntervalRandom('stim')" style="width:18px;height:18px;accent-color:var(--accent);" />
-                <label for="stimIntervalRandom" style="margin:0;cursor:pointer;font-size:0.88rem;">Intervalo aleatorio</label>
-              </div>
+            <div class="check-row" onclick="document.getElementById('stimIntervalRandom').click()">
+              <input type="checkbox" id="stimIntervalRandom" onchange="toggleIntervalRandom('stim')" onclick="event.stopPropagation()" />
+              <label for="stimIntervalRandom">Intervalo aleatorio entre estímulos</label>
             </div>
             <div id="stimIntervalRandomRow" style="display:none;" class="field-row">
               <div class="field">
@@ -1844,9 +1895,9 @@
                   <option value="both">Ambos</option>
                 </select>
               </div>
-              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
-                <input type="checkbox" id="stimSound" style="width:18px;height:18px;accent-color:var(--accent);" />
-                <label for="stimSound" style="margin:0;cursor:pointer;">Sonido</label>
+              <div class="check-row" style="margin-top:22px;" onclick="document.getElementById('stimSound').click()">
+                <input type="checkbox" id="stimSound" onclick="event.stopPropagation()" />
+                <label for="stimSound">Sonido al activar</label>
               </div>
             </div>
             <div id="stimProxThreshRow" style="display:none;" class="field">
@@ -1857,12 +1908,12 @@
                 <button type="button" class="stepper-btn" onclick="adjustCount('stimProxThresh',5,10,100)">+</button>
               </div>
             </div>
-            <div class="field" style="margin-bottom:8px;">
-              <label>Nombre del ejercicio</label>
-              <input type="text" id="flashSaveName" placeholder="Reacción Flash — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
-            </div>
-            <div class="btn-row">
-              <button class="btn-primary btn-save" onclick="saveFlashConfig()">Guardar ejercicio</button>
+            <div class="save-block">
+              <div class="field">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="flashSaveName" placeholder="Reacción Flash — mis ajustes" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;" onclick="saveFlashConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -1870,11 +1921,13 @@
         <!-- Formulario Par/Impar -->
         <div id="quickFormParImpar" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
-              <div class="card-title" style="margin:0;">Par / Impar</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="collapseQuickForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Par / Impar</div>
+                <div class="form-header-sub">Discriminación cognitiva con 2 nodos</div>
+              </div>
             </div>
-            <div class="card-sub">Discriminación cognitiva con 2 nodos.</div>
             <div style="background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;line-height:1.7;border:1px solid var(--border);">
               <strong>Modo 1 (colores):</strong> Nodo <strong style="color:#4CAF50;">verde</strong> = <strong>PAR</strong> &nbsp;·&nbsp; Nodo <strong style="color:#f44336;">rojo</strong> = <strong>IMPAR</strong><br>
               <strong>Modo 2 (números):</strong> Toca el número que coincide con la palabra en pantalla
@@ -1940,16 +1993,16 @@
                 <button type="button" class="stepper-btn" onclick="adjustCount('piProxThresh',5,10,100)">+</button>
               </div>
             </div>
-            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
-              <input type="checkbox" id="piColorDiff" style="width:16px;height:16px;accent-color:var(--accent);" />
-              <label for="piColorDiff" style="margin:0;cursor:pointer;">Dificultad de color — el número en pantalla aparece en rojo o verde aleatorio</label>
+            <div class="check-row" onclick="document.getElementById('piColorDiff').click()">
+              <input type="checkbox" id="piColorDiff" onclick="event.stopPropagation()" />
+              <label for="piColorDiff">Dificultad de color — número en pantalla en rojo o verde aleatorio</label>
             </div>
-            <div class="field" style="margin-bottom:8px;">
-              <label>Nombre del ejercicio</label>
-              <input type="text" id="piSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
-            </div>
-            <div class="btn-row">
-              <button class="btn-primary btn-save" onclick="saveParImparConfig()">Guardar ejercicio</button>
+            <div class="save-block">
+              <div class="field">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="piSaveName" placeholder="Par/Impar — mis ajustes" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;" onclick="saveParImparConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
@@ -1957,11 +2010,13 @@
         <!-- Formulario Stroop -->
         <div id="quickFormStroop" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
-              <div class="card-title" style="margin:0;">Stroop</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="collapseQuickForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Stroop</div>
+                <div class="form-header-sub">Nombre del color vs color de la tinta</div>
+              </div>
             </div>
-            <div class="card-sub">Elige si la respuesta está en el nombre del color o en el color de la tinta.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -2033,22 +2088,24 @@
                 <button type="button" class="stepper-btn" onclick="adjustCount('stroopProxThresh',5,10,100)">+</button>
               </div>
             </div>
-            <div class="field" style="margin-bottom:8px;">
-              <label>Nombre del ejercicio</label>
-              <input type="text" id="stroopSaveName" placeholder="Stroop — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
-            </div>
-            <div class="btn-row">
-              <button class="btn-primary btn-save" onclick="saveStroopConfig()">Guardar ejercicio</button>
+            <div class="save-block">
+              <div class="field">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="stroopSaveName" placeholder="Stroop — mis ajustes" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;" onclick="saveStroopConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
         <div id="quickFormDiscrimination" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
-              <div class="card-title" style="margin:0;">Discriminación</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="collapseQuickForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Discriminación</div>
+                <div class="form-header-sub">Encuentra el objetivo entre distractores</div>
+              </div>
             </div>
-            <div class="card-sub">Encuentra el objetivo entre distractores.</div>
             <div class="field-row">
               <div class="field">
                 <label>Nodos activos</label>
@@ -2160,23 +2217,25 @@
                 <button type="button" class="stepper-btn" onclick="adjustCount('discProxThresh',5,10,100)">+</button>
               </div>
             </div>
-            <div class="field" style="margin-bottom:8px;">
-              <label>Nombre del ejercicio</label>
-              <input type="text" id="discSaveName" placeholder="Discriminación — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
-            </div>
-            <div class="btn-row">
-              <button class="btn-primary btn-save" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
+            <div class="save-block">
+              <div class="field">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="discSaveName" placeholder="Discriminación — mis ajustes" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;" onclick="saveQuickDiscriminationConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
 
         <div id="quickFormChrono" style="display:none;">
           <div class="card">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-              <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="collapseQuickForm()">← Volver</button>
-              <div class="card-title" style="margin:0;">Chrono</div>
+            <div class="form-header">
+              <button class="form-header-back" onclick="collapseQuickForm()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Chrono</div>
+                <div class="form-header-sub">Cronómetro de inicio y final · buzzer, activación o reacción</div>
+              </div>
             </div>
-            <div class="card-sub">Cronómetro de inicio y final con buzzer, activación o reacción + sprint.</div>
             <div class="field-row">
               <div class="field">
                 <label>Modo</label>
@@ -2276,12 +2335,12 @@
                 </div>
               </div>
             </div>
-            <div class="field" style="margin-bottom:8px;">
-              <label>Nombre del ejercicio</label>
-              <input type="text" id="chronoSaveName" placeholder="Chrono — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
-            </div>
-            <div class="btn-row">
-              <button class="btn-primary btn-save" onclick="saveChronoConfig()">Guardar ejercicio</button>
+            <div class="save-block">
+              <div class="field">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="chronoSaveName" placeholder="Chrono — mis ajustes" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;" onclick="saveChronoConfig()">Guardar ejercicio</button>
             </div>
           </div>
         </div>
