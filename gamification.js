@@ -149,10 +149,10 @@ const Gamification = {
     }
   },
 
-  // Sistema de puntos
+  // Sistema de puntos (totalPoints = acumulado de por vida, nunca se resta)
   totalPoints: 0,
   level: 1,
-  pointsForNextLevel: 500,
+  sessionCount: 0,
 
   // Retos activos
   challenges: {
@@ -201,11 +201,19 @@ const Gamification = {
     const saved = localStorage.getItem('gamification_data');
     if (saved) {
       const data = JSON.parse(saved);
-      this.achievements = data.achievements || this.achievements;
-      this.totalPoints = data.totalPoints || 0;
-      this.level = data.level || 1;
-      this.pointsForNextLevel = data.pointsForNextLevel || 500;
-      this.challenges = data.challenges || this.challenges;
+      // Merge achievements preservando los nuevos que no estén guardados
+      if (data.achievements) {
+        Object.keys(data.achievements).forEach(id => {
+          if (this.achievements[id]) {
+            this.achievements[id].unlocked   = data.achievements[id].unlocked;
+            this.achievements[id].unlockedAt = data.achievements[id].unlockedAt;
+          }
+        });
+      }
+      this.totalPoints  = data.totalPoints  || 0;
+      this.level        = data.level        || 1;
+      this.sessionCount = data.sessionCount || 0;
+      if (data.challenges) this.challenges = data.challenges;
     }
     this.save();
   },
@@ -215,11 +223,11 @@ const Gamification = {
    */
   save() {
     localStorage.setItem('gamification_data', JSON.stringify({
-      achievements: this.achievements,
-      totalPoints: this.totalPoints,
-      level: this.level,
-      pointsForNextLevel: this.pointsForNextLevel,
-      challenges: this.challenges
+      achievements:  this.achievements,
+      totalPoints:   this.totalPoints,
+      level:         this.level,
+      sessionCount:  this.sessionCount,
+      challenges:    this.challenges
     }));
   },
 
@@ -230,10 +238,9 @@ const Gamification = {
     const stats = window.OrionImprovements.SessionStats.calculateStats(sessionData);
     const newAchievements = [];
 
-    // Verificar logros de velocidad
-    if (sessionData.reactionTimes) {
-      const bestTime = Math.min(...sessionData.reactionTimes);
-      
+    // Verificar logros de velocidad (stats.best está en segundos)
+    const bestTime = parseFloat(stats.best);
+    if (bestTime > 0) {
       if (bestTime < 0.25) this._unlockAchievement('speed_under_250ms', newAchievements);
       if (bestTime < 0.30) this._unlockAchievement('speed_under_300ms', newAchievements);
       if (bestTime < 0.40) this._unlockAchievement('speed_under_400ms', newAchievements);
@@ -242,37 +249,37 @@ const Gamification = {
     // Verificar logros de precisión
     const accuracy = parseFloat(stats.accuracy);
     if (accuracy === 100) this._unlockAchievement('perfect_score', newAchievements);
-    if (accuracy >= 90) this._unlockAchievement('high_accuracy', newAchievements);
+    if (accuracy >= 90)   this._unlockAchievement('high_accuracy', newAchievements);
 
     // Verificar logros de consistencia
-    if (parseFloat(stats.stdDev) < 0.05 && sessionData.reactionTimes.length >= 10) {
+    const attemptCount = (sessionData.history || sessionData.reactionTimes || []).length;
+    if (parseFloat(stats.stdDev) < 0.05 && attemptCount >= 10) {
       this._unlockAchievement('consistency_master', newAchievements);
     }
 
-    // Verificar logros de volumen
-    const sessionCount = this._getSessionCount();
-    if (sessionCount === 1) this._unlockAchievement('first_session', newAchievements);
-    if (sessionCount === 10) this._unlockAchievement('10_sessions', newAchievements);
-    if (sessionCount === 50) this._unlockAchievement('50_sessions', newAchievements);
-    if (sessionCount === 100) this._unlockAchievement('100_sessions', newAchievements);
+    // Verificar logros de volumen usando sessionCount persistido
+    this.sessionCount++;
+    if (this.sessionCount === 1)   this._unlockAchievement('first_session', newAchievements);
+    if (this.sessionCount === 10)  this._unlockAchievement('10_sessions', newAchievements);
+    if (this.sessionCount === 50)  this._unlockAchievement('50_sessions', newAchievements);
+    if (this.sessionCount === 100) this._unlockAchievement('100_sessions', newAchievements);
 
     // Actualizar retos
     this._updateChallenges(sessionData, stats);
 
-    // Sumar puntos
+    // Sumar puntos y recalcular nivel
     const sessionPoints = this._calculateSessionPoints(stats);
     this.totalPoints += sessionPoints;
     this._checkLevelUp();
 
-    // Guardar
     this.save();
 
     return {
       newAchievements,
-      pointsEarned: sessionPoints,
-      totalPoints: this.totalPoints,
-      level: this.level,
-      nextLevelProgress: this.totalPoints % this.pointsForNextLevel
+      pointsEarned:      sessionPoints,
+      totalPoints:       this.totalPoints,
+      level:             this.level,
+      nextLevelProgress: this._getLevelProgress()
     };
   },
 
@@ -305,9 +312,11 @@ const Gamification = {
       }
     }
 
-    // Desafío de velocidad: 5 intentos bajo 400ms
-    if (this.challenges['speed_challenge'].active && sessionData.reactionTimes) {
-      const fastTimes = sessionData.reactionTimes.filter(t => t < 0.4).length;
+    // Desafío de velocidad: 5 intentos bajo 400ms (admite ambos formatos de datos)
+    if (this.challenges['speed_challenge'].active) {
+      const times = sessionData.reactionTimes
+        || (sessionData.history || []).filter(r => r.reaction_ms > 0).map(r => r.reaction_ms / 1000);
+      const fastTimes = times.filter(t => t < 0.4).length;
       this.challenges['speed_challenge'].current += fastTimes;
       if (this.challenges['speed_challenge'].current >= this.challenges['speed_challenge'].target) {
         this.challenges['speed_challenge'].completed = true;
@@ -357,21 +366,28 @@ const Gamification = {
   /**
    * Verificar cambio de nivel
    */
+  // Umbrales acumulados por nivel (totalPoints de por vida, nunca se restan)
+  _levelThreshold(level) {
+    let t = 500;
+    for (let i = 1; i < level; i++) t = Math.floor(t * 1.2);
+    return t;
+  },
+
   _checkLevelUp() {
-    while (this.totalPoints >= this.pointsForNextLevel) {
-      this.totalPoints -= this.pointsForNextLevel;
+    let nextThreshold = this._levelThreshold(this.level);
+    while (this.totalPoints >= nextThreshold) {
       this.level++;
-      this.pointsForNextLevel = Math.floor(this.pointsForNextLevel * 1.2);
+      nextThreshold = this._levelThreshold(this.level);
       console.log(`🎊 ¡Subes a nivel ${this.level}!`);
     }
   },
 
-  /**
-   * Obtener contador de sesiones
-   */
-  _getSessionCount() {
-    const sessions = JSON.parse(localStorage.getItem('offline_sessions') || '[]');
-    return sessions.length;
+  _getLevelProgress() {
+    const prevThreshold = this.level > 1 ? this._levelThreshold(this.level - 1) : 0;
+    const nextThreshold = this._levelThreshold(this.level);
+    const inLevel = this.totalPoints - prevThreshold;
+    const span    = nextThreshold - prevThreshold;
+    return Math.floor((inLevel / span) * 100);
   },
 
   /**
@@ -412,14 +428,15 @@ const Gamification = {
    */
   getPlayerProfile() {
     return {
-      level: this.level,
-      totalPoints: this.totalPoints,
-      pointsForNextLevel: this.pointsForNextLevel,
-      nextLevelProgress: Math.floor((this.totalPoints / this.pointsForNextLevel) * 100),
+      level:                this.level,
+      totalPoints:          this.totalPoints,
+      pointsForNextLevel:   this._levelThreshold(this.level),
+      nextLevelProgress:    this._getLevelProgress(),
+      sessionCount:         this.sessionCount,
       unlockedAchievements: this.getUnlockedAchievements().length,
-      totalAchievements: Object.keys(this.achievements).length,
-      activeChallenges: this.getActiveChallenges().length,
-      completedChallenges: this.getCompletedChallenges().length
+      totalAchievements:    Object.keys(this.achievements).length,
+      activeChallenges:     this.getActiveChallenges().length,
+      completedChallenges:  this.getCompletedChallenges().length
     };
   },
 

@@ -120,13 +120,22 @@ const OfflineStorage = {
 // =====================================================================
 
 const SessionStats = {
-  // Calcular estadísticas de sesión
+  // Calcular estadísticas de sesión.
+  // Acepta dos formatos:
+  //   { reactionTimes: [0.345, ...], results: ['ok', 'miss', ...] }  (segundos)
+  //   { history: [{ reaction_ms: 345, result: 'ok' }, ...] }         (formato real de la app)
   calculateStats(sessionData) {
-    const times = sessionData.reactionTimes || [];
-    const results = sessionData.results || [];
-    
+    let times   = sessionData.reactionTimes ? [...sessionData.reactionTimes] : [];
+    let results = sessionData.results       ? [...sessionData.results]       : [];
+
+    if (!times.length && sessionData.history && sessionData.history.length) {
+      const validEntries = sessionData.history.filter(r => r.reaction_ms > 0);
+      times   = validEntries.map(r => r.reaction_ms / 1000); // ms → s
+      results = validEntries.map(r => r.result);
+    }
+
     if (times.length === 0) {
-      return { average: 0, best: 0, worst: 0, median: 0, stdDev: 0 };
+      return { average: '0.000', best: '0.000', worst: '0.000', median: '0.000', stdDev: '0.000', correct: 0, incorrect: 0, accuracy: '0.0' };
     }
 
     // Promedio
@@ -147,9 +156,9 @@ const SessionStats = {
     const stdDev = Math.sqrt(variance);
     
     // Aciertos / Fallos
-    const correct = results.filter(r => r === 'ok').length;
+    const correct   = results.filter(r => r === 'ok').length;
     const incorrect = results.filter(r => r === 'miss').length;
-    const accuracy = (correct / results.length) * 100;
+    const accuracy  = results.length > 0 ? (correct / results.length) * 100 : 100;
     
     return {
       average: average.toFixed(3),
@@ -359,28 +368,13 @@ const OfflineServiceWorker = {
     return navigator.onLine;
   },
 
-  // Sincronizar datos cuando se reconecta
+  // Sincronizar datos cuando se reconecta.
+  // Despacha 'orion:syncOffline' para que el manejador de Supabase lo procese.
   async syncOfflineData() {
     if (!this.isOnline()) return;
-
     const unsynced = await OfflineStorage.getUnsynedSessions();
-    
-    for (const session of unsynced) {
-      try {
-        // Enviar a servidor/Supabase
-        const response = await fetch('/api/sessions/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(session)
-        });
-
-        if (response.ok) {
-          await OfflineStorage.markSessionSynced(session.id);
-        }
-      } catch (error) {
-        console.error('Error sincronizando sesión:', error);
-      }
-    }
+    if (unsynced.length === 0) return;
+    window.dispatchEvent(new CustomEvent('orion:syncOffline', { detail: { sessions: unsynced } }));
   }
 };
 

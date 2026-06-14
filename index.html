@@ -4129,6 +4129,12 @@
 
         toast('Guardado ✓');
         if (btn) { btn.textContent = 'Guardado ✓'; }
+
+        // Procesar gamificación con los datos de la sesión real
+        if (window.OrionImprovements?.Gamification) {
+          const gResult = window.OrionImprovements.Gamification.processSessionCompletion(state.session);
+          gResult.newAchievements.forEach(a => toast(`🏆 Logro: ${a.name}`));
+        }
       } catch(err) {
         toast('Error: ' + err.message, 'error');
         if (btn) { btn.disabled = false; btn.textContent = 'Guardar en la nube'; }
@@ -4296,6 +4302,10 @@
 
     async function loadInitialData() {
       await Promise.all([loadAthletes(), loadClubs(), loadExercises(), loadFolders()]);
+      // Conectar módulos de mejora con el cliente Supabase ya autenticado
+      if (window.OrionImprovements?.SupabaseIntegration) {
+        window.OrionImprovements.SupabaseIntegration.setup(_sb, currentProfessionalId);
+      }
     }
 
     // POSICIONES POR DEPORTE
@@ -7038,6 +7048,12 @@
     }
 
   </script>
+
+  <!-- MÓDULOS DE MEJORA (cargar después del script principal) -->
+  <script src="improvements.js"></script>
+  <script src="analytics.js"></script>
+  <script src="gamification.js"></script>
+  <script src="supabase-integration.js"></script>
 
   <!-- BARRA FIJA DE INICIO -->
   <div id="startBar">

@@ -1,387 +1,160 @@
 /**
- * Integración con Supabase
- * Sincronización de sesiones, atletas y evaluaciones a la nube
+ * SupabaseIntegration
+ * Usa el cliente _sb y currentProfessionalId ya inicializados por la app.
+ * La autenticación la gestiona la app (no duplicar aquí).
+ *
+ * Tablas reales:
+ *   sessions       – id, player_id, exercise_type, notes, professional_id, date
+ *   results        – session_id, professional_id, repetition, node_id, shape, color, reaction_ms, result
+ *   player_profiles – id, full_name, email, sport, position, dorsal, birth_date, gender,
+ *                     dominant_hand, dominant_foot, notes, profile_image, professional_id, club_id
  */
 
 const SupabaseIntegration = {
-  supabase: null,
-  apiUrl: 'https://YOUR_PROJECT.supabase.co',
-  apiKey: 'YOUR_ANON_KEY', // Cambiar con tu clave pública de Supabase
-  currentUser: null,
+  _sb: null,
+  _professionalId: null,
 
   /**
-   * Inicializar Supabase
-   * Llamar una vez al cargar la app
+   * Llamar después del login con el cliente y el professional_id que ya tiene la app.
    */
-  async init(apiUrl, apiKey) {
-    this.apiUrl = apiUrl;
-    this.apiKey = apiKey;
-
-    try {
-      // Cargar script de Supabase si no está presente
-      if (!window.supabase) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        document.head.appendChild(script);
-        
-        await new Promise(resolve => {
-          script.onload = resolve;
-          setTimeout(resolve, 2000);
-        });
-      }
-
-      // Inicializar cliente
-      const { createClient } = window.supabase;
-      this.supabase = createClient(apiUrl, apiKey);
-
-      console.log('✓ Supabase conectado');
-      return true;
-    } catch (error) {
-      console.error('Error conectando Supabase:', error);
-      return false;
-    }
+  setup(supabaseClient, professionalId) {
+    this._sb            = supabaseClient;
+    this._professionalId = professionalId;
+    console.log('✓ SupabaseIntegration configurado');
   },
 
-  /**
-   * Autenticar usuario
-   */
-  async authenticate(email, password) {
-    try {
-      const { data, error } = await this.supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) throw error;
-
-      this.currentUser = data.user;
-      localStorage.setItem('supabase_user', JSON.stringify(data.user));
-      console.log('✓ Usuario autenticado:', email);
-      return data;
-    } catch (error) {
-      console.error('Error autenticando:', error.message);
-      return null;
-    }
+  _ready() {
+    return this._sb && this._professionalId;
   },
 
-  /**
-   * Registrar nuevo usuario
-   */
-  async signup(email, password, displayName) {
-    try {
-      const { data, error } = await this.supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { display_name: displayName }
-        }
-      });
-
-      if (error) throw error;
-
-      this.currentUser = data.user;
-      console.log('✓ Usuario registrado:', email);
-      return data;
-    } catch (error) {
-      console.error('Error registrando:', error.message);
-      return null;
-    }
-  },
+  // ─── SESIONES ────────────────────────────────────────────────────────────────
 
   /**
-   * Cerrar sesión
+   * Obtener historial de sesiones del profesional actual.
+   * Acepta filtro opcional por player_id.
    */
-  async logout() {
+  async getSessions({ playerId = null, limit = 100 } = {}) {
+    if (!this._ready()) return [];
     try {
-      await this.supabase.auth.signOut();
-      this.currentUser = null;
-      localStorage.removeItem('supabase_user');
-      console.log('✓ Sesión cerrada');
-      return true;
-    } catch (error) {
-      console.error('Error cerrando sesión:', error);
-      return false;
-    }
-  },
-
-  /**
-   * Guardar sesión de entrenamiento en Supabase
-   */
-  async saveTrainingSession(sessionData) {
-    if (!this.currentUser) {
-      console.warn('No hay usuario autenticado. Guardando localmente...');
-      return await window.OrionImprovements.OfflineStorage.saveSessionLocally(sessionData);
-    }
-
-    try {
-      const { data, error } = await this.supabase
-        .from('training_sessions')
-        .insert([
-          {
-            user_id: this.currentUser.id,
-            athlete_id: sessionData.athlete_id,
-            exercise_name: sessionData.exerciseName,
-            exercise_type: sessionData.exerciseType,
-            reaction_times: sessionData.reactionTimes,
-            results: sessionData.results,
-            statistics: JSON.stringify(window.OrionImprovements.SessionStats.calculateStats(sessionData)),
-            notes: sessionData.notes,
-            session_duration: sessionData.duration,
-            created_at: new Date().toISOString()
-          }
-        ])
-        .select();
-
-      if (error) throw error;
-
-      console.log('✓ Sesión guardada en Supabase');
-      return data[0];
-    } catch (error) {
-      console.error('Error guardando sesión:', error);
-      // Fallback a almacenamiento local
-      return await window.OrionImprovements.OfflineStorage.saveSessionLocally(sessionData);
-    }
-  },
-
-  /**
-   * Obtener histórico de sesiones del usuario
-   */
-  async getUserSessions(limit = 50) {
-    if (!this.currentUser) return [];
-
-    try {
-      const { data, error } = await this.supabase
-        .from('training_sessions')
-        .select('*')
-        .eq('user_id', this.currentUser.id)
-        .order('created_at', { ascending: false })
+      let query = this._sb
+        .from('sessions')
+        .select('*, results(*)')
+        .eq('professional_id', this._professionalId)
+        .order('date', { ascending: false })
         .limit(limit);
-
+      if (playerId) query = query.eq('player_id', playerId);
+      const { data, error } = await query;
       if (error) throw error;
-
       return data || [];
-    } catch (error) {
-      console.error('Error obteniendo sesiones:', error);
+    } catch (err) {
+      console.error('SupabaseIntegration.getSessions:', err);
       return [];
     }
   },
 
   /**
-   * Obtener sesiones de un atleta específico
+   * Sincronizar sesiones guardadas offline.
+   * Escucha el evento 'orion:syncOffline' emitido por OfflineServiceWorker.
    */
-  async getAthleteSessions(athleteId, limit = 100) {
-    if (!this.currentUser) return [];
-
-    try {
-      const { data, error } = await this.supabase
-        .from('training_sessions')
-        .select('*')
-        .eq('user_id', this.currentUser.id)
-        .eq('athlete_id', athleteId)
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (error) throw error;
-
-      return data || [];
-    } catch (error) {
-      console.error('Error obteniendo sesiones del atleta:', error);
-      return [];
-    }
-  },
-
-  /**
-   * Guardar perfil de atleta
-   */
-  async saveAthlete(athleteData) {
-    if (!this.currentUser) {
-      console.warn('No hay usuario autenticado');
-      return null;
-    }
-
-    try {
-      const { data, error } = await this.supabase
-        .from('athletes')
-        .insert([
-          {
-            user_id: this.currentUser.id,
-            name: athleteData.name,
-            email: athleteData.email,
-            sport: athleteData.sport,
-            position: athleteData.position,
-            dorsal: athleteData.dorsal,
-            birth_date: athleteData.birthDate,
-            gender: athleteData.gender,
-            dominant_hand: athleteData.dominantHand,
-            dominant_foot: athleteData.dominantFoot,
-            notes: athleteData.notes,
-            photo_url: athleteData.photoUrl,
-            created_at: new Date().toISOString()
-          }
-        ])
-        .select();
-
-      if (error) throw error;
-
-      console.log('✓ Atleta guardado en Supabase');
-      return data[0];
-    } catch (error) {
-      console.error('Error guardando atleta:', error);
-      return null;
-    }
-  },
-
-  /**
-   * Obtener todos los atletas del usuario
-   */
-  async getUserAthletes() {
-    if (!this.currentUser) return [];
-
-    try {
-      const { data, error } = await this.supabase
-        .from('athletes')
-        .select('*')
-        .eq('user_id', this.currentUser.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      return data || [];
-    } catch (error) {
-      console.error('Error obteniendo atletas:', error);
-      return [];
-    }
-  },
-
-  /**
-   * Guardar evaluación / test
-   */
-  async saveEvaluation(evaluationData) {
-    if (!this.currentUser) return null;
-
-    try {
-      const { data, error } = await this.supabase
-        .from('evaluations')
-        .insert([
-          {
-            user_id: this.currentUser.id,
-            athlete_id: evaluationData.athlete_id,
-            template_name: evaluationData.template_name,
-            test_type: evaluationData.test_type,
-            values: JSON.stringify(evaluationData.values),
-            notes: evaluationData.notes,
-            created_at: new Date().toISOString()
-          }
-        ])
-        .select();
-
-      if (error) throw error;
-
-      console.log('✓ Evaluación guardada en Supabase');
-      return data[0];
-    } catch (error) {
-      console.error('Error guardando evaluación:', error);
-      return null;
-    }
-  },
-
-  /**
-   * Obtener evaluaciones de un atleta
-   */
-  async getAthleteEvaluations(athleteId) {
-    if (!this.currentUser) return [];
-
-    try {
-      const { data, error } = await this.supabase
-        .from('evaluations')
-        .select('*')
-        .eq('user_id', this.currentUser.id)
-        .eq('athlete_id', athleteId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      return data || [];
-    } catch (error) {
-      console.error('Error obteniendo evaluaciones:', error);
-      return [];
-    }
-  },
-
-  /**
-   * Sincronizar sesiones offline con Supabase
-   */
-  async syncOfflineSessions() {
-    if (!this.currentUser) {
-      console.warn('No hay usuario autenticado, no se puede sincronizar');
-      return;
-    }
-
-    try {
-      const unsynced = await window.OrionImprovements.OfflineStorage.getUnsynedSessions();
-
-      for (const session of unsynced) {
-        const result = await this.saveTrainingSession(session);
-        if (result) {
-          await window.OrionImprovements.OfflineStorage.markSessionSynced(session.id);
+  async syncOfflineSessions(sessions) {
+    if (!this._ready()) return;
+    let synced = 0;
+    for (const session of sessions) {
+      try {
+        const { data: rows, error } = await this._sb
+          .from('sessions')
+          .insert([{
+            player_id:      session.athlete?.id || null,
+            exercise_type:  session.exerciseType || session.type || null,
+            notes:          session.notes        || null,
+            professional_id: this._professionalId,
+            date:           session.timestamp    || new Date().toISOString()
+          }])
+          .select();
+        if (error) throw error;
+        const sid = rows[0].id;
+        if (session.history && session.history.length) {
+          await this._sb.from('results').insert(
+            session.history.map(r => ({ session_id: sid, professional_id: this._professionalId, ...r }))
+          );
         }
+        await window.OrionImprovements.OfflineStorage.markSessionSynced(session.id);
+        synced++;
+      } catch (err) {
+        console.error('Error sincronizando sesión offline:', err);
       }
+    }
+    if (synced > 0) console.log(`✓ ${synced} sesión(es) sincronizada(s) con Supabase`);
+  },
 
-      console.log(`✓ ${unsynced.length} sesiones sincronizadas`);
-      return true;
-    } catch (error) {
-      console.error('Error sincronizando sesiones:', error);
-      return false;
+  // ─── JUGADORES ───────────────────────────────────────────────────────────────
+
+  /**
+   * Obtener jugadores del profesional (usa player_profiles, compatible con Track).
+   */
+  async getPlayers({ clubId = null } = {}) {
+    if (!this._ready()) return [];
+    try {
+      let query = this._sb
+        .from('player_profiles')
+        .select('*')
+        .eq('professional_id', this._professionalId)
+        .order('full_name');
+      if (clubId) query = query.eq('club_id', clubId);
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.error('SupabaseIntegration.getPlayers:', err);
+      return [];
     }
   },
 
+  // ─── ANALYTICS ───────────────────────────────────────────────────────────────
+
   /**
-   * Escuchar cambios en tiempo real (Real-Time Subscriptions)
+   * Calcular estadísticas por jugador basándose en sesiones + results de Supabase.
+   * Devuelve el mismo formato que SessionStats.calculateStats.
+   */
+  async getPlayerStats(playerId) {
+    const sessions = await this.getSessions({ playerId });
+    if (!sessions.length) return null;
+
+    const allResults = sessions.flatMap(s => s.results || []);
+    const times      = allResults.filter(r => r.reaction_ms > 0).map(r => r.reaction_ms / 1000);
+
+    if (!times.length) return null;
+
+    return window.OrionImprovements.SessionStats.calculateStats({
+      reactionTimes: times,
+      results:       allResults.map(r => r.result)
+    });
+  },
+
+  // ─── REAL-TIME ───────────────────────────────────────────────────────────────
+
+  /**
+   * Suscribirse a nuevas sesiones del profesional en tiempo real.
+   * Devuelve la suscripción (llamar .unsubscribe() para cancelar).
    */
   subscribeToSessions(callback) {
-    if (!this.currentUser) return null;
-
-    const subscription = this.supabase
-      .channel(`sessions:${this.currentUser.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'training_sessions',
-          filter: `user_id=eq.${this.currentUser.id}`
-        },
-        (payload) => {
-          console.log('Nueva sesión recibida:', payload.new);
-          callback(payload.new);
-        }
-      )
+    if (!this._ready()) return null;
+    return this._sb
+      .channel(`sessions:${this._professionalId}`)
+      .on('postgres_changes', {
+        event:  'INSERT',
+        schema: 'public',
+        table:  'sessions',
+        filter: `professional_id=eq.${this._professionalId}`
+      }, payload => callback(payload.new))
       .subscribe();
-
-    return subscription;
-  },
-
-  /**
-   * Obtener usuario actual
-   */
-  getCurrentUser() {
-    const stored = localStorage.getItem('supabase_user');
-    return stored ? JSON.parse(stored) : null;
   }
 };
 
-// Auto-inicializar si hay credenciales en localStorage
-window.addEventListener('load', async () => {
-  const supabaseConfig = localStorage.getItem('supabase_config');
-  if (supabaseConfig) {
-    const { apiUrl, apiKey } = JSON.parse(supabaseConfig);
-    await SupabaseIntegration.init(apiUrl, apiKey);
-
-    // Intentar sincronizar sesiones offline
-    window.addEventListener('online', () => {
-      SupabaseIntegration.syncOfflineSessions();
-    });
-  }
+// Escuchar el evento de sync offline
+window.addEventListener('orion:syncOffline', e => {
+  SupabaseIntegration.syncOfflineSessions(e.detail.sessions);
 });
 
 window.OrionImprovements.SupabaseIntegration = SupabaseIntegration;
+console.log('✓ SupabaseIntegration cargado');

@@ -7,12 +7,12 @@ const TrendAnalysis = {
   /**
    * Calcular tendencia linear de una serie
    */
-  calculateLinearTrend(values) {
+  calculateLinearTrend(values, lowerIsBetter = false) {
     if (values.length < 2) return null;
 
     const n = values.length;
     const xValues = Array.from({ length: n }, (_, i) => i);
-    
+
     const sumX = xValues.reduce((a, b) => a + b, 0);
     const sumY = values.reduce((a, b) => a + b, 0);
     const sumXY = xValues.reduce((sum, x, i) => sum + x * values[i], 0);
@@ -21,10 +21,15 @@ const TrendAnalysis = {
     const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
     const intercept = (sumY - slope * sumX) / n;
 
+    // Para tiempos de reacción: bajar = mejorar (lowerIsBetter=true)
+    // Para precisión: subir = mejorar (lowerIsBetter=false)
+    const improving = lowerIsBetter ? slope < -0.001 : slope > 0.001;
+    const worsening = lowerIsBetter ? slope > 0.001  : slope < -0.001;
+
     return {
       slope: slope.toFixed(6),
       intercept: intercept.toFixed(3),
-      trend: slope > 0.001 ? 'mejora' : slope < -0.001 ? 'empeora' : 'estable',
+      trend: improving ? 'mejora' : worsening ? 'empeora' : 'estable',
       confidence: Math.abs(slope) * 100
     };
   },
@@ -59,8 +64,8 @@ const TrendAnalysis = {
     const times = stats.map(s => parseFloat(s.average));
     const accuracies = stats.map(s => parseFloat(s.accuracy));
 
-    const timeTrend = this.calculateLinearTrend(times);
-    const accuracyTrend = this.calculateLinearTrend(accuracies);
+    const timeTrend = this.calculateLinearTrend(times, true);       // bajar tiempo = mejorar
+    const accuracyTrend = this.calculateLinearTrend(accuracies, false); // subir precisión = mejorar
 
     // Calcular mejora porcentual
     const firstTime = times[0];
@@ -170,7 +175,7 @@ const TrendAnalysis = {
         avgAccuracy: avgAccuracy.toFixed(1),
         bestTime: bestTime.toFixed(3),
         bestAccuracy: bestAccuracy.toFixed(1),
-        trend: this.calculateLinearTrend(stats.map(s => parseFloat(s.average))).trend
+        trend: this.calculateLinearTrend(stats.map(s => parseFloat(s.average)), true).trend
       };
     }
 
@@ -345,7 +350,10 @@ const TrendAnalysis = {
     const minTime = Math.min(...avgTimes);
     const maxTime = Math.max(...avgTimes);
     
-    const speedScore = 100 - ((stats[stats.length - 1].average - minTime) / (maxTime - minTime) * 100);
+    const range = maxTime - minTime;
+    const speedScore = range > 0
+      ? 100 - ((parseFloat(stats[stats.length - 1].average) - minTime) / range * 100)
+      : 100;
     const accuracyScore = parseFloat(stats[stats.length - 1].accuracy);
     const consistencyScore = 100 - (parseFloat(stats[stats.length - 1].stdDev) / 0.2 * 100);
 
