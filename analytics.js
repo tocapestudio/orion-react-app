@@ -279,8 +279,8 @@ const TrendAnalysis = {
       datasets: [{
         label: 'Tiempo Promedio (s)',
         data: stats.map(s => s.avgTime),
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderColor: '#00D9FF',
+        backgroundColor: 'rgba(0,217,255,0.08)',
         borderWidth: 2,
         fill: true,
         tension: 0.4
@@ -326,7 +326,7 @@ const TrendAnalysis = {
         {
           label: 'Tiempo Promedio (s)',
           data: Object.values(analysis).map(v => parseFloat(v.avgTime)),
-          backgroundColor: '#3b82f6'
+          backgroundColor: '#00D9FF'
         },
         {
           label: 'Precisión (%)',
@@ -366,8 +366,8 @@ const TrendAnalysis = {
           accuracyScore,
           Math.max(0, Math.min(100, consistencyScore))
         ],
-        borderColor: '#06b6d4',
-        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+        borderColor: '#00D9FF',
+        backgroundColor: 'rgba(0,217,255,0.12)',
         borderWidth: 2
       }]
     };

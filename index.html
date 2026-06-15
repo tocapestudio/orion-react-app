@@ -11,31 +11,31 @@
   <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap');
-
     :root {
-      --bg:        #080c12;
-      --bg2:       #0d1420;
-      --bg3:       #111d2e;
-      --border:    rgba(99,179,255,0.10);
-      --border2:   rgba(99,179,255,0.18);
-      --text:      #e8f0fb;
-      --muted:     #5a7a9a;
-      --accent:    #3b82f6;
-      --accent2:   #06b6d4;
-      --success:   #22d3a0;
-      --warning:   #f59e0b;
-      --danger:    #ef4444;
-      --glow:      0 0 40px rgba(59,130,246,0.15);
-      font-family: 'Space Grotesk', sans-serif;
+      --bg:        #0D1117;
+      --bg2:       #1C2128;
+      --bg3:       #21262D;
+      --border:    #30363D;
+      --border2:   #30363D;
+      --text:      #E6EDF3;
+      --muted:     #8B949E;
+      --muted2:    #6E7681;
+      --accent:    #00D9FF;
+      --accent2:   #00FFA3;
+      --success:   #3FB950;
+      --warning:   #D29922;
+      --danger:    #FF5252;
+      --info:      #58A6FF;
+      --glow:      0 0 40px rgba(0,217,255,0.15);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { min-height: 100%; background: var(--bg); color: var(--text); overscroll-behavior: none; }
     body {
       background-image:
-        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(59,130,246,0.12), transparent),
-        radial-gradient(ellipse 50% 30% at 90% 80%, rgba(6,182,212,0.06), transparent);
+        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,217,255,0.07), transparent),
+        radial-gradient(ellipse 50% 30% at 90% 80%, rgba(0,255,163,0.04), transparent);
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
@@ -54,9 +54,9 @@
       position: sticky; top: 0; z-index: 100;
     }
     .logo {
-      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+      font-size: 1.3rem; font-weight: 800;
       letter-spacing: -0.02em;
-      background: linear-gradient(120deg, #fff 30%, var(--accent2));
+      background: linear-gradient(120deg, #fff 20%, var(--accent));
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -65,7 +65,7 @@
     .bt-status {
       display: flex; align-items: center; gap: 8px; padding: 8px 14px;
       border-radius: 999px; border: 1px solid var(--border2); background: var(--bg2);
-      font-size: 0.82rem; font-family: 'DM Mono', monospace; color: var(--muted);
+      font-size: 0.82rem; font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; color: var(--muted);
       cursor: pointer; transition: all .2s;
     }
     .bt-status:hover { border-color: var(--accent); color: var(--text); }
@@ -105,7 +105,7 @@
 
     /* CARDS */
     .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 14px; }
-    .card-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .card-title { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
     .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
 
     /* EXERCISE LIST */
@@ -124,16 +124,16 @@
       padding: 14px 24px; border-radius: 14px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #fff; font-weight: 600; font-size: 0.95rem;
-      transition: all .2s; box-shadow: 0 4px 20px rgba(59,130,246,0.25);
+      transition: all .2s; box-shadow: 0 4px 20px rgba(0,217,255,0.25);
     }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(59,130,246,0.35); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,217,255,0.35); }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     .btn-save {
-      background: linear-gradient(135deg, #0f2150, #1a3a8f) !important;
-      border: 1px solid rgba(255,255,255,0.35) !important;
-      box-shadow: 0 4px 16px rgba(15,33,80,0.4) !important;
+      background: linear-gradient(135deg, rgba(0,217,255,0.15), rgba(0,217,255,0.25)) !important;
+      border: 1px solid rgba(0,217,255,0.4) !important;
+      box-shadow: 0 4px 16px rgba(0,217,255,0.15) !important;
     }
-    .btn-save:hover { box-shadow: 0 6px 24px rgba(15,33,80,0.55) !important; border-color: rgba(255,255,255,0.6) !important; }
+    .btn-save:hover { box-shadow: 0 6px 24px rgba(0,217,255,0.3) !important; border-color: rgba(0,217,255,0.7) !important; }
     .btn-secondary {
       padding: 12px 20px; border-radius: 14px; background: var(--bg3);
       color: var(--text); font-weight: 500; font-size: 0.9rem;
@@ -147,9 +147,9 @@
     }
     .btn-home {
       padding: 10px 16px; border-radius: 14px;
-      background: #dbeafe;
-      color: #1e3a8a;
-      border: 1px solid #93c5fd;
+      background: rgba(0,217,255,0.1);
+      color: #00D9FF;
+      border: 1px solid rgba(0,217,255,0.3);
       font-weight: 700;
       font-size: 0.9rem;
       display: inline-flex;
@@ -158,8 +158,8 @@
       transition: background .2s, border-color .2s, transform .2s;
     }
     .btn-home:hover {
-      background: #bfdbfe;
-      border-color: #60a5fa;
+      background: rgba(0,217,255,0.18);
+      border-color: rgba(0,217,255,0.6);
       transform: translateY(-1px);
     }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
@@ -177,13 +177,13 @@
     .field input[type=range] { padding: 0; height: 36px; accent-color: var(--accent); }
     .field-row { display: flex; gap: 10px; }
     .field-row .field { flex: 1; }
-    .slider-val { font-family: 'DM Mono', monospace; font-size: 0.9rem; color: var(--accent); float: right; }
+    .slider-val { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; font-size: 0.9rem; color: var(--accent); float: right; }
 
     /* STEPPER (number + − +) */
     .stepper { display:flex; align-items:center; gap:0; border:1px solid var(--border2); border-radius:12px; overflow:hidden; background:var(--bg3); }
     .stepper-btn { background:none; border:none; color:var(--accent); font-size:1.25rem; width:40px; height:40px; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .stepper-btn:active { background:var(--bg2); }
-    .stepper input[type=number] { background:none; border:none; color:var(--text); font-family:'DM Mono',monospace; font-size:1rem; text-align:center; width:40px; appearance:textfield; -moz-appearance:textfield; padding:0; }
+    .stepper input[type=number] { background:none; border:none; color:var(--text); font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; font-size:1rem; text-align:center; width:40px; appearance:textfield; -moz-appearance:textfield; padding:0; }
     .stepper input[type=number]::-webkit-inner-spin-button,
     .stepper input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
     .stepper input[type=number]:focus { outline:none; }
@@ -236,12 +236,12 @@
     /* STATS */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-bottom: 14px; }
     .stat-tile { background: var(--bg3); border: 1px solid var(--border); border-radius: 14px; padding: 14px; text-align: center; }
-    .stat-tile .val { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+    .stat-tile .val { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; font-size: 1.6rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
     .stat-tile .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
     /* MINI-LOG */
     .mini-log { display:flex; flex-direction:column-reverse; gap:4px; }
-    .mini-log-entry { display:flex; justify-content:space-between; align-items:center; padding:5px 12px; border-radius:8px; font-size:0.78rem; font-family:'DM Mono',monospace; }
+    .mini-log-entry { display:flex; justify-content:space-between; align-items:center; padding:5px 12px; border-radius:8px; font-size:0.78rem; font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; }
     .mini-log-entry.ok   { background:rgba(34,197,94,0.10);  color:#22c55e; }
     .mini-log-entry.miss { background:rgba(239,68,68,0.10);  color:var(--danger); }
     .mini-log-entry .ml-time { opacity:.7; }
@@ -254,7 +254,7 @@
     }
     .live-display::before {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.08), transparent);
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,217,255,0.08), transparent);
       pointer-events: none;
     }
     .stroop-stimulus {
@@ -275,8 +275,8 @@
       justify-content: center;
       text-align: center;
     }
-    .live-node { font-family: 'Syne', sans-serif; font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 8px; }
-    .live-time { font-family: 'DM Mono', monospace; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
+    .live-node { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .live-time { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; font-size: 1.4rem; color: var(--text); margin-bottom: 4px; }
     .live-hint { font-size: 0.82rem; color: var(--muted); }
 
     /* SESSION PROGRESS BAR */
@@ -286,7 +286,7 @@
       border-radius: 2px;
       width: 0%;
       transition: width 0.45s cubic-bezier(.4,0,.2,1);
-      box-shadow: 0 0 10px rgba(59,130,246,0.55);
+      box-shadow: 0 0 10px rgba(0,217,255,0.55);
       margin-bottom: 22px;
     }
 
@@ -303,9 +303,9 @@
       gap: 7px;
       padding: 6px 18px;
       border-radius: 999px;
-      border: 1.5px solid rgba(59,130,246,0.3);
-      background: rgba(59,130,246,0.07);
-      font-family: 'DM Mono', monospace;
+      border: 1.5px solid rgba(0,217,255,0.3);
+      background: rgba(0,217,255,0.07);
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--accent);
@@ -315,13 +315,13 @@
     #liveNode.waiting span {
       border-color: var(--accent2);
       color: var(--accent2);
-      background: rgba(6,182,212,0.08);
+      background: rgba(0,217,255,0.08);
       animation: nodeRipple 1.6s ease-out infinite;
     }
     @keyframes nodeRipple {
-      0%   { box-shadow: 0 0 0 0   rgba(6,182,212,0.5); }
-      70%  { box-shadow: 0 0 0 13px rgba(6,182,212,0);   }
-      100% { box-shadow: 0 0 0 0   rgba(6,182,212,0);   }
+      0%   { box-shadow: 0 0 0 0   rgba(0,217,255,0.5); }
+      70%  { box-shadow: 0 0 0 13px rgba(0,217,255,0);   }
+      100% { box-shadow: 0 0 0 0   rgba(0,217,255,0);   }
     }
 
     /* NODE CHIPS */
@@ -329,7 +329,7 @@
     .node-chip {
       display: flex; align-items: center; gap: 6px; padding: 8px 14px;
       border-radius: 10px; background: var(--bg3); border: 1px solid var(--border);
-      font-size: 0.82rem; font-family: 'DM Mono', monospace; transition: all .2s;
+      font-size: 0.82rem; font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; transition: all .2s;
     }
     .node-chip.connected { border-color: var(--success); color: var(--success); }
     .node-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
@@ -342,7 +342,7 @@
       border: 1px solid var(--border); min-width: 140px;
     }
     .node-card-header { display: flex; align-items: center; justify-content: space-between; }
-    .node-id { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+    .node-id { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--accent); }
     .node-status { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
     .node-battery { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
     .battery-bar {
@@ -393,7 +393,7 @@
       .section-header .section-title { order: -1; width: 100%; text-align: center; margin-bottom: 2px; }
     }
     .section-title {
-      font-family: 'Syne', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 1.1rem;
       font-weight: 800;
       display: flex;
@@ -436,10 +436,10 @@
     .home-grid-main { grid-template-columns: 1fr; }
     .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
     .home-grid-main .home-button span { font-size: 1.1rem; }
-    .home-btn-exercises { border-color: #22d3ee !important; }
-    .home-btn-exercises:hover { border-color: #22d3ee !important; box-shadow: 0 0 18px rgba(34,211,238,0.25) !important; }
-    .home-btn-data { border-color: #1d4ed8 !important; }
-    .home-btn-data:hover { border-color: #3b82f6 !important; box-shadow: 0 0 18px rgba(29,78,216,0.3) !important; }
+    .home-btn-exercises { border-color: #00D9FF !important; }
+    .home-btn-exercises:hover { border-color: #00D9FF !important; box-shadow: 0 0 18px rgba(0,217,255,0.25) !important; }
+    .home-btn-data { border-color: rgba(0,217,255,0.5) !important; }
+    .home-btn-data:hover { border-color: #00D9FF !important; box-shadow: 0 0 18px rgba(0,217,255,0.3) !important; }
     .home-btn-config { border-color: var(--border2) !important; color: var(--muted) !important; background: var(--bg2) !important; }
     .home-btn-config:hover { border-color: var(--border2) !important; box-shadow: none !important; color: var(--text) !important; }
     @media (min-width: 1024px) {
@@ -459,7 +459,7 @@
     /* CREATE — MODO TABS */
     .mode-tabs { display:flex; gap:0; background:var(--bg3); border:1px solid var(--border2); border-radius:14px; padding:4px; margin-bottom:20px; }
     .mode-tab { flex:1; padding:10px 16px; border-radius:10px; background:transparent; color:var(--muted); font-size:0.88rem; font-weight:600; border:none; cursor:pointer; transition:all .2s; letter-spacing:0.01em; }
-    .mode-tab.active { background:var(--accent); color:#fff; box-shadow:0 2px 12px rgba(59,130,246,0.3); }
+    .mode-tab.active { background:var(--accent); color:#fff; box-shadow:0 2px 12px rgba(0,217,255,0.3); }
     .mode-tab:not(.active):hover { color:var(--text); background:var(--bg2); }
 
     /* CREATE — EXERCISE CARDS */
@@ -476,7 +476,7 @@
     .form-header { display:flex; align-items:center; gap:12px; padding-bottom:16px; margin-bottom:20px; border-bottom:1px solid var(--border); }
     .form-header-back { width:34px; height:34px; border-radius:10px; background:var(--bg3); border:1px solid var(--border2); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; flex-shrink:0; }
     .form-header-back:hover { color:var(--text); border-color:var(--accent); }
-    .form-header-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; }
+    .form-header-title { font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size:1.05rem; font-weight:700; }
     .form-header-sub { font-size:0.78rem; color:var(--muted); margin-top:1px; }
 
     /* CREATE — FIELD SECTIONS */
@@ -511,7 +511,7 @@
       padding: 24px; width: 100%; max-width: 480px; animation: slideUp .25s ease;
     }
     @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:none;opacity:1} }
-    .modal-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
+    .modal-title { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
 
     /* TOAST */
     .toast {
@@ -580,13 +580,13 @@
       width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);
       cursor: pointer; transition: all .2s;
     }
-    .color-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.3); }
+    .color-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,217,255,0.3); }
     .color-red { background: #ef4444; }
     .color-green { background: #22d3a0; }
-    .color-blue { background: #3b82f6; }
+    .color-blue { background: #00D9FF; }
     .color-yellow { background: #f59e0b; }
     .color-white { background: #e8f0fb; }
-    .color-cyan { background: #06b6d4; }
+    .color-cyan { background: #00D9FF; }
     /* START BAR */
     body.has-start-bar .page { padding-bottom: 88px; }
     @media (max-width: 600px) {
@@ -618,8 +618,8 @@
       display: none; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
     }
     #countdownNumber {
-      font-family: 'DM Mono', monospace; font-size: 9rem; font-weight: 700;
-      color: var(--accent); line-height: 1; text-shadow: 0 0 40px rgba(59,130,246,0.5);
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; font-size: 9rem; font-weight: 700;
+      color: var(--accent); line-height: 1; text-shadow: 0 0 40px rgba(0,217,255,0.5);
     }
 
     /* RESPONSIVE: tablet & desktop wider layout */
@@ -771,7 +771,7 @@
             <div class="form-header-title">Predeterminados</div>
           </div>
           <div class="ex-card" onclick="openExerciseConfig('flash')">
-            <div class="ex-card-icon" style="background:rgba(59,130,246,0.12);color:var(--accent);">
+            <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <div class="ex-card-body">
@@ -801,7 +801,7 @@
             <span class="ex-card-arrow">›</span>
           </div>
           <div class="ex-card" onclick="openExerciseConfig('discrimination')">
-            <div class="ex-card-icon" style="background:rgba(6,182,212,0.12);color:var(--accent2);">
+            <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent2);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             </div>
             <div class="ex-card-body">
@@ -1643,17 +1643,17 @@
 
         <!-- Hint -->
         <div id="liveHint" style="text-align:center;font-size:0.9rem;font-weight:600;color:var(--muted);letter-spacing:0.04em;margin-bottom:18px;">Preparando...</div>
-        <div id="screenProgress" style="display:none;text-align:center;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:18px;font-family:'DM Mono',monospace;letter-spacing:0.06em;"></div>
+        <div id="screenProgress" style="display:none;text-align:center;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:18px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;letter-spacing:0.06em;"></div>
         <div class="stroop-stimulus" id="stroopScreen"></div>
 
         <!-- Fila 1: Media + Mejor — 2 tiles grandes -->
         <div id="statsRow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
           <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:18px;padding:22px 12px;text-align:center;">
-            <span id="statAvg" style="font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:700;color:var(--text);display:block;line-height:1;margin-bottom:6px;">--</span>
+            <span id="statAvg" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:2.4rem;font-weight:700;color:var(--text);display:block;line-height:1;margin-bottom:6px;">--</span>
             <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Media s</span>
           </div>
           <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:18px;padding:22px 12px;text-align:center;">
-            <span id="statBest" style="font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:700;color:var(--accent);display:block;line-height:1;margin-bottom:6px;">--</span>
+            <span id="statBest" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:2.4rem;font-weight:700;color:var(--accent);display:block;line-height:1;margin-bottom:6px;">--</span>
             <span style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Mejor s</span>
           </div>
         </div>
@@ -1661,19 +1661,19 @@
         <!-- Fila 2: Progreso · Sesión · Actual — 3 tiles compactos -->
         <div id="statsRowBottom" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
           <div style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
-            <span id="statProgress" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0/0</span>
+            <span id="statProgress" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0/0</span>
             <span id="statProgressLbl" style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Progreso</span>
           </div>
           <div id="statElapsedTile" style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
-            <span id="statElapsed" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0:00</span>
+            <span id="statElapsed" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0:00</span>
             <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Sesión</span>
           </div>
           <div id="liveTimeTile" style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
-            <span id="liveTime" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">-- s</span>
+            <span id="liveTime" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">-- s</span>
             <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Actual</span>
           </div>
           <div id="statCompleteTile" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;">
-            <span id="statComplete" style="font-family:'DM Mono',monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0</span>
+            <span id="statComplete" style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:1.15rem;font-weight:600;color:var(--text);display:block;margin-bottom:5px;">0</span>
             <span style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;">Hechas</span>
           </div>
         </div>
@@ -1741,7 +1741,7 @@
         <!-- Lista de tipos -->
         <div id="quickModeList">
           <div class="ex-card" onclick="expandQuickForm('flash')">
-            <div class="ex-card-icon" style="background:rgba(59,130,246,0.12);color:var(--accent);">
+            <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <div class="ex-card-body">
@@ -1771,7 +1771,7 @@
             <span class="ex-card-arrow">›</span>
           </div>
           <div class="ex-card" onclick="expandQuickForm('discrimination')">
-            <div class="ex-card-icon" style="background:rgba(6,182,212,0.12);color:var(--accent2);">
+            <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent2);">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             </div>
             <div class="ex-card-body">
@@ -2445,7 +2445,7 @@
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             <span>Todos los jugadores</span>
           </div>
-          <span id="allPlayersCount" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:3px 10px;font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;">0</span>
+          <span id="allPlayersCount" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:3px 10px;font-size:0.78rem;color:var(--muted);font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">0</span>
         </button>
 
         <div class="clubs-grid" id="clubsGrid"></div>
@@ -2500,11 +2500,11 @@
         <div class="profile-header">
           <div class="profile-avatar" id="profileAvatar"></div>
           <div style="flex:1;min-width:0;">
-            <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;line-height:1.2;" id="profileName">—</div>
+            <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:1.1rem;font-weight:800;line-height:1.2;" id="profileName">—</div>
             <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;" id="profileClubSport"></div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
-              <span style="font-family:'DM Mono',monospace;font-size:0.75rem;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:3px 8px;color:var(--muted);" id="profileCode"></span>
-              <span style="font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;" id="profileDorsal"></span>
+              <span style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.75rem;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:3px 8px;color:var(--muted);" id="profileCode"></span>
+              <span style="font-size:0.78rem;color:var(--muted);font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;" id="profileDorsal"></span>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
@@ -4342,7 +4342,7 @@
         return `<tr>
           <td>${r.repetition}</td>
           <td style="color:var(--muted);">${r.shape || '—'}</td>
-          <td style="font-family:'DM Mono',monospace;">${tStr}</td>
+          <td style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">${tStr}</td>
           <td><span class="badge ${r.result}" style="font-size:0.7rem;padding:2px 8px;">${r.result==='ok'?'OK':'Miss'}</span></td>
         </tr>`;
       }).join('');
@@ -4760,7 +4760,7 @@
         entry.style.cssText = 'padding:6px 10px;background:var(--bg2);border-radius:6px;font-size:0.82rem;display:flex;align-items:center;gap:8px;';
         statusList.appendChild(entry);
       }
-      entry.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;animation:pulse 1.2s infinite;flex-shrink:0;"></span><span style="color:var(--text);font-weight:500;">Nodo ${data.node_id}</span><span style="color:var(--muted);">${hostname} &nbsp;·&nbsp; ${ip}</span>`;
+      entry.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#00D9FF;display:inline-block;animation:pulse 1.2s infinite;flex-shrink:0;"></span><span style="color:var(--text);font-weight:500;">Nodo ${data.node_id}</span><span style="color:var(--muted);">${hostname} &nbsp;·&nbsp; ${ip}</span>`;
       statusList.style.display = 'flex';
 
       // Añadir comando PlatformIO si no estaba ya
@@ -6278,8 +6278,8 @@
       swimming: 'Natación', combat: 'Combate'
     };
     const PROFILE_TAB_COLORS = {
-      resumen:       { bg: 'rgba(6,182,212,0.18)',   color: '#06b6d4' },
-      evaluaciones:  { bg: 'rgba(6,182,212,0.18)',   color: '#06b6d4' },
+      resumen:       { bg: 'rgba(0,217,255,0.18)',   color: '#00D9FF' },
+      evaluaciones:  { bg: 'rgba(0,217,255,0.18)',   color: '#00D9FF' },
       entrenamiento: { bg: 'rgba(34,197,94,0.18)',   color: '#22c55e' },
       notas:         { bg: 'rgba(245,158,11,0.18)',  color: '#f59e0b' },
       historial:     { bg: 'rgba(139,92,246,0.18)',  color: '#8b5cf6' },
@@ -6320,7 +6320,7 @@
       }
       if (empty) empty.style.display = 'none';
       grid.innerHTML = state.clubs.map(club => {
-        const color      = SPORT_COLORS[club.sport] || '#3b82f6';
+        const color      = SPORT_COLORS[club.sport] || '#00D9FF';
         const sportLabel = SPORT_LABELS[club.sport]  || club.sport || '—';
         const cnt = state.athletes.filter(a => a.club_id === club.id).length;
         const cat  = club.category ? `<div style="font-size:0.72rem;color:var(--muted);margin-top:1px;">${club.category}</div>` : '';
@@ -6328,10 +6328,10 @@
         return `
           <div class="club-card" onclick="openClub('${club.id}')">
             <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 40px 40px 0;border-color:transparent ${color} transparent transparent;"></div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:6px;padding-right:28px;line-height:1.2;">${club.name}</div>
+            <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:6px;padding-right:28px;line-height:1.2;">${club.name}</div>
             <div style="font-size:0.75rem;color:var(--muted);">${sportLabel}</div>
             ${cat}${liga}
-            <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);font-family:'DM Mono',monospace;">${cnt} jugador${cnt!==1?'es':''}</div>
+            <div style="margin-top:12px;font-size:0.78rem;color:var(--muted);font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">${cnt} jugador${cnt!==1?'es':''}</div>
           </div>`;
       }).join('');
     }
@@ -6382,13 +6382,13 @@
       }
       el.innerHTML = players.map(p => {
         const club  = state.clubs.find(c => c.id === p.club_id);
-        const color = SPORT_COLORS[club?.sport] || '#3b82f6';
+        const color = SPORT_COLORS[club?.sport] || '#00D9FF';
         const initials = (p.full_name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
         const avatar = p.profile_image
           ? `<img src="${p.profile_image}" alt="" />`
           : `<span style="color:#fff;">${initials}</span>`;
         const sub = [club?.name, p.position].filter(Boolean).join(' · ');
-        const dorsalTag = p.dorsal ? `<span style="margin-left:6px;font-family:'DM Mono',monospace;font-size:0.76rem;color:var(--muted);">#${p.dorsal}</span>` : '';
+        const dorsalTag = p.dorsal ? `<span style="margin-left:6px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.76rem;color:var(--muted);">#${p.dorsal}</span>` : '';
         const bv = backView || currentDataView;
         return `
           <div class="player-row" onclick="openPlayerProfile('${p.id}','${bv}')">
@@ -6427,7 +6427,7 @@
       profileBackView = backView || 'clubs';
 
       const club  = state.clubs.find(c => c.id === currentPlayer.club_id);
-      const color = SPORT_COLORS[club?.sport] || '#3b82f6';
+      const color = SPORT_COLORS[club?.sport] || '#00D9FF';
       const sport = SPORT_LABELS[club?.sport]  || club?.sport || '';
       const initials = (currentPlayer.full_name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
 
@@ -6467,8 +6467,8 @@
           btn.classList.toggle('active', active);
           if (active) {
             const tc = PROFILE_TAB_COLORS[t] || {};
-            btn.style.background = tc.bg    || 'rgba(59,130,246,0.18)';
-            btn.style.color      = tc.color || '#3b82f6';
+            btn.style.background = tc.bg    || 'rgba(0,217,255,0.18)';
+            btn.style.color      = tc.color || '#00D9FF';
           } else {
             btn.style.background = '';
             btn.style.color = '';
@@ -6651,7 +6651,7 @@
           <div class="notes-item">
             <div style="font-size:0.9rem;line-height:1.6;margin-bottom:10px;">${(n.content||n.text||'').replace(/\n/g,'<br>')}</div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;">${date}</span>
+              <span style="font-size:0.72rem;color:var(--muted);font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">${date}</span>
               <button onclick="deleteNote('${n.id}')" style="background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;font-family:inherit;">Eliminar</button>
             </div>
           </div>`;
