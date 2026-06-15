@@ -438,10 +438,10 @@
     .home-grid-main .home-button span { font-size: 1.1rem; }
     .home-btn-exercises { border-color: #00D9FF !important; }
     .home-btn-exercises:hover { border-color: #00D9FF !important; box-shadow: 0 0 18px rgba(0,217,255,0.25) !important; }
-    .home-btn-data { border-color: #30363D !important; color: var(--muted) !important; }
-    .home-btn-data:hover { border-color: #484F58 !important; box-shadow: none !important; color: var(--text) !important; }
-    .home-btn-config { border-color: #30363D !important; color: var(--muted) !important; background: var(--bg2) !important; }
-    .home-btn-config:hover { border-color: #484F58 !important; box-shadow: none !important; color: var(--text) !important; }
+    .home-btn-data { border-color: rgba(59,130,246,0.5) !important; color: #60a5fa !important; }
+    .home-btn-data:hover { border-color: #3b82f6 !important; box-shadow: 0 0 18px rgba(59,130,246,0.25) !important; color: #93c5fd !important; }
+    .home-btn-config { border-color: rgba(255,255,255,0.22) !important; color: rgba(255,255,255,0.55) !important; background: var(--bg2) !important; }
+    .home-btn-config:hover { border-color: rgba(255,255,255,0.5) !important; box-shadow: 0 0 18px rgba(255,255,255,0.1) !important; color: #fff !important; }
     @media (min-width: 1024px) {
       .home-grid-main { grid-template-columns: 5fr 5fr 3fr; }
       .home-grid-main .home-button { min-height: 300px; flex-direction: column; justify-content: center; padding: 32px 18px; }
@@ -770,9 +770,10 @@
             <button class="form-header-back" onclick="showExCategory(null)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
             <div class="form-header-title">Predeterminados</div>
           </div>
+          <!-- Reacción Flash: rayo = velocidad de reacción pura -->
           <div class="ex-card" onclick="openExerciseConfig('flash')">
             <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Reacción Flash</div>
@@ -780,9 +781,10 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Par / Impar: bifurcación = decisión binaria -->
           <div class="ex-card" onclick="openExerciseConfig('parimpar')">
-            <div class="ex-card-icon" style="background:rgba(34,211,160,0.12);color:var(--success);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3m0 0V4m0 3v3M17 4l-5 5m0 0l5 5m-5-5h7"/></svg>
+            <div class="ex-card-icon" style="background:rgba(52,211,153,0.12);color:#34d399;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="12"/><line x1="12" y1="12" x2="5" y2="5"/><line x1="12" y1="12" x2="19" y2="5"/><circle cx="5" cy="4" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="4" r="2" fill="currentColor" stroke="none"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Par / Impar</div>
@@ -790,9 +792,10 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Stroop: ojo = ver e interpretar (color vs palabra) -->
           <div class="ex-card" onclick="openExerciseConfig('stroop')">
-            <div class="ex-card-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+            <div class="ex-card-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Stroop</div>
@@ -800,9 +803,10 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Discriminación: diana = encontrar el objetivo entre distractores -->
           <div class="ex-card" onclick="openExerciseConfig('discrimination')">
-            <div class="ex-card-icon" style="background:rgba(0,217,255,0.12);color:var(--accent2);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            <div class="ex-card-icon" style="background:rgba(56,189,248,0.12);color:#38bdf8;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Discriminación</div>
@@ -810,9 +814,10 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Se Busca: lupa con estrella = identificar la forma idéntica -->
           <div class="ex-card" onclick="openExerciseConfig('patterndisc')">
-            <div class="ex-card-icon" style="background:rgba(168,85,247,0.12);color:#a855f7;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <div class="ex-card-icon" style="background:rgba(167,139,250,0.12);color:#a78bfa;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/><line x1="10" y1="7" x2="10" y2="13"/><line x1="7" y1="10" x2="13" y2="10"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Se Busca</div>
@@ -820,9 +825,10 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Simón dice: secuencia de cuadros iluminados = memorizar orden -->
           <div class="ex-card" onclick="openExerciseConfig('simon')">
-            <div class="ex-card-icon" style="background:rgba(249,115,22,0.12);color:#f97316;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="2"/><rect x="14" y="2" width="8" height="8" rx="2"/><rect x="2" y="14" width="8" height="8" rx="2"/><rect x="14" y="14" width="8" height="8" rx="2"/></svg>
+            <div class="ex-card-icon" style="background:rgba(251,146,60,0.12);color:#fb923c;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor" stroke="none"/></svg>
             </div>
             <div class="ex-card-body">
               <div class="ex-card-title">Simón dice</div>
