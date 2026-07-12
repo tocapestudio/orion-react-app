@@ -4368,8 +4368,15 @@
 
     // AUTH
     function resolveProfessionalId(user) {
-      // Track guarda el professional_id en user_metadata si la tabla professionals no está expuesta en la API
-      return user.user_metadata?.professional_id || user.id;
+      const candidates = [
+        user?.user_metadata?.professional_id,
+        user?.user_metadata?.professionalId,
+        user?.app_metadata?.professional_id,
+        user?.app_metadata?.professionalId,
+        user?.id
+      ];
+      const resolved = candidates.find(v => v != null && v !== '');
+      return resolved || null;
     }
 
     async function initAuth() {
