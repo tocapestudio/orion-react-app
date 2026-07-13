@@ -108,6 +108,10 @@
     .card-title { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
     .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
 
+    /* EMPTY STATES */
+    .empty-state { text-align: center; padding: 28px 16px; color: var(--muted); font-size: 0.85rem; }
+    .empty-state svg { width: 30px; height: 30px; margin: 0 auto 10px; display: block; opacity: 0.45; }
+
     /* EXERCISE LIST */
     .ex-item {
       display: flex; align-items: center; justify-content: space-between;
@@ -2587,7 +2591,10 @@
             <button class="btn-danger" style="padding:6px 12px;font-size:0.8rem;" onclick="disconnectAll()">Desconectar todos</button>
           </div>
           <div id="connectedNodesList" class="nodes-grid">
-            <div style="color:var(--muted);font-size:0.85rem;grid-column:1/-1;">Sin nodos conectados</div>
+            <div class="empty-state" style="grid-column:1/-1;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+              <div>Sin nodos conectados</div>
+            </div>
           </div>
         </div>
 
@@ -3011,6 +3018,19 @@
 
     // ESTADO
     function msToS(ms) { return (ms / 1000).toFixed(3); }
+    const EMPTY_ICONS = {
+      node:     '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>',
+      person:   '<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>',
+      list:     '<path d="M4 6h16M4 12h16M4 18h16"/>',
+      lightning:'<path d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+      note:     '<path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/>',
+    };
+    function emptyState(icon, text) {
+      return `<div class="empty-state" style="grid-column:1/-1;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${EMPTY_ICONS[icon] || ''}</svg>
+        <div>${text}</div>
+      </div>`;
+    }
     function setLiveNode(text) {
       const el = document.getElementById('liveNode');
       if (!el) return;
@@ -3325,7 +3345,7 @@
       if (!container) return;
 
       if (state.bleNodes.length === 0) {
-        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;grid-column:1/-1;">Sin nodos conectados</div>';
+        container.innerHTML = emptyState('node', 'Sin nodos conectados');
       } else {
         container.innerHTML = state.bleNodes.map((bleNode, index) => {
           const nodeId = bleNode.nodeId || '?';
@@ -4288,7 +4308,7 @@
 
     function renderDataSessions(sessions, container) {
       if (!sessions.length) {
-        container.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:32px;">Sin sesiones guardadas</div>`;
+        container.innerHTML = emptyState('list', 'Sin sesiones guardadas');
         return;
       }
       container.innerHTML = sessions.map(s => {
@@ -4330,7 +4350,7 @@
     }
 
     function renderSessionDetail(results) {
-      if (!results.length) return `<div style="color:var(--muted);font-size:0.82rem;text-align:center;">Sin resultados registrados</div>`;
+      if (!results.length) return emptyState('list', 'Sin resultados registrados');
       const times = results.map(r => r.sprint_ms ?? r.end_reaction_ms ?? r.reaction_ms).filter(t => t != null && t > 0);
       const hits   = results.filter(r => r.result === 'ok').length;
       const misses = results.length - hits;
@@ -4476,7 +4496,7 @@
       const list = document.getElementById('athletesList');
       if (!list) return;
       const html = !state.athletes.length
-        ? `<div style="color:var(--muted);font-size:0.85rem;margin-bottom:10px;">Sin jugadores añadidos.</div>`
+        ? emptyState('person', 'Sin jugadores añadidos.')
         : state.athletes.map(a => {
             const club = state.clubs.find(c => c.id === a.club_id);
             const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
@@ -4508,7 +4528,7 @@
             </div>
             <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
           </div>`;
-      }).join('') || '<div style="color:var(--muted);font-size:0.85rem;padding:12px;text-align:center;">No hay jugadores</div>';
+      }).join('') || emptyState('person', 'No hay jugadores');
     }
 
     async function addAthlete() {
@@ -4642,7 +4662,7 @@
       list.innerHTML = !state.athletes.length
         ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Añade jugadores en Configuración.</div>`
         : !filtered.length
-          ? `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">Sin resultados.</div>`
+          ? emptyState('list', 'Sin resultados.')
           : filtered.map(a => {
               const club = state.clubs.find(c => c.id === a.club_id);
               const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
@@ -4825,7 +4845,7 @@
     function renderExercises() {
       const container = document.getElementById('mis-group');
       if (!exercises.length) {
-        container.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:20px;">No tienes ejercicios guardados.</div>';
+        container.innerHTML = emptyState('lightning', 'No tienes ejercicios guardados.');
         return;
       }
       
@@ -6649,7 +6669,7 @@
 
     function renderNotesList(notes, el) {
       if (!notes.length) {
-        el.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:16px;">Sin notas todavía.</div>`;
+        el.innerHTML = emptyState('note', 'Sin notas todavía.');
         return;
       }
       el.innerHTML = notes.map(n => {
