@@ -2591,24 +2591,20 @@
           </div>
         </div>
 
-        <!-- Disponibles / escaneo -->
+        <!-- Añadir nodos -->
         <div style="margin-top:6px;margin-bottom:10px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <strong style="font-size:0.95rem;">Disponibles</strong>
-              <span id="scanIndicator" style="display:none;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.2s infinite;flex-shrink:0;"></span>
-            </div>
-            <button id="scanBtn" class="btn-secondary" style="padding:6px 14px;font-size:0.8rem;" onclick="toggleScan()">Buscar</button>
+            <strong style="font-size:0.95rem;">Añadir nodo</strong>
           </div>
           <div id="availableNodesList" style="display:flex;flex-direction:column;gap:8px;min-height:36px;">
-            <div style="color:var(--muted);font-size:0.85rem;">Pulsa Buscar para escanear</div>
+            <div style="color:var(--muted);font-size:0.85rem;">Pulsa «Añadir nodo» para conectar un nodo por Bluetooth.</div>
           </div>
         </div>
 
         <!-- Botones de acción -->
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
           <div style="flex:1;min-width:140px;"><button class="btn-primary" onclick="connectNode()" style="width:100%;">+ Añadir nodo</button></div>
-          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodos</button></div>
+          <div style="flex:1;min-width:140px;"><button class="btn-secondary" onclick="identifyNodes()" style="width:100%;">Identificar nodo</button></div>
         </div>
         <div style="margin-top:8px;font-size:0.78rem;color:var(--muted);">
           Pulsa "Añadir nodo" una vez por cada nodo a conectar.
@@ -3363,9 +3359,7 @@
         return !state.bleNodes.some(n => n.device?.id === d.id);
       });
       if (visible.length === 0) {
-        list.innerHTML = state.leScan
-          ? '<div style="color:var(--muted);font-size:0.85rem;">Buscando nodos en rango...</div>'
-          : '<div style="color:var(--muted);font-size:0.85rem;">Pulsa Buscar para escanear</div>';
+        list.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;">Pulsa «Añadir nodo» para conectar un nodo por Bluetooth.</div>';
         return;
       }
       list.innerHTML = visible.map((entry) => {
