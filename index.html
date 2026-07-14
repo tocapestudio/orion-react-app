@@ -4094,7 +4094,7 @@
       a.click();
     }
 
-    function drawSparkLine(pts) {
+    function drawSparkLine(pts, yFmt = v => (v / 1000).toFixed(2)) {
       if (pts.length < 2) return '';
       const W = 720, H = 150;
       const P = { top: 12, right: 12, bottom: 26, left: 42 };
@@ -4144,7 +4144,7 @@
           <circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="6" fill="${p.ok===false?'rgba(239,68,68,0.12)':'rgba(56,189,248,0.12)'}" stroke="none"/>
           <circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="3.5" fill="${p.ok===false?'#ef4444':'#38bdf8'}" stroke="rgba(8,12,24,0.9)" stroke-width="1.5"/>
         `).join('')}
-        ${gridY.map(g=>`<text x="${P.left-5}" y="${g.y.toFixed(1)}" text-anchor="end" dominant-baseline="middle" font-size="9" fill="rgba(100,150,190,0.9)">${(g.v/1000).toFixed(2)}</text>`).join('')}
+        ${gridY.map(g=>`<text x="${P.left-5}" y="${g.y.toFixed(1)}" text-anchor="end" dominant-baseline="middle" font-size="9" fill="rgba(100,150,190,0.9)">${yFmt(g.v)}</text>`).join('')}
         ${vp.filter((_,i)=>i===0||i===pts.length-1||i%step===0).map(p=>`<text x="${p.cx.toFixed(1)}" y="${(P.top+ph+17).toFixed(1)}" text-anchor="middle" font-size="9" fill="rgba(100,150,190,0.8)">${p.x||p.rep||''}</text>`).join('')}
       </svg>`;
     }
@@ -6748,20 +6748,31 @@
       if (valid.length < 2) { chartEl.style.display = 'none'; return; }
       try {
         const ids = valid.map(s => s.id);
-        const results = await db.get('results', `?session_id=in.(${ids.join(',')})&professional_id=eq.${currentProfessionalId}&result=eq.ok&select=session_id,reaction_ms`);
+        const results = await db.get('results', `?session_id=in.(${ids.join(',')})&professional_id=eq.${currentProfessionalId}&select=session_id,reaction_ms,result`);
         if (!results.length) { chartEl.style.display = 'none'; return; }
         const bySession = {};
         for (const r of results) {
           if (!bySession[r.session_id]) bySession[r.session_id] = [];
-          bySession[r.session_id].push(r.reaction_ms);
+          bySession[r.session_id].push(r);
         }
-        const pts = valid.filter(s => bySession[s.id]?.length).map(s => {
-          const times = bySession[s.id];
-          const avg = times.reduce((a,b) => a+b, 0) / times.length;
-          return { x: new Date(s.date).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}), y: avg, ok: true };
-        });
-        if (pts.length < 2) { chartEl.style.display = 'none'; return; }
-        chartEl.innerHTML = `<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Evolución · Media de reacción por sesión</div>${drawSparkLine(pts)}`;
+        const timePts = [], accPts = [];
+        for (const s of valid) {
+          const rows = bySession[s.id];
+          if (!rows || !rows.length) continue;
+          const label = new Date(s.date).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+          const okRows = rows.filter(r => r.result === 'ok' && r.reaction_ms != null);
+          if (okRows.length) {
+            const avg = okRows.reduce((a,b) => a+b.reaction_ms, 0) / okRows.length;
+            timePts.push({ x: label, y: avg, ok: true });
+          }
+          accPts.push({ x: label, y: rows.filter(r => r.result === 'ok').length / rows.length * 100, ok: true });
+        }
+        if (timePts.length < 2) { chartEl.style.display = 'none'; return; }
+        let html = `<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Evolución · Media de reacción por sesión</div>${drawSparkLine(timePts)}`;
+        if (accPts.length >= 2) {
+          html += `<div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin:18px 0 8px;">Evolución · Precisión por sesión</div>${drawSparkLine(accPts, v => v.toFixed(0) + '%')}`;
+        }
+        chartEl.innerHTML = html;
         chartEl.style.display = '';
       } catch(e) { chartEl.style.display = 'none'; }
     }
