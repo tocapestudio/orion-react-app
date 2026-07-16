@@ -9,6 +9,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Orion React</title>
   <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -60,7 +63,7 @@
       color: var(--text);
     }
     .logo-icon { height: 26px; width: auto; display: block; }
-    .logo span { font-weight: 700; color: var(--muted); }
+    .logo span { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.15em; letter-spacing: 0.02em; color: var(--muted); }
     .bt-status {
       display: flex; align-items: center; gap: 8px; padding: 8px 14px;
       border-radius: 999px; border: 1px solid var(--border2); background: var(--bg2);
@@ -732,7 +735,7 @@
         </button>
       </div>
       <div style="display:flex;justify-content:center;margin-top:32px;">
-        <img src="assets/logo/orion-icon.png" alt="Orion" style="height:56px;width:auto;opacity:0.85;" />
+        <img src="assets/logo/orion-full.png" alt="Orion Visual Lab" style="height:56px;width:auto;max-width:80%;opacity:0.85;" />
       </div>
     </section>
 
