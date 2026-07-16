@@ -151,6 +151,7 @@
       background: rgba(239,68,68,0.1); color: var(--danger);
       font-weight: 500; border: 1px solid rgba(239,68,68,0.2); transition: all .2s;
     }
+    .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-home {
       padding: 10px 16px; border-radius: 14px;
       background: rgba(0,217,255,0.1);
@@ -2960,6 +2961,21 @@
       <div class="btn-row">
         <button class="btn-primary" onclick="createFolder()">Crear</button>
         <button class="btn-secondary" onclick="closeFolderModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="confirmDeleteModal">
+    <div class="modal">
+      <div class="modal-title" id="confirmDeleteTitle">Eliminar</div>
+      <div class="card-sub" id="confirmDeleteMsg" style="margin-bottom:14px;"></div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Escribe "<strong id="confirmDeleteExpected"></strong>" para confirmar</label>
+        <input type="text" id="confirmDeleteInput" autocomplete="off" oninput="updateConfirmDeleteBtn()" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-danger" id="confirmDeleteBtn" disabled onclick="runConfirmDelete()">Eliminar definitivamente</button>
+        <button class="btn-secondary" onclick="closeConfirmDeleteModal()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -6402,18 +6418,25 @@
 
     async function deleteCurrentClub() {
       if (!currentClub) return;
-      const cnt = state.athletes.filter(a => a.club_id === currentClub.id).length;
+      const club = currentClub;
+      const cnt = state.athletes.filter(a => a.club_id === club.id).length;
       const msg = cnt > 0
-        ? `¿Eliminar "${currentClub.name}"? ${cnt} jugador(es) quedarán sin club.`
-        : `¿Eliminar "${currentClub.name}"?`;
-      if (!confirm(msg)) return;
-      try {
-        await db.delete('clubs', `?id=eq.${currentClub.id}`);
-        currentClub = null;
-        await Promise.all([loadClubs(), loadAthletes()]);
-        showDataView('clubs');
-        toast('Club eliminado');
-      } catch(e) { toast('Error: ' + e.message, 'error'); }
+        ? `Esta acción no se puede deshacer. ${cnt} jugador(es) quedarán sin club asignado.`
+        : `Esta acción no se puede deshacer.`;
+      openConfirmDelete({
+        title: 'Eliminar club',
+        message: msg,
+        expectedText: club.name,
+        onConfirm: async () => {
+          try {
+            await db.delete('clubs', `?id=eq.${club.id}`);
+            currentClub = null;
+            await Promise.all([loadClubs(), loadAthletes()]);
+            showDataView('clubs');
+            toast('Club eliminado');
+          } catch(e) { toast('Error: ' + e.message, 'error'); }
+        }
+      });
     }
 
     // ── Players list ──────────────────────────────────────────────
@@ -7143,6 +7166,36 @@
       } catch(e) { toast('Error: ' + e.message, 'error'); }
     }
 
+    // ── Confirmación doble para borrados destructivos ───────────────
+    let _confirmDeleteCallback = null;
+    function openConfirmDelete({ title, message, expectedText, onConfirm }) {
+      _confirmDeleteCallback = onConfirm;
+      document.getElementById('confirmDeleteTitle').textContent = title;
+      document.getElementById('confirmDeleteMsg').textContent = message;
+      document.getElementById('confirmDeleteExpected').textContent = expectedText;
+      const input = document.getElementById('confirmDeleteInput');
+      input.value = '';
+      input.dataset.expected = expectedText;
+      document.getElementById('confirmDeleteBtn').disabled = true;
+      document.getElementById('confirmDeleteModal').classList.add('open');
+      setTimeout(() => input.focus(), 50);
+    }
+    function closeConfirmDeleteModal() {
+      document.getElementById('confirmDeleteModal').classList.remove('open');
+      _confirmDeleteCallback = null;
+    }
+    function updateConfirmDeleteBtn() {
+      const input = document.getElementById('confirmDeleteInput');
+      document.getElementById('confirmDeleteBtn').disabled = input.value.trim() !== input.dataset.expected;
+    }
+    async function runConfirmDelete() {
+      const cb = _confirmDeleteCallback;
+      if (!cb) return;
+      const btn = document.getElementById('confirmDeleteBtn');
+      btn.disabled = true;
+      try { await cb(); } finally { closeConfirmDeleteModal(); }
+    }
+
     // ── Edit / delete player ──────────────────────────────────────
     function editCurrentPlayer() {
       if (!currentPlayer) return;
@@ -7185,16 +7238,23 @@
 
     async function deleteCurrentPlayer() {
       if (!currentPlayer) return;
-      if (!confirm(`¿Eliminar a "${currentPlayer.full_name}"? Esta acción no se puede deshacer.`)) return;
-      try {
-        await db.delete('player_profiles', `?id=eq.${currentPlayer.id}`);
-        await loadAthletes();
-        toast('Jugador eliminado');
-        const bv = profileBackView;
-        currentPlayer = null;
-        if (bv === 'clubDetail' && currentClub) { openClub(currentClub.id); }
-        else { showDataView(bv); }
-      } catch(e) { toast('Error: ' + e.message, 'error'); }
+      const player = currentPlayer;
+      openConfirmDelete({
+        title: 'Eliminar jugador',
+        message: `Esta acción no se puede deshacer. Se borrarán también sus sesiones, evaluaciones y notas guardadas.`,
+        expectedText: player.full_name,
+        onConfirm: async () => {
+          try {
+            await db.delete('player_profiles', `?id=eq.${player.id}`);
+            await loadAthletes();
+            toast('Jugador eliminado');
+            const bv = profileBackView;
+            currentPlayer = null;
+            if (bv === 'clubDetail' && currentClub) { openClub(currentClub.id); }
+            else { showDataView(bv); }
+          } catch(e) { toast('Error: ' + e.message, 'error'); }
+        }
+      });
     }
 
   </script>
