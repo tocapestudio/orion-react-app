@@ -3,7 +3,7 @@
  * Proporciona funcionalidad offline y cacheo de recursos
  */
 
-const CACHE_NAME = 'orion-app-v1';
+const CACHE_NAME = 'orion-app-v3';
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
@@ -13,6 +13,7 @@ const URLS_TO_CACHE = [
 
 // Instalar Service Worker
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -28,7 +29,7 @@ self.addEventListener('install', (event) => {
 // Activar Service Worker
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
-  
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -38,7 +39,7 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
