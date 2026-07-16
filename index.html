@@ -3111,6 +3111,7 @@
         // Un clic = un nodo. Vuelve a pulsar para añadir otro.
         let device;
         try {
+          await exitFullscreenIfActive();
           device = await navigator.bluetooth.requestDevice({
             filters: [{ namePrefix: 'OrionNode' }],
             optionalServices: [BLE_SERVICE]
@@ -3194,6 +3195,7 @@
     async function connectAny() {
       if (!navigator.bluetooth) { toast('Web Bluetooth no disponible'); return; }
       try {
+        await exitFullscreenIfActive();
         const device = await navigator.bluetooth.requestDevice({
           acceptAllDevices: true,
           optionalServices: [BLE_SERVICE]
@@ -3213,6 +3215,7 @@
         try {
           if (!navigator.bluetooth) break;
           toast(`Buscando nodo ${connected + 1}/${toConnect}...`);
+          await exitFullscreenIfActive();
           const device = await navigator.bluetooth.requestDevice({
             filters: [{ namePrefix: 'OrionNode' }],
             optionalServices: [BLE_SERVICE]
@@ -4065,6 +4068,17 @@
         document.getElementById('btnPause').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M8 5v14l11-7z"/></svg>Reanudar';
         document.getElementById('liveHint').textContent = 'Sesión en pausa';
       }
+    }
+
+    async function exitFullscreenIfActive() {
+      // El selector nativo de dispositivos Bluetooth puede quedar inaccesible
+      // (invisible pero bloqueando la página) si se abre estando en pantalla
+      // completa. Salimos de pantalla completa antes de pedirlo.
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!isFs) return;
+      try {
+        await (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || (() => {})).call(document);
+      } catch(e) {}
     }
 
     function toggleFullscreen() {
