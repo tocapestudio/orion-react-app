@@ -194,41 +194,57 @@ const Gamification = {
     }
   },
 
+  // Jugador actualmente cargado en memoria (null = sin datos por deportista)
+  currentPlayerId: null,
+
   /**
-   * Inicializar gamificación desde localStorage
+   * Volcar el estado a su forma "de fábrica" (logros bloqueados, 0 puntos...)
    */
-  init() {
-    const saved = localStorage.getItem('gamification_data');
-    if (saved) {
-      const data = JSON.parse(saved);
-      // Merge achievements preservando los nuevos que no estén guardados
-      if (data.achievements) {
-        Object.keys(data.achievements).forEach(id => {
-          if (this.achievements[id]) {
-            this.achievements[id].unlocked   = data.achievements[id].unlocked;
-            this.achievements[id].unlockedAt = data.achievements[id].unlockedAt;
-          }
-        });
-      }
-      this.totalPoints  = data.totalPoints  || 0;
-      this.level        = data.level        || 1;
-      this.sessionCount = data.sessionCount || 0;
-      if (data.challenges) this.challenges = data.challenges;
-    }
-    this.save();
+  resetState() {
+    Object.values(this.achievements).forEach(a => { a.unlocked = false; a.unlockedAt = null; });
+    Object.values(this.challenges).forEach(c => { c.current = 0; c.completed = false; });
+    this.totalPoints  = 0;
+    this.level        = 1;
+    this.sessionCount = 0;
   },
 
   /**
-   * Guardar estado a localStorage
+   * Cargar estado (persistido en Supabase, por deportista) en memoria.
+   * data = null -> deportista sin progreso todavía (estado de fábrica).
    */
-  save() {
-    localStorage.setItem('gamification_data', JSON.stringify({
+  loadState(playerId, data) {
+    this.currentPlayerId = playerId;
+    this.resetState();
+    if (!data) return;
+    if (data.achievements) {
+      Object.keys(data.achievements).forEach(id => {
+        if (this.achievements[id]) {
+          this.achievements[id].unlocked   = !!data.achievements[id].unlocked;
+          this.achievements[id].unlockedAt = data.achievements[id].unlockedAt || null;
+        }
+      });
+    }
+    this.totalPoints  = data.totalPoints  || 0;
+    this.level        = data.level        || 1;
+    this.sessionCount = data.sessionCount || 0;
+    if (data.challenges) {
+      Object.keys(data.challenges).forEach(id => {
+        if (this.challenges[id]) Object.assign(this.challenges[id], data.challenges[id]);
+      });
+    }
+  },
+
+  /**
+   * Serializar el estado actual para guardarlo (por deportista)
+   */
+  getState() {
+    return {
       achievements:  this.achievements,
       totalPoints:   this.totalPoints,
       level:         this.level,
       sessionCount:  this.sessionCount,
       challenges:    this.challenges
-    }));
+    };
   },
 
   /**
@@ -465,10 +481,5 @@ const Gamification = {
   }
 };
 
-// Inicializar al cargar
-window.addEventListener('load', () => {
-  Gamification.init();
-  console.log('✓ Sistema de gamificación cargado');
-});
-
 window.OrionImprovements.Gamification = Gamification;
+console.log('✓ Sistema de gamificación cargado');
