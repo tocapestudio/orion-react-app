@@ -1055,11 +1055,10 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Repeticiones</label>
-                <div class="stepper">
-                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',-1,1,50)">−</button>
-                  <input type="number" min="1" max="50" value="10" id="exPiReps" />
-                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',1,1,50)">+</button>
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exPiModeRepsBtn" onclick="setFlashMode('reps','exPi')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exPiModeTimeBtn" onclick="setFlashMode('time','exPi')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
                 </div>
               </div>
               <div class="field">
@@ -1068,6 +1067,24 @@
                   <button type="button" class="stepper-btn" onclick="adjustCount('exPiDuration',-0.1,0.1,10)">−</button>
                   <input type="number" min="0.1" max="10" step="0.1" value="2.5" id="exPiDuration" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exPiDuration',0.1,0.1,10)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exPiRepsRow" class="field">
+                <label>Repeticiones</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exPiReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exPiTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exPiTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPiTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -1143,11 +1160,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exStroopModeRepsBtn" onclick="setFlashMode('reps','exStroop')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exStroopModeTimeBtn" onclick="setFlashMode('time','exStroop')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exStroopRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('exStroopReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="10" id="exStroopReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exStroopReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exStroopTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exStroopTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exStroopTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -1237,11 +1271,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exDiscModeRepsBtn" onclick="setFlashMode('reps','exDisc')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exDiscModeTimeBtn" onclick="setFlashMode('time','exDisc')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exDiscRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('exDiscReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="10" id="exDiscReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exDiscReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exDiscTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exDiscTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exDiscTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -1490,11 +1541,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exPdModeRepsBtn" onclick="setFlashMode('reps','exPd')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exPdModeTimeBtn" onclick="setFlashMode('time','exPd')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exPdRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('exPdReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="10" id="exPdReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exPdReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exPdTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exPdTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPdTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -1579,11 +1647,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exSimonModeRepsBtn" onclick="setFlashMode('reps','exSimon')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exSimonModeTimeBtn" onclick="setFlashMode('time','exSimon')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exSimonRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('exSimonReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="5" id="exSimonReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exSimonReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exSimonTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exSimonTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exSimonTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -1991,11 +2076,10 @@
             </div>
             <div class="field-row">
               <div class="field">
-                <label>Repeticiones</label>
-                <div class="stepper">
-                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',-1,1,50)">−</button>
-                  <input type="number" min="1" max="50" value="10" id="piReps" />
-                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',1,1,50)">+</button>
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="piModeRepsBtn" onclick="setFlashMode('reps','pi')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="piModeTimeBtn" onclick="setFlashMode('time','pi')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
                 </div>
               </div>
               <div class="field">
@@ -2004,6 +2088,24 @@
                   <button type="button" class="stepper-btn" onclick="adjustCount('piDuration',-0.1,0.1,10)">−</button>
                   <input type="number" min="0.1" max="10" step="0.1" value="2.5" id="piDuration" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('piDuration',0.1,0.1,10)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="piRepsRow" class="field">
+                <label>Repeticiones</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="piReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="piTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="piTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('piTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -2077,11 +2179,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="stroopModeRepsBtn" onclick="setFlashMode('reps','stroop')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="stroopModeTimeBtn" onclick="setFlashMode('time','stroop')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="stroopRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('stroopReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="10" id="stroopReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('stroopReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="stroopTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="stroopTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('stroopTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -2166,11 +2285,28 @@
                 </div>
               </div>
               <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="discModeRepsBtn" onclick="setFlashMode('reps','disc')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="discModeTimeBtn" onclick="setFlashMode('time','disc')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="discRepsRow" class="field">
                 <label>Repeticiones</label>
                 <div class="stepper">
                   <button type="button" class="stepper-btn" onclick="adjustCount('discReps',-1,1,50)">−</button>
                   <input type="number" min="1" max="50" value="10" id="discReps" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('discReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="discTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="discTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('discTimeLimit',10,10,600)">+</button>
                 </div>
               </div>
             </div>
@@ -3810,18 +3946,21 @@
 
     function startStroop() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      const exerciseMode = document.getElementById('stroopTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stroopTimeLimit').value) * 1000 : 0;
       const resolveBy = document.getElementById('stroopRule').value;
       const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sensor = document.getElementById('stroopSensor').value;
       const proximityThreshold = readProxThresh('stroopProxThresh');
+      const total = exerciseMode === 'reps' ? reps : 999;
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
-      const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration,sensor,proximityThreshold}, nodeValues:{} };
+      const sequence = Array.from({ length: total }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
+      window._lastCfg = { _type: 'stroop', config: { exerciseMode, nodesCount, reps, timeLimit, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
+      state.session = { active:true, type:'stroop', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{resolveBy,duration,sensor,proximityThreshold}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -3862,16 +4001,24 @@
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
-        setTimeout(nextStroop, step.delay);
-      } else {
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
         setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextStroop, step.delay);
       }
     }
     function startParImpar() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
+      const exerciseMode = document.getElementById('piTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps      = parseInt(document.getElementById('piReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('piTimeLimit').value) * 1000 : 0;
       const duration  = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('piInterval').value) * 1000);
       const timeout   = readTimeout('piTimeout');
@@ -3879,9 +4026,10 @@
       const colorDiff = document.getElementById('piColorDiff').checked;
       const sensor    = document.getElementById('piSensor').value;
       const proximityThreshold = readProxThresh('piProxThresh');
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold } };
+      const total     = exerciseMode === 'reps' ? reps : 999;
+      window._lastCfg = { _type: 'parimpar', config: { exerciseMode, reps, timeLimit, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold } };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -3953,10 +4101,16 @@
       document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : '✗ Error o sin respuesta';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
-        setTimeout(nextParImpar, state.session.config.interval || 700);
-      } else {
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
         setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextParImpar, state.session.config.interval || 700);
       }
     }
 
@@ -5028,7 +5182,9 @@
     function startParImparEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
+      const exerciseMode = document.getElementById('exPiTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps      = parseInt(document.getElementById('exPiReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exPiTimeLimit').value) * 1000 : 0;
       const duration  = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('exPiInterval').value) * 1000);
       const timeout   = readTimeout('exPiTimeout');
@@ -5037,10 +5193,11 @@
       const sensor    = document.getElementById('exPiSensor').value;
       const proximityThreshold = readProxThresh('exPiProxThresh');
       const sound     = document.getElementById('exPiSound').checked;
+      const total     = exerciseMode === 'reps' ? reps : 999;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'parimpar', config: { reps, duration, interval, timeout, piMode, colorDiff, sensor, sound, proximityThreshold } };
+      window._lastCfg = { _type: 'parimpar', config: { exerciseMode, reps, timeLimit, duration, interval, timeout, piMode, colorDiff, sensor, sound, proximityThreshold } };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:reps, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,piMode,colorDiff,sensor,proximityThreshold}, correctNode:null, nodeIds:piNodeIds };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -5048,8 +5205,10 @@
 
     function startStroopEx() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      const exerciseMode = document.getElementById('exStroopTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exStroopTimeLimit').value) * 1000 : 0;
       const resolveBy = document.getElementById('exStroopRule').value;
       const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
@@ -5057,11 +5216,12 @@
       const sensor = document.getElementById('exStroopSensor').value;
       const proximityThreshold = readProxThresh('exStroopProxThresh');
       const sound  = document.getElementById('exStroopSound').checked;
+      const total = exerciseMode === 'reps' ? reps : 999;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodesCount);
-      const sequence = Array.from({ length: reps }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
-      window._lastCfg = { _type: 'stroop', config: { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
-      state.session = { active:true, type:'stroop', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval,sensor,proximityThreshold}, nodeValues:{} };
+      const sequence = Array.from({ length: total }, () => buildStroopStep(stroopNodeIds, resolveBy, timeout, interval));
+      window._lastCfg = { _type: 'stroop', config: { exerciseMode, nodesCount, reps, timeLimit, resolveBy, timeout, duration, interval, sensor, proximityThreshold } };
+      state.session = { active:true, type:'stroop', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodesCount,resolveBy,duration,interval,sensor,proximityThreshold}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -5130,8 +5290,10 @@
 
     function startDiscrimination() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      const exerciseMode = document.getElementById('exDiscTimeRow')?.style.display !== 'none' ? 'time' : 'reps';
       const nodes = parseInt(document.getElementById('exDiscNodesCount')?.value || document.getElementById('exNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('exDiscReps')?.value || 10);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exDiscTimeLimit')?.value || 60) * 1000 : 0;
       const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay')?.value || 0.8) * 1000);
@@ -5145,15 +5307,16 @@
       const sound  = document.getElementById('exDiscSound')?.checked ?? true;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
 
+      const total = exerciseMode === 'reps' ? reps : 999;
       const discNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
-      for (let i = 0; i < reps; i++) {
+      for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds[Math.floor(Math.random() * discNodeIds.length)];
         sequence.push({ nodes: discNodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
 
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -5240,10 +5403,16 @@
       document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : 'Sin respuesta o error';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
-        setTimeout(nextDiscrimination, step.delay);
-      } else {
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
         setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextDiscrimination, step.delay);
       }
     }
 
@@ -5254,7 +5423,9 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodes   = parseInt(document.getElementById('exPdNodes').value);
       if (state.bleNodes.length < nodes) { toast(`Necesitas ${nodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
+      const exerciseMode = document.getElementById('exPdTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps    = parseInt(document.getElementById('exPdReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exPdTimeLimit').value) * 1000 : 0;
       const crit    = document.getElementById('exPdCriterion').value;
       const dur     = Math.round(parseFloat(document.getElementById('exPdDuration').value) * 1000);
       const delay   = Math.round(parseFloat(document.getElementById('exPdDelay').value) * 1000);
@@ -5269,7 +5440,8 @@
         number: ['0','1','2','3','4','5','6','7','8','9'],
         arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
       };
-      const sequence = Array.from({ length: reps }, () => {
+      const total = exerciseMode === 'reps' ? reps : 999;
+      const sequence = Array.from({ length: total }, () => {
         const pool = pools[crit] || pools.shape;
         const modelShape = pool[Math.floor(Math.random() * pool.length)];
         const distPool   = pool.filter(s => s !== modelShape);
@@ -5281,7 +5453,7 @@
         const distShapes = otherIds.map((_, i) => i === targetIdx ? modelShape : shuffled[i % shuffled.length]);
         return { nodeIds, modelNode: nodeIds[modelIdx], targetNode, modelShape, distShapes, timeout, delay, sensor };
       });
-      state.session = { active:true, type:'patterndisc', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,crit,dur,delay,timeout,sensor,proximityThreshold} };
+      state.session = { active:true, type:'patterndisc', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,crit,dur,delay,timeout,sensor,proximityThreshold} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextPatternDisc, 600);
@@ -5321,10 +5493,16 @@
       document.getElementById('liveHint').textContent = ok ? '✓ Correcto' : '✗ Fallo o sin respuesta';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
-        setTimeout(nextPatternDisc, step.delay);
-      } else {
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
         setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextPatternDisc, step.delay);
       }
     }
 
@@ -5337,8 +5515,10 @@
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const nodeIds  = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b);
       if (nodeIds.length < 2) { toast('Necesitas al menos 2 nodos conectados', 'error'); return; }
+      const exerciseMode = document.getElementById('exSimonTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const seqLen   = parseInt(document.getElementById('exSimonSeqLen').value);
       const reps     = parseInt(document.getElementById('exSimonReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exSimonTimeLimit').value) * 1000 : 0;
       const showMs   = Math.round(parseFloat(document.getElementById('exSimonShowSpeed').value) * 1000);
       const pauseMs  = Math.round(parseFloat(document.getElementById('exSimonPause').value) * 1000);
       const mode     = document.getElementById('exSimonMode').value;
@@ -5346,11 +5526,12 @@
       const sensor   = document.getElementById('exSimonSensor').value;
       const proximityThreshold = readProxThresh('exSimonProxThresh');
       const sound    = document.getElementById('exSimonSound').checked;
+      const total    = exerciseMode === 'reps' ? reps : 999;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const nodeIdxMap = {};
       nodeIds.forEach((id, i) => { nodeIdxMap[id] = i; });
       state.session = {
-        active:true, type:'simon', history:[], current:0, total:reps,
+        active:true, type:'simon', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total,
         timeoutId:null, waiting:false,
         config:{ seqLen, reps, showMs, pauseMs, mode, shape, sensor, proximityThreshold },
         nodeIds, nodeIdxMap,
@@ -5450,11 +5631,17 @@
       document.getElementById('liveHint').textContent = ok ? '✓ Secuencia correcta' : '✗ Orden incorrecto';
       updateLiveStats();
       state.session.current++;
-      if (state.session.current < state.session.total) {
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
+        setTimeout(endSession, 800);
+      } else {
         state.session.simonPhase = 'idle';
         setTimeout(simonNextRound, 1200);
-      } else {
-        setTimeout(endSession, 800);
       }
     }
 
@@ -5546,8 +5733,10 @@
     }
 
     function startQuickDiscrimination() {
+      const exerciseMode = document.getElementById('discTimeRow')?.style.display !== 'none' ? 'time' : 'reps';
       const nodes = parseInt(document.getElementById('discNodesCount')?.value || 3);
       const reps = parseInt(document.getElementById('discReps')?.value || 10);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('discTimeLimit')?.value || 60) * 1000 : 0;
       const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration')?.value || 2) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay')?.value || 0.8) * 1000);
@@ -5558,14 +5747,15 @@
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('discProxThresh');
+      const total = exerciseMode === 'reps' ? reps : 999;
       const discNodeIds2 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
       const sequence = [];
-      for (let i = 0; i < reps; i++) {
+      for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds2[Math.floor(Math.random() * discNodeIds2.length)];
         sequence.push({ nodes: discNodeIds2, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
       }
-      window._lastCfg = { _type: 'discrimination', config: { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:reps, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -5573,8 +5763,10 @@
 
     async function saveQuickDiscriminationConfig() {
       const name = (document.getElementById('discSaveName')?.value.trim()) || `Discriminación · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('discTimeRow')?.style.display !== 'none' ? 'time' : 'reps';
       const nodes = parseInt(document.getElementById('discNodesCount').value);
       const reps = parseInt(document.getElementById('discReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('discTimeLimit').value) * 1000 : 0;
       const timeout = readTimeout('discTimeout');
       const duration = Math.round(parseFloat(document.getElementById('discDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('discDelay').value) * 1000);
@@ -5585,7 +5777,7 @@
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('discProxThresh');
-      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6039,9 +6231,11 @@
     function startParImparWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
+      const exerciseMode = cfg.exerciseMode || 'reps';
+      const total = exerciseMode === 'reps' ? cfg.reps : 999;
       window._lastCfg = { _type: 'parimpar', config: cfg };
       const piNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
-      state.session = { active:true, type:'parimpar', startTime:Date.now(), history:[], current:0, total:cfg.reps, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, correctNode:null, nodeIds:piNodeIds };
+      state.session = { active:true, type:'parimpar', exerciseMode, timeLimit:cfg.timeLimit||0, startTime:Date.now(), history:[], current:0, total, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval||800, timeout:cfg.timeout, piMode:cfg.piMode||'shapes', colorDiff:!!cfg.colorDiff, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, correctNode:null, nodeIds:piNodeIds };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextParImpar, 600);
@@ -6049,10 +6243,12 @@
 
     function startStroopWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      const exerciseMode = cfg.exerciseMode || 'reps';
+      const total = exerciseMode === 'reps' ? cfg.reps : 999;
       window._lastCfg = { _type: 'stroop', config: cfg };
       const stroopNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodesCount);
-      const sequence = Array.from({ length: cfg.reps }, () => buildStroopStep(stroopNodeIds, cfg.resolveBy, cfg.timeout, cfg.interval));
-      state.session = { active:true, type:'stroop', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, nodeValues:{} };
+      const sequence = Array.from({ length: total }, () => buildStroopStep(stroopNodeIds, cfg.resolveBy, cfg.timeout, cfg.interval));
+      state.session = { active:true, type:'stroop', exerciseMode, timeLimit:cfg.timeLimit||0, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodesCount:cfg.nodesCount, resolveBy:cfg.resolveBy, duration:cfg.duration, interval:cfg.interval, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStroop, 600);
@@ -6060,15 +6256,17 @@
 
     function startDiscriminationWithConfig(cfg) {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      const exerciseMode = cfg.exerciseMode || 'reps';
+      const total = exerciseMode === 'reps' ? cfg.reps : 999;
       window._lastCfg = { _type: 'discrimination', config: cfg };
       const discMode = cfg.discMode || 'find_target';
       const discNodeIds3 = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.nodes);
       const sequence = [];
-      for (let i = 0; i < cfg.reps; i++) {
+      for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds3[Math.floor(Math.random() * discNodeIds3.length)];
         sequence.push({ nodes: discNodeIds3, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
       }
-      state.session = { active:true, type:'discrimination', history:[], current:0, total:cfg.reps, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
+      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit:cfg.timeLimit||0, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -6114,7 +6312,9 @@
 
     async function saveParImparExConfig() {
       const name = document.getElementById('exPiSaveName').value.trim() || `Par/Impar · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('exPiTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps      = parseInt(document.getElementById('exPiReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exPiTimeLimit').value) * 1000 : 0;
       const duration  = Math.round(parseFloat(document.getElementById('exPiDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('exPiInterval').value) * 1000);
       const timeout   = readTimeout('exPiTimeout');
@@ -6122,7 +6322,7 @@
       const colorDiff = document.getElementById('exPiColorDiff').checked;
       const sensor    = document.getElementById('exPiSensor').value;
       const proximityThreshold = readProxThresh('exPiProxThresh');
-      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
+      const cfg = { exerciseMode, reps, timeLimit, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6132,15 +6332,17 @@
 
     async function saveStroopExConfig() {
       const name = document.getElementById('exStroopSaveName').value.trim() || `Stroop · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('exStroopTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const nodesCount = parseInt(document.getElementById('exStroopNodesCount').value);
       const reps = parseInt(document.getElementById('exStroopReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exStroopTimeLimit').value) * 1000 : 0;
       const resolveBy = document.getElementById('exStroopRule').value;
       const timeout = readTimeout('exStroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exStroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('exStroopInterval').value) * 1000);
       const sensor = document.getElementById('exStroopSensor').value;
       const proximityThreshold = readProxThresh('exStroopProxThresh');
-      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodesCount, reps, timeLimit, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6150,8 +6352,10 @@
 
     async function saveDiscriminationExConfig() {
       const name = document.getElementById('exDiscSaveName').value.trim() || `Discriminación · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('exDiscTimeRow')?.style.display !== 'none' ? 'time' : 'reps';
       const nodes = parseInt(document.getElementById('exDiscNodesCount').value);
       const reps = parseInt(document.getElementById('exDiscReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exDiscTimeLimit').value) * 1000 : 0;
       const timeout = readTimeout('exDiscTimeout');
       const duration = Math.round(parseFloat(document.getElementById('exDiscDuration').value) * 1000);
       const delay = Math.round(parseFloat(document.getElementById('exDiscDelay').value) * 1000);
@@ -6162,7 +6366,7 @@
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('exDiscProxThresh');
-      const cfg = { nodes, reps, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6241,7 +6445,9 @@
 
     async function saveParImparConfig() {
       const name = (document.getElementById('piSaveName')?.value.trim()) || `Par/Impar · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('piTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const reps      = parseInt(document.getElementById('piReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('piTimeLimit').value) * 1000 : 0;
       const duration  = Math.round(parseFloat(document.getElementById('piDuration').value) * 1000);
       const interval  = Math.round(parseFloat(document.getElementById('piInterval').value) * 1000);
       const timeout   = readTimeout('piTimeout');
@@ -6249,7 +6455,7 @@
       const colorDiff = document.getElementById('piColorDiff').checked;
       const sensor    = document.getElementById('piSensor').value;
       const proximityThreshold = readProxThresh('piProxThresh');
-      const cfg = { reps, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
+      const cfg = { exerciseMode, reps, timeLimit, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6259,15 +6465,17 @@
 
     async function saveStroopConfig() {
       const name = (document.getElementById('stroopSaveName')?.value.trim()) || `Stroop · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('stroopTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const nodesCount = parseInt(document.getElementById('stroopNodesCount').value);
       const reps = parseInt(document.getElementById('stroopReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stroopTimeLimit').value) * 1000 : 0;
       const resolveBy = document.getElementById('stroopRule').value;
       const timeout = readTimeout('stroopTimeout');
       const duration = Math.round(parseFloat(document.getElementById('stroopDuration').value) * 1000);
       const interval = Math.round(parseFloat(document.getElementById('stroopInterval').value) * 1000);
       const sensor = document.getElementById('stroopSensor').value;
       const proximityThreshold = readProxThresh('stroopProxThresh');
-      const cfg = { nodesCount, reps, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodesCount, reps, timeLimit, resolveBy, timeout, duration, interval, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Stroop · ${resolveBy === 'named' ? 'color nombrado' : 'color tinta'}`, steps: JSON.stringify({ _type: 'stroop', config: cfg }), folder_id: null, professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
