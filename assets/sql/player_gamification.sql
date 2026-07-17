@@ -1,6 +1,6 @@
 create table if not exists public.player_gamification (
-  player_id        uuid primary key references public.player_profiles(id) on delete cascade,
-  professional_id  uuid not null,
+  player_id        text primary key references public.player_profiles(id) on delete cascade,
+  professional_id  text not null,
   total_points     integer not null default 0,
   level            integer not null default 1,
   session_count    integer not null default 0,
