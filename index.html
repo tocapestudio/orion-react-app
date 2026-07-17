@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+<head>11
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#080c12" />
@@ -2949,7 +2949,7 @@
       </div>
 
       <div class="btn-row">
-        <button class="btn-primary" onclick="addAthleteFromModal()">Crear jugador</button>
+        <button class="btn-primary" id="addAthleteSubmitBtn" onclick="addAthleteFromModal()">Crear jugador</button>
         <button class="btn-secondary" onclick="closeAddAthleteModal()">Cancelar</button>
       </div>
     </div>
@@ -4758,6 +4758,8 @@
       window._editingPlayerId = null;
       const titleEl = document.querySelector('#addAthleteModal .modal-title');
       if (titleEl) titleEl.textContent = 'Nuevo jugador';
+      const submitBtn = document.getElementById('addAthleteSubmitBtn');
+      if (submitBtn) submitBtn.textContent = 'Crear jugador';
       ['newPlayerName','newPlayerEmail','newPlayerDorsal','newPlayerNotes'].forEach(id => {
         const el = document.getElementById(id); if (el) el.value = '';
       });
@@ -7575,6 +7577,8 @@
       window._editingPlayerId = p.id;
       const titleEl = document.querySelector('#addAthleteModal .modal-title');
       if (titleEl) titleEl.textContent = 'Editar jugador';
+      const submitBtn = document.getElementById('addAthleteSubmitBtn');
+      if (submitBtn) submitBtn.textContent = 'Guardar jugador';
       const clubSel = document.getElementById('newPlayerClub');
       clubSel.innerHTML = '<option value="">— Seleccionar club —</option>' +
         state.clubs.map(c => `<option value="${c.id}"${c.id===p.club_id?' selected':''}>${c.name}</option>`).join('');
