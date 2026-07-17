@@ -2615,7 +2615,10 @@
       <!-- ── SUB-VIEW: Club Detail ── -->
       <div id="dv-clubDetail" style="display:none;">
         <div class="section-header" style="flex-wrap:wrap;gap:8px;">
-          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button>
+            <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          </div>
           <div id="clubDetailTitle" class="section-title" style="flex:1;"></div>
           <div style="display:flex;gap:6px;">
             <button class="btn-secondary" style="padding:8px 12px;font-size:0.8rem;" onclick="editCurrentClub()">Editar</button>
@@ -2633,7 +2636,10 @@
       <!-- ── SUB-VIEW: All Players ── -->
       <div id="dv-allPlayers" style="display:none;">
         <div class="section-header">
-          <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button>
+            <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="showDataView('clubs')">← Clubes</button>
+          </div>
           <div class="section-title">Todos los jugadores</div>
           <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
         </div>
@@ -2656,7 +2662,8 @@
 
       <!-- ── SUB-VIEW: Player Profile ── -->
       <div id="dv-playerProfile" style="display:none;">
-        <div style="margin-bottom:12px;">
+        <div style="display:flex;gap:6px;margin-bottom:12px;">
+          <button class="btn-home" onclick="showPage('home')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 11.5L12 3l9 8.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-8.5z"/></svg>INICIO</button>
           <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" id="profileBackBtn" onclick="backFromProfile()">← Volver</button>
         </div>
 
