@@ -3,7 +3,7 @@
  * Proporciona funcionalidad offline y cacheo de recursos
  */
 
-const CACHE_NAME = 'orion-app-v3';
+const CACHE_NAME = 'orion-app-v4';
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
@@ -45,6 +45,11 @@ self.addEventListener('activate', (event) => {
 
 // Estrategia de caché: Network First, fallback a Cache
 self.addEventListener('fetch', (event) => {
+  // Solo controlamos peticiones al propio origen (los archivos de la app).
+  // Las peticiones a la API de Supabase (u otro origen) van siempre directas
+  // a la red — cachearlas dejaba la app leyendo datos viejos para siempre.
+  if (new URL(event.request.url).origin !== self.location.origin) return;
+
   // Para requests POST (como API), usar Network first
   if (event.request.method === 'POST') {
     event.respondWith(
