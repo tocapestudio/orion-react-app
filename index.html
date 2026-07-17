@@ -7038,16 +7038,16 @@
       if (!el) return;
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:32px;font-size:0.85rem;">Cargando ejercicios...</div>`;
       try {
-        const assigned = await db.get('assigned_exercises', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=assigned_at.desc`);
+        const assigned = await db.get('assigned_exercises', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=created_at.desc`);
         if (!assigned.length) {
           el.innerHTML = `<div class="empty"><div class="empty-icon">🏋️</div><h3>Sin ejercicios asignados</h3><p>Este jugador aún no tiene ejercicios asignados.</p></div>`;
           return;
         }
-        const SC = { completed:'#22d3a0', pending:'#f59e0b', skipped:'#ef4444' };
-        const SL = { completed:'Completado', pending:'Pendiente', skipped:'Omitido' };
+        const SC = { completed:'#22d3a0', pending:'#f59e0b' };
+        const SL = { completed:'Completado', pending:'Pendiente' };
         el.innerHTML = assigned.map(ex => {
-          const date = new Date(ex.assigned_at||'').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
-          const s = ex.status||'pending';
+          const date = new Date(ex.created_at||'').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'});
+          const s = ex.completed ? 'completed' : 'pending';
           return `
             <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
               <div>
@@ -7069,7 +7069,7 @@
       if (!el) return;
       el.innerHTML = `<div style="color:var(--muted);text-align:center;padding:24px;font-size:0.85rem;">Cargando notas...</div>`;
       try {
-        const notes = await db.get('notes', `?player_id=eq.${playerId}&professional_id=eq.${currentProfessionalId}&order=created_at.desc`);
+        const notes = await db.get('notes', `?player_id=eq.${playerId}&order=created_at.desc`);
         renderNotesList(notes, el);
       } catch(e) {
         el.innerHTML = `<div style="color:var(--danger);padding:16px;font-size:0.85rem;">Error: ${e.message}</div>`;
@@ -7100,8 +7100,10 @@
       if (!text) { toast('Escribe una nota primero', 'error'); return; }
       try {
         await db.post('notes', {
+          id: crypto.randomUUID(),
           player_id: currentPlayer.id,
-          professional_id: currentProfessionalId,
+          author_id: currentProfessionalId,
+          author_role: 'professional',
           content: text,
           created_at: new Date().toISOString()
         });
