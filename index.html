@@ -6723,7 +6723,7 @@
         const sub = [club?.name, p.position].filter(Boolean).join(' · ');
         const dorsalTag = p.dorsal ? `<span style="margin-left:6px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.76rem;color:var(--muted);">#${p.dorsal}</span>` : '';
         const idCode = p.short_id || p.invitation_code;
-        const idTag = idCode ? `<span style="margin-left:8px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.7rem;color:var(--muted);opacity:0.7;">#${idCode}</span>` : '';
+        const idTag = idCode ? `<span style="margin-left:8px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.7rem;color:var(--muted);opacity:0.7;">id:${idCode}</span>` : '';
         const bv = backView || currentDataView;
         return `
           <div class="player-row" onclick="openPlayerProfile('${p.id}','${bv}')">
@@ -6778,7 +6778,7 @@
       document.getElementById('profileName').textContent = currentPlayer.full_name;
       document.getElementById('profileClubSport').textContent = [club?.name, sport].filter(Boolean).join(' · ');
       document.getElementById('profileCode').textContent = currentPlayer.short_id
-        ? `#${currentPlayer.short_id}` : (currentPlayer.invitation_code ? `#${currentPlayer.invitation_code}` : '');
+        ? `id:${currentPlayer.short_id}` : (currentPlayer.invitation_code ? `id:${currentPlayer.invitation_code}` : '');
       document.getElementById('profileDorsal').textContent = currentPlayer.dorsal ? `Dorsal ${currentPlayer.dorsal}` : '';
 
       // Reset to resumen tab
