@@ -2462,6 +2462,12 @@
           <span id="allPlayersCount" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:3px 10px;font-size:0.78rem;color:var(--muted);font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">0</span>
         </button>
 
+        <div style="display:flex;justify-content:flex-end;margin:10px 0 4px;">
+          <select id="clubSortSelect" onchange="setClubSort(this.value)" style="padding:7px 10px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;">
+            <option value="name">Ordenar: Nombre</option>
+            <option value="sport">Ordenar: Deporte</option>
+          </select>
+        </div>
         <div class="clubs-grid" id="clubsGrid"></div>
         <div class="empty" id="clubsEmpty" style="display:none;">
           <div class="empty-icon">🏟️</div>
@@ -2495,12 +2501,19 @@
           <div class="section-title">Todos los jugadores</div>
           <button class="btn-secondary" style="padding:8px 14px;font-size:0.82rem;" onclick="openCreateAthleteModal()">+ Jugador</button>
         </div>
-        <div style="position:relative;margin-bottom:14px;">
-          <input type="text" id="allPlayersSearch" placeholder="Nombre, modalidad o dorsal..."
+        <div style="position:relative;margin-bottom:10px;">
+          <input type="text" id="allPlayersSearch" placeholder="Nombre, modalidad, dorsal o ID..."
             oninput="filterAllPlayers()"
             style="width:100%;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
           <svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+          <select id="playerSortSelect" onchange="setPlayerSort(this.value)" style="padding:7px 10px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);font-size:0.78rem;">
+            <option value="name">Ordenar: Nombre</option>
+            <option value="club">Ordenar: Club</option>
+            <option value="dorsal">Ordenar: Dorsal</option>
+          </select>
         </div>
         <div id="allPlayersList"></div>
       </div>
@@ -2808,6 +2821,9 @@
           onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'" />
         <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;" width="15" height="15" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </div>
+      <button class="ex-item" style="margin-bottom:12px;width:100%;text-align:left;" onclick="clearAthlete()">
+        <div class="ex-item-info"><h3>✕ Sin deportista</h3><p>Quitar el deportista asignado</p></div>
+      </button>
       <div id="athleteModalList" style="margin-bottom:16px;max-height:320px;overflow-y:auto;"></div>
       <button class="btn-secondary" style="width:100%;" onclick="closeAthleteModal()">Cancelar</button>
     </div>
@@ -4727,6 +4743,13 @@
       document.getElementById('athleteName').textContent = state.athlete?.name || 'Sin deportista';
     }
 
+    function clearAthlete() {
+      state.athlete = null;
+      updateAthletePill();
+      closeAthleteModal();
+      toast('Sin deportista asignado');
+    }
+
     function openCreateFolderModal() {
       document.getElementById('folderName').value = '';
       document.getElementById('folderModal').classList.add('open');
@@ -6362,6 +6385,34 @@
     let evalTemplates    = [];
     let _evalTemplate    = null;
     let _customVarCount  = 0;
+    let clubSortMode     = 'name';
+    let playerSortMode   = 'name';
+
+    function setClubSort(mode) { clubSortMode = mode; renderClubs(); }
+    function setPlayerSort(mode) { playerSortMode = mode; filterAllPlayers(); }
+
+    function sortClubsList(list) {
+      const sorted = [...list];
+      if (clubSortMode === 'sport') {
+        sorted.sort((a, b) => (SPORT_LABELS[a.sport] || a.sport || '').localeCompare(SPORT_LABELS[b.sport] || b.sport || '') || a.name.localeCompare(b.name));
+      } else {
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      return sorted;
+    }
+
+    function sortPlayersList(list) {
+      const sorted = [...list];
+      if (playerSortMode === 'club') {
+        const clubName = p => state.clubs.find(c => c.id === p.club_id)?.name || '';
+        sorted.sort((a, b) => clubName(a).localeCompare(clubName(b)) || a.full_name.localeCompare(b.full_name));
+      } else if (playerSortMode === 'dorsal') {
+        sorted.sort((a, b) => (a.dorsal ? parseInt(a.dorsal) : Infinity) - (b.dorsal ? parseInt(b.dorsal) : Infinity));
+      } else {
+        sorted.sort((a, b) => a.full_name.localeCompare(b.full_name));
+      }
+      return sorted;
+    }
 
     function showDataView(view) {
       ['clubs','clubDetail','allPlayers','playerProfile'].forEach(v => {
@@ -6386,7 +6437,7 @@
         return;
       }
       if (empty) empty.style.display = 'none';
-      grid.innerHTML = state.clubs.map(club => {
+      grid.innerHTML = sortClubsList(state.clubs).map(club => {
         const color      = SPORT_COLORS[club.sport] || '#00D9FF';
         const sportLabel = SPORT_LABELS[club.sport]  || club.sport || '—';
         const cnt = state.athletes.filter(a => a.club_id === club.id).length;
@@ -6415,7 +6466,7 @@
       const clubPlayers = state.athletes.filter(a => a.club_id === clubId);
       document.getElementById('clubPlayerCount').textContent =
         `${clubPlayers.length} jugador${clubPlayers.length!==1?'es':''}`;
-      renderPlayerList(clubPlayers, 'clubDetailPlayers', 'clubDetail');
+      renderPlayerList(sortPlayersList(clubPlayers), 'clubDetailPlayers', 'clubDetail');
       showDataView('clubDetail');
     }
 
@@ -6463,13 +6514,15 @@
           : `<span style="color:#fff;">${initials}</span>`;
         const sub = [club?.name, p.position].filter(Boolean).join(' · ');
         const dorsalTag = p.dorsal ? `<span style="margin-left:6px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.76rem;color:var(--muted);">#${p.dorsal}</span>` : '';
+        const idCode = p.short_id || p.invitation_code;
+        const idTag = idCode ? `<span style="margin-left:8px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;font-size:0.7rem;color:var(--muted);opacity:0.7;">#${idCode}</span>` : '';
         const bv = backView || currentDataView;
         return `
           <div class="player-row" onclick="openPlayerProfile('${p.id}','${bv}')">
             <div class="player-avatar" style="background:${color}22;border:2px solid ${color}55;">${avatar}</div>
             <div style="flex:1;min-width:0;">
               <div style="font-weight:600;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.full_name}${dorsalTag}</div>
-              <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${sub}</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${sub}${idTag}</div>
             </div>
             <span style="color:var(--muted);font-size:1.1rem;flex-shrink:0;">›</span>
           </div>`;
@@ -6479,7 +6532,7 @@
     function showAllPlayers() {
       const inp = document.getElementById('allPlayersSearch');
       if (inp) inp.value = '';
-      renderPlayerList(state.athletes, 'allPlayersList', 'allPlayers');
+      renderPlayerList(sortPlayersList(state.athletes), 'allPlayersList', 'allPlayers');
       showDataView('allPlayers');
     }
 
@@ -6489,9 +6542,11 @@
         ? state.athletes.filter(a =>
             (a.full_name||'').toLowerCase().includes(q) ||
             (a.position ||'').toLowerCase().includes(q) ||
-            String(a.dorsal||'').includes(q))
+            String(a.dorsal||'').includes(q) ||
+            (a.short_id||'').toLowerCase().includes(q) ||
+            (a.invitation_code||'').toLowerCase().includes(q))
         : state.athletes;
-      renderPlayerList(filtered, 'allPlayersList', 'allPlayers');
+      renderPlayerList(sortPlayersList(filtered), 'allPlayersList', 'allPlayers');
     }
 
     // ── Player profile ────────────────────────────────────────────
