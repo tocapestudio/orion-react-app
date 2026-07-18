@@ -4944,7 +4944,7 @@
       if (!state.session?.active && state.bleNodes.length > 0) {
         clearTimeout(window._brightnessTimer);
         window._brightnessTimer = setTimeout(() => {
-          state.bleNodes.forEach(n => sendBLE({ cmd:'show', node_id:n.nodeId, shape:'circle', color:'white', duration:5000 }));
+          state.bleNodes.forEach(n => sendBLE({ cmd:'preview', node_id:n.nodeId, shape:'circle', color:'white' }));
         }, 80);
       }
     }
