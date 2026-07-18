@@ -3708,7 +3708,6 @@
       const category = document.getElementById('stimCategory').value;
       const value    = document.getElementById('stimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
-      const { shape, color } = resolveStimContent(category, value, displayColor);
       const isRandIv = document.getElementById('stimIntervalRandom')?.checked;
       const interval = isRandIv
         ? { random:true, min:Math.round(parseFloat(document.getElementById('stimIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('stimIntervalMax').value)*1000) }
@@ -3725,7 +3724,7 @@
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3735,7 +3734,9 @@
       if (!state.session.active || state.session.paused) return;
       const { sequence, current, config } = state.session;
       const nodeId = sequence[current];
-      const shape  = config.shape === 'number' ? String(Math.floor(Math.random()*9)+1) : config.shape;
+      const { shape, color } = resolveStimContent(config.category, config.value, config.displayColor);
+      state.session.lastShape = shape;
+      state.session.lastColor = color;
       setLiveNode(`Nodo ${nodeId}`);
       document.getElementById('liveTime').textContent = '-- s';
       document.getElementById('liveHint').textContent = 'Reacciona al ver el estímulo';
@@ -3747,7 +3748,7 @@
         document.getElementById('statProgressLbl').textContent = 'Progreso';
         document.getElementById('statProgress').textContent = `${current+1}/${state.session.total}`;
       }
-      sendBLE({ cmd:'show', node_id:nodeId, shape, color:config.color, duration:config.duration, sensor:config.sensor || 'vibration' });
+      sendBLE({ cmd:'show', node_id:nodeId, shape, color, duration:config.duration, sensor:config.sensor || 'vibration' });
       state.session.waiting = true;
       const _fWaitMs = config.timeout > 0 && config.timeout < config.duration
         ? config.timeout : config.duration + 1500;
@@ -3761,7 +3762,7 @@
       state.session.waiting = false;
       clearTimeout(state.session.timeoutId);
       sendBLE({ cmd:'off' });
-      state.session.history.push({ repetition:state.session.current+1, node_id:state.session.sequence[state.session.current], shape:state.session.config.shape, color:state.session.config.color, reaction_ms:reactionMs, result:ok?'ok':'miss' });
+      state.session.history.push({ repetition:state.session.current+1, node_id:state.session.sequence[state.session.current], shape:state.session.lastShape, color:state.session.lastColor, reaction_ms:reactionMs, result:ok?'ok':'miss' });
       document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
       document.getElementById('liveHint').textContent = ok ? '✓ Reacción registrada' : 'Sin respuesta';
       updateLiveStats();
@@ -5161,7 +5162,6 @@
       const category = document.getElementById('exStimCategory').value;
       const value    = document.getElementById('exStimValue').value;
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
-      const { shape, color } = resolveStimContent(category, value, displayColor);
       const isRandIv = document.getElementById('exIntervalRandom')?.checked;
       const interval = isRandIv
         ? { random:true, min:Math.round(parseFloat(document.getElementById('exIntervalMin').value)*1000), max:Math.round(parseFloat(document.getElementById('exIntervalMax').value)*1000) }
@@ -5178,7 +5178,7 @@
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,shape,color,interval,duration,timeout,sensor,proximityThreshold} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -6218,10 +6218,10 @@
       const valSel = document.getElementById(valId);
       const colorRow = document.getElementById(colorRowId);
       if (!cat || !valSel) return;
-      const shapeOpts = '<option value="circle">Círculo</option><option value="square_filled">Cuadrado</option><option value="plus">Cruz</option>';
-      const colorOpts = '<option value="green">Verde</option><option value="red">Rojo</option><option value="blue">Azul</option><option value="yellow">Amarillo</option><option value="white">Blanco</option><option value="cyan">Cian</option>';
+      const shapeOpts = '<option value="random">Aleatorio</option><option value="circle">Círculo</option><option value="square_filled">Cuadrado</option><option value="plus">Cruz</option>';
+      const colorOpts = '<option value="random">Aleatorio</option><option value="green">Verde</option><option value="red">Rojo</option><option value="blue">Azul</option><option value="yellow">Amarillo</option><option value="white">Blanco</option><option value="cyan">Cian</option>';
       const numOpts = '<option value="random">Aleatorio</option>' + [1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">${n}</option>`).join('');
-      const arrowOpts = '<option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option><option value="up_left">↖ Arriba izq.</option><option value="up_right">↗ Arriba der.</option><option value="down_left">↙ Abajo izq.</option><option value="down_right">↘ Abajo der.</option>';
+      const arrowOpts = '<option value="random">Aleatorio</option><option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option><option value="up_left">↖ Arriba izq.</option><option value="up_right">↗ Arriba der.</option><option value="down_left">↙ Abajo izq.</option><option value="down_right">↘ Abajo der.</option>';
       if (cat === 'shape')  { valSel.innerHTML = shapeOpts; if (colorRow) colorRow.style.display = ''; }
       else if (cat === 'color')  { valSel.innerHTML = colorOpts; if (colorRow) colorRow.style.display = 'none'; }
       else if (cat === 'number') { valSel.innerHTML = numOpts;   if (colorRow) colorRow.style.display = ''; }
@@ -6229,7 +6229,22 @@
     }
 
     function resolveStimContent(category, value, displayColor) {
-      if (category === 'color') return { shape: 'circle', color: value };
+      const pools = {
+        color: ['green','red','blue','yellow','white','cyan'],
+        shape: ['circle','square_filled','plus'],
+        arrow: ['up','down','left','right','up_left','up_right','down_left','down_right'],
+      };
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      if (category === 'color') {
+        return { shape: 'circle', color: value === 'random' ? pick(pools.color) : value };
+      }
+      if (category === 'number') {
+        const n = value === 'random' ? String(Math.floor(Math.random() * 9) + 1) : value;
+        return { shape: n, color: displayColor || 'white' };
+      }
+      if (pools[category]) {
+        return { shape: value === 'random' ? pick(pools[category]) : value, color: displayColor || 'white' };
+      }
       return { shape: value, color: displayColor || 'white' };
     }
 
@@ -6243,14 +6258,13 @@
       if (state.bleNodes.length < cfg.numNodes) { toast(`Necesitas ${cfg.numNodes} nodos conectados (hay ${state.bleNodes.length})`, 'error'); return; }
       window._lastCfg = { _type: 'flash', config: cfg };
       const exerciseMode = cfg.exerciseMode || 'reps';
-      const { shape, color } = resolveStimContent(cfg.category, cfg.value, cfg.displayColor);
       const total = exerciseMode === 'reps' ? cfg.reps : 999;
       const flashIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, cfg.numNodes);
       const sequence = Array.from({length: total}, (_,i) =>
         cfg.order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, shape, color, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, category:cfg.category, value:cfg.value, displayColor:cfg.displayColor, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
