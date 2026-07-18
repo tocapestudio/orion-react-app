@@ -6152,8 +6152,21 @@
     }
 
     // Vuelve la pantalla de Ejercicios al selector de categoría, olvidando
-    // dónde te habías quedado (config abierta, categoría elegida...).
+    // dónde te habías quedado (config abierta, categoría elegida, ejercicio
+    // en marcha...). Si había una sesión corriendo, se detiene sin más
+    // (sin mostrar el resumen, porque nos vamos a Inicio).
     function resetExercisesView() {
+      if (state.session?.active) {
+        cancelBLEQueue();
+        clearTimeout(state.session.timeoutId);
+        clearInterval(state.session.countdownId);
+        clearInterval(state.session.elapsedId);
+        state.session.active = state.session.waiting = false;
+        sendBLE({ cmd:'off' });
+        document.body.classList.remove('exercise-active');
+      }
+      document.getElementById('activeSession').style.display = 'none';
+      document.getElementById('sessionSummary').style.display = 'none';
       document.getElementById('exercisePresetConfig').style.display = 'none';
       ['exFlashConfig','exParImparConfig','exStroopConfig','exDiscriminationConfig','exChronoConfig','exPatternDiscConfig','exSimonConfig']
         .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
