@@ -288,8 +288,6 @@ const Gamification = {
     this.totalPoints += sessionPoints;
     this._checkLevelUp();
 
-    this.save();
-
     return {
       newAchievements,
       pointsEarned:      sessionPoints,

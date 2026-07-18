@@ -4940,13 +4940,17 @@
 
     function updateBrightnessPreview(val) {
       document.getElementById('brightnessVal').textContent = val;
-      sendBLE({ cmd:'brightness', value:String(pctToBrightness(val)) });
-      if (!state.session?.active && state.bleNodes.length > 0) {
-        clearTimeout(window._brightnessTimer);
-        window._brightnessTimer = setTimeout(() => {
+      // Debounced: mandar un cmd por cada tick de oninput (arrastrando el slider
+      // dispara docenas por segundo) saturaba la cola BLE y los nodos iban
+      // aplicando valores viejos con retraso ("preview muy irregular"). Con el
+      // debounce solo se manda el valor final al dejar de mover la barra.
+      clearTimeout(window._brightnessTimer);
+      window._brightnessTimer = setTimeout(() => {
+        sendBLE({ cmd:'brightness', value:String(pctToBrightness(val)) });
+        if (!state.session?.active && state.bleNodes.length > 0) {
           state.bleNodes.forEach(n => sendBLE({ cmd:'preview', node_id:n.nodeId, shape:'circle', color:'white' }));
-        }, 80);
-      }
+        }
+      }, 80);
     }
 
     function updateBrightness(val) {
