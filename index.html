@@ -6144,10 +6144,21 @@
       navHistory.push(pageId);
       navigateTo(pageId);
       if (pageId === 'data') loadDataPage();
+      if (pageId === 'home') resetExercisesView();
       if (pageId !== 'config') {
         stopLEScan(true);
       }
       clearStarter();
+    }
+
+    // Vuelve la pantalla de Ejercicios al selector de categoría, olvidando
+    // dónde te habías quedado (config abierta, categoría elegida...).
+    function resetExercisesView() {
+      document.getElementById('exercisePresetConfig').style.display = 'none';
+      ['exFlashConfig','exParImparConfig','exStroopConfig','exDiscriminationConfig','exChronoConfig','exPatternDiscConfig','exSimonConfig']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      document.getElementById('exerciseList').style.display = 'block';
+      showExCategory(null);
     }
 
     function goBack() {
