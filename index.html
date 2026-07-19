@@ -4443,13 +4443,15 @@
           chartEl.style.display = 'none';
         }
       }
+      const showStimCol = state.session.type === 'flash';
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
-          <thead><tr><th>#</th><th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
+          <thead><tr><th>#</th>${showStimCol ? '<th>Estímulo</th>' : ''}<th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
           <tbody>${h.map(r=>{
             const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : null));
             const rowBg = r.result==='ok' ? 'rgba(34,211,160,0.05)' : 'rgba(239,68,68,0.05)';
-            return `<tr style="background:${rowBg}"><td>${r.repetition}</td><td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
+            const stimCell = showStimCol ? `<td>${stimDisplayLabel(state.session.config.category, r.shape, r.color)}</td>` : '';
+            return `<tr style="background:${rowBg}"><td>${r.repetition}</td>${stimCell}<td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
           }).join('')}</tbody>
         </table>`;
       document.getElementById('sessionSummary').style.display = 'block';
@@ -4618,7 +4620,7 @@
         const tStr = t != null && t > 0 ? msToS(t) + ' s' : '—';
         return `<tr>
           <td>${r.repetition}</td>
-          <td style="color:var(--muted);">${r.shape || '—'}</td>
+          <td style="color:var(--muted);">${stimDisplayLabel(null, r.shape, r.color)}</td>
           <td style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">${tStr}</td>
           <td><span class="badge ${r.result}" style="font-size:0.7rem;padding:2px 8px;">${r.result==='ok'?'OK':'Miss'}</span></td>
         </tr>`;
@@ -6324,6 +6326,21 @@
     const PD_SHAPE_POOL = ['circle','square_filled','plus','triangle','x','ring','square'];
     STIM_LABELS.shape.ring = 'Anillo';
     STIM_LABELS.shape.square = 'Cuadrado (borde)';
+
+    // Texto legible para "qué estímulo salió" en las tablas de resultados.
+    // category==='color' guarda shape:'circle' siempre (el valor real es el
+    // color), así que sin la categoría de la sesión no se puede distinguir de
+    // un estímulo de forma que casualmente sea un círculo -- de ahí la
+    // heurística cuando no se pasa `category` (histórico guardado sin ese dato).
+    function stimDisplayLabel(category, shape, color) {
+      if (category === 'color') return STIM_LABELS.color[color] || color || '—';
+      if (category === 'number') return shape ?? '—';
+      if (category === 'arrow') return STIM_LABELS.arrow[shape] || shape || '—';
+      if (category === 'shape') return STIM_LABELS.shape[shape] || shape || '—';
+      if (shape == null) return '—';
+      if (shape === 'circle' && color && color !== 'white') return STIM_LABELS.color[color] || color;
+      return STIM_LABELS.shape[shape] || STIM_LABELS.arrow[shape] || shape;
+    }
 
     // Rejilla de casillas para restringir qué valores puede sacar "aleatorio"
     // dentro de una categoría. `checked` son los valores ya guardados (si los
