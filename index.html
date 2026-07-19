@@ -2826,8 +2826,8 @@
         <div class="card-title">Intensidad lumínica</div>
         <div class="card-sub">Ajusta el brillo de la matriz LED. Todos los nodos mostrarán el nivel actual.</div>
         <div class="field">
-          <label>Brillo <span class="slider-val" id="brightnessVal">1</span>%</label>
-          <input type="range" min="1" max="100" value="1" id="brightnessSlider" oninput="updateBrightnessPreview(this.value)" onchange="updateBrightness(this.value)" />
+          <label>Brillo <span class="slider-val" id="brightnessVal">15</span>%</label>
+          <input type="range" min="1" max="100" value="15" id="brightnessSlider" oninput="updateBrightnessPreview(this.value)" onchange="updateBrightness(this.value)" />
         </div>
       </div>
 
@@ -3367,7 +3367,7 @@
           await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'buzzer', state: state.buzzerOn ? 'on' : 'off' })));
           const vol = document.getElementById('volumeSlider')?.value || '15';
           await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'volume', value: String(vol) })));
-          const brightnessPct = document.getElementById('brightnessSlider')?.value || '1';
+          const brightnessPct = document.getElementById('brightnessSlider')?.value || '15';
           await cmdChar.writeValue(enc.encode(JSON.stringify({ cmd:'brightness', value: String(pctToBrightness(brightnessPct)) })));
         } catch(e) {}
         toast(silent ? `${device.name} reconectado ✓` : 'Nodo conectado ✓');
