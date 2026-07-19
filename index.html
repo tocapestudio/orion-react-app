@@ -594,6 +594,16 @@
     .color-yellow { background: #f59e0b; }
     .color-white { background: #e8f0fb; }
     .color-cyan { background: #00D9FF; }
+    .allowed-values-box { display: flex; flex-wrap: wrap; gap: 8px; }
+    .allowed-val-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+      border-radius: 8px; border: 1px solid var(--border2); background: var(--bg3);
+      font-size: 0.82rem; cursor: pointer; user-select: none;
+    }
+    .allowed-val-chip input { margin: 0; }
+    .allowed-group { margin-bottom: 10px; }
+    .allowed-group:last-child { margin-bottom: 0; }
+    .allowed-group-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
     /* START BAR */
     body.has-start-bar .page { padding-bottom: 88px; }
     @media (max-width: 600px) {
@@ -922,7 +932,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Tipo de contenido</label>
-                <select id="exStimCategory" onchange="updateStimValueOptions('exStimCategory','exStimValue','exStimColorRow')">
+                <select id="exStimCategory" onchange="updateStimValueOptions('exStimCategory','exStimValue','exStimColorRow','exStimAllowedBox','exStimAllowedRow')">
                   <option value="shape">Formas</option>
                   <option value="color">Colores</option>
                   <option value="number">Números</option>
@@ -936,6 +946,12 @@
                   <option value="square_filled">Cuadrado</option>
                   <option value="plus">Cruz</option>
                 </select>
+              </div>
+            </div>
+            <div class="field-row" id="exStimAllowedRow" style="display:none;">
+              <div class="field" style="flex:1;">
+                <label>Valores permitidos (aleatorio)</label>
+                <div class="allowed-values-box" id="exStimAllowedBox"></div>
               </div>
             </div>
             <div class="field-row" id="exStimColorRow">
@@ -1365,10 +1381,16 @@
               <div class="field-row">
                 <div class="field" id="exDiscDistractorValueWrap" style="display:none;">
                   <label>Valor del distractor</label>
-                  <select id="exDiscDistractorValue">
+                  <select id="exDiscDistractorValue" onchange="renderDiscAllowedValues('exDisc')">
                     <option value="random">Aleatorio</option>
                   </select>
                 </div>
+              </div>
+            </div>
+            <div class="field-row" id="exDiscAllowedRow" style="display:none;">
+              <div class="field" style="flex:1;">
+                <label>Valores permitidos (aleatorio)</label>
+                <div id="exDiscAllowedBox"></div>
               </div>
             </div>
             <div class="field-row">
@@ -1569,7 +1591,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Tipo de estímulo</label>
-                <select id="exPdCriterion">
+                <select id="exPdCriterion" onchange="renderAllowedValuesCheckboxes('exPdAllowedBox', this.value, null, this.value==='shape' ? PD_SHAPE_POOL : null)">
                   <option value="shape">Formas</option>
                   <option value="number">Números</option>
                   <option value="arrow">Flechas</option>
@@ -1582,6 +1604,12 @@
                   <input type="number" min="0.1" max="10" step="0.1" value="3" id="exPdDuration" />
                   <button type="button" class="stepper-btn" onclick="adjustCount('exPdDuration',0.1,0.1,10)">+</button>
                 </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field" style="flex:1;">
+                <label>Valores permitidos</label>
+                <div class="allowed-values-box" id="exPdAllowedBox"></div>
               </div>
             </div>
             <div class="field-row">
@@ -1985,7 +2013,7 @@
             <div class="field-row">
               <div class="field">
                 <label>Tipo de contenido</label>
-                <select id="stimCategory" onchange="updateStimValueOptions('stimCategory','stimValue','stimColorRow')">
+                <select id="stimCategory" onchange="updateStimValueOptions('stimCategory','stimValue','stimColorRow','stimAllowedBox','stimAllowedRow')">
                   <option value="shape">Formas</option>
                   <option value="color">Colores</option>
                   <option value="number">Números</option>
@@ -1999,6 +2027,12 @@
                   <option value="square_filled">Cuadrado</option>
                   <option value="plus">Cruz</option>
                 </select>
+              </div>
+            </div>
+            <div class="field-row" id="stimAllowedRow" style="display:none;">
+              <div class="field" style="flex:1;">
+                <label>Valores permitidos (aleatorio)</label>
+                <div class="allowed-values-box" id="stimAllowedBox"></div>
               </div>
             </div>
             <div class="field-row" id="stimColorRow">
@@ -2379,10 +2413,16 @@
               <div class="field-row">
                 <div class="field" id="discDistractorValueWrap" style="display:none;">
                   <label>Valor del distractor</label>
-                  <select id="discDistractorValue">
+                  <select id="discDistractorValue" onchange="renderDiscAllowedValues('disc')">
                     <option value="random">Aleatorio</option>
                   </select>
                 </div>
+              </div>
+            </div>
+            <div class="field-row" id="discAllowedRow" style="display:none;">
+              <div class="field" style="flex:1;">
+                <label>Valores permitidos (aleatorio)</label>
+                <div id="discAllowedBox"></div>
               </div>
             </div>
             <div class="field-row">
@@ -3709,6 +3749,7 @@
       const order    = document.getElementById('stimOrder').value;
       const category = document.getElementById('stimCategory').value;
       const value    = document.getElementById('stimValue').value;
+      const allowedValues = value === 'random' ? getAllowedValues('stimAllowedBox', category) : null;
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
       const isRandIv = document.getElementById('stimIntervalRandom')?.checked;
       const interval = isRandIv
@@ -3725,8 +3766,8 @@
         order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, allowedValues, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,allowedValues,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -3736,7 +3777,7 @@
       if (!state.session.active || state.session.paused) return;
       const { sequence, current, config } = state.session;
       const nodeId = sequence[current];
-      const { shape, color } = resolveStimContent(config.category, config.value, config.displayColor);
+      const { shape, color } = resolveStimContent(config.category, config.value, config.displayColor, config.allowedValues);
       state.session.lastShape = shape;
       state.session.lastColor = color;
       setLiveNode(`Nodo ${nodeId}`);
@@ -5138,6 +5179,10 @@
         document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
         document.getElementById('exPatternDiscConfig').style.display = type === 'patterndisc' ? 'block' : 'none';
         document.getElementById('exSimonConfig').style.display = type === 'simon' ? 'block' : 'none';
+        if (type === 'patterndisc') {
+          const crit = document.getElementById('exPdCriterion').value;
+          renderAllowedValuesCheckboxes('exPdAllowedBox', crit, null, crit === 'shape' ? PD_SHAPE_POOL : null);
+        }
         const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx, patterndisc: startPatternDisc, simon: startSimon };
         setStarter(fns[type]);
       }
@@ -5167,6 +5212,7 @@
       const order    = document.getElementById('exStimOrder').value;
       const category = document.getElementById('exStimCategory').value;
       const value    = document.getElementById('exStimValue').value;
+      const allowedValues = value === 'random' ? getAllowedValues('exStimAllowedBox', category) : null;
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
       const isRandIv = document.getElementById('exIntervalRandom')?.checked;
       const interval = isRandIv
@@ -5183,8 +5229,8 @@
         order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
-      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
+      window._lastCfg = { _type: 'flash', config: { exerciseMode, numNodes:nodes, reps, timeLimit, order, category, value, allowedValues, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold } };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes,reps,order,category,value,allowedValues,displayColor,interval,duration,timeout,sensor,proximityThreshold} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -5266,6 +5312,7 @@
         const dSel = document.getElementById(prefix + 'DistractorValue');
         if (dSel && crit) dSel.innerHTML = '<option value="random">Aleatorio</option>' + discOptionsHtml(crit, correctVal);
       }
+      renderDiscAllowedValues(prefix);
     }
 
     function updateDiscMode(prefix) {
@@ -5285,6 +5332,7 @@
         updateDiscValueSel(prefix);
         updateDiscDistractorField(prefix);
       }
+      renderDiscAllowedValues(prefix);
     }
 
     function updateExDiscValueOptions() {
@@ -5292,6 +5340,42 @@
         updateDiscValueSel('exDisc');
         updateDiscDistractorField('exDisc');
       }
+      renderDiscAllowedValues('exDisc');
+    }
+
+    // "Aleatorio" en Discriminación puede sacar valores de 1 categoría fija
+    // (el criterio elegido) o, en modo "buscar el diferente" con criterio
+    // "Aleatorio (cambia cada ronda)", de cualquiera de las 4 -- por eso aquí
+    // se muestran 4 grupos de casillas en ese caso, y solo 1 en el resto.
+    function discAllowedNeeded(prefix) {
+      const mode = document.getElementById(prefix + 'Mode')?.value;
+      if (mode === 'find_odd') return true;
+      const distractors = document.getElementById(prefix + 'Distractors')?.value;
+      if (distractors === 'different') return true;
+      const distractorValue = document.getElementById(prefix + 'DistractorValue')?.value;
+      return distractors === 'same' && distractorValue === 'random';
+    }
+    function renderDiscAllowedValues(prefix) {
+      const row = document.getElementById(prefix + 'AllowedRow');
+      const box = document.getElementById(prefix + 'AllowedBox');
+      if (!row || !box) return;
+      if (!discAllowedNeeded(prefix)) { row.style.display = 'none'; return; }
+      row.style.display = '';
+      const criterion = document.getElementById(prefix + 'Criterion')?.value || 'color';
+      const cats = criterion === 'random' ? ['color','shape','arrow','number'] : [criterion];
+      box.innerHTML = cats.map(cat => `
+        <div class="allowed-group">
+          ${cats.length > 1 ? `<div class="allowed-group-label">${getCategoryLabel(cat)}</div>` : ''}
+          <div class="allowed-values-box" id="${prefix}AllowedBox_${cat}"></div>
+        </div>
+      `).join('');
+      cats.forEach(cat => renderAllowedValuesCheckboxes(`${prefix}AllowedBox_${cat}`, cat, null));
+    }
+    function getDiscAllowedValues(prefix, criterion) {
+      const cats = criterion === 'random' ? ['color','shape','arrow','number'] : [criterion];
+      const out = {};
+      cats.forEach(cat => { out[cat] = getAllowedValues(`${prefix}AllowedBox_${cat}`, cat); });
+      return out;
     }
 
     function startDiscriminationEx() {
@@ -5313,6 +5397,7 @@
       const correctValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscValue')?.value || 'green');
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
+      const allowedValues = discAllowedNeeded('exDisc') ? getDiscAllowedValues('exDisc', criterion) : null;
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('exDiscProxThresh');
       const sound  = document.getElementById('exDiscSound')?.checked ?? true;
@@ -5323,11 +5408,11 @@
       const sequence = [];
       for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds[Math.floor(Math.random() * discNodeIds.length)];
-        sequence.push({ nodes: discNodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        sequence.push({ nodes: discNodeIds, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, allowed_values: allowedValues, timeout, delay, sensor });
       }
 
-      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
-      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, allowedValues, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,allowedValues,sensor,proximityThreshold}, nodeValues:{} };
       closePresetConfig();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -5341,13 +5426,11 @@
       document.getElementById('liveHint').textContent = step.disc_mode === 'find_odd' ? 'Toca el diferente' : 'Toca el nodo correcto';
       document.getElementById('statProgress').textContent = `${current + 1}/${state.session.total}`;
 
-      const pools = {
-        color:  ['green','red','blue','yellow','white','cyan'],
-        number: Array.from({length:10},(_,i)=>String(i)),
-        arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
-        shape:  ['circle','square_filled','plus','triangle','x'],
-      };
       const criterionColor = { color: null, number: 'blue', arrow: 'red', shape: 'green' };
+      const poolFor = (cat) => {
+        const allowed = step.allowed_values?.[cat];
+        return (allowed && allowed.length ? allowed : STIM_POOLS[cat]) || [];
+      };
 
       const { nodes, criterion, timeout, sensor } = step;
       const dur = state.session.config.duration;
@@ -5358,7 +5441,7 @@
         const crit = criterion === 'random'
           ? allCriteria[Math.floor(Math.random() * allCriteria.length)]
           : criterion;
-        const pool = pools[crit] || [];
+        const pool = poolFor(crit);
         const commonVal = pool[Math.floor(Math.random() * pool.length)];
         const oddPool = pool.filter(v => v !== commonVal);
         const oddVal = oddPool[Math.floor(Math.random() * oddPool.length)];
@@ -5374,7 +5457,7 @@
         }
       } else {
         const { correct_node, correct_value, distractors, distractor_value } = step;
-        const pool = (pools[criterion] || []).filter(v => v !== correct_value);
+        const pool = poolFor(criterion).filter(v => v !== correct_value);
         let distractorVals;
         if (distractors === 'same') {
           const v = distractor_value && distractor_value !== 'random'
@@ -5446,14 +5529,11 @@
       const sound   = document.getElementById('exPdSound').checked;
       sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
       const nodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, nodes);
-      const pools = {
-        shape:  ['circle','square_filled','plus','triangle','x','ring','square'],
-        number: ['0','1','2','3','4','5','6','7','8','9'],
-        arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
-      };
+      const pdPool = crit === 'shape' ? PD_SHAPE_POOL : (STIM_POOLS[crit] || PD_SHAPE_POOL);
+      const allowedValues = getAllowedValues('exPdAllowedBox', crit, pdPool);
       const total = exerciseMode === 'reps' ? reps : 999;
       const sequence = Array.from({ length: total }, () => {
-        const pool = pools[crit] || pools.shape;
+        const pool = allowedValues.length ? allowedValues : pdPool;
         const modelShape = pool[Math.floor(Math.random() * pool.length)];
         const distPool   = pool.filter(s => s !== modelShape);
         const shuffled   = [...distPool].sort(() => Math.random() - 0.5);
@@ -5741,6 +5821,7 @@
         updateDiscValueSel('disc');
         updateDiscDistractorField('disc');
       }
+      renderDiscAllowedValues('disc');
     }
 
     function startQuickDiscrimination() {
@@ -5756,6 +5837,7 @@
       const correctValue = discMode === 'find_odd' ? null : (document.getElementById('discValue')?.value || 'green');
       const distractors = discMode === 'find_odd' ? null : (document.getElementById('discDistractors')?.value || 'different');
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
+      const allowedValues = discAllowedNeeded('disc') ? getDiscAllowedValues('disc', criterion) : null;
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('discProxThresh');
       const total = exerciseMode === 'reps' ? reps : 999;
@@ -5763,10 +5845,10 @@
       const sequence = [];
       for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds2[Math.floor(Math.random() * discNodeIds2.length)];
-        sequence.push({ nodes: discNodeIds2, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, timeout, delay, sensor });
+        sequence.push({ nodes: discNodeIds2, correct_node: correctNode, disc_mode: discMode, criterion, correct_value: correctValue, distractors, distractor_value: distractorValue, allowed_values: allowedValues, timeout, delay, sensor });
       }
-      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold } };
-      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,sensor,proximityThreshold}, nodeValues:{} };
+      window._lastCfg = { _type: 'discrimination', config: { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, allowedValues, sensor, proximityThreshold } };
+      state.session = { active:true, type:'discrimination', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:{nodes,reps,timeout,duration,delay,discMode,criterion,correctValue,distractors,distractorValue,allowedValues,sensor,proximityThreshold}, nodeValues:{} };
       collapseQuickForm();
       showActiveSession();
       setTimeout(nextDiscrimination, 600);
@@ -5786,9 +5868,10 @@
       const correctValue = discMode === 'find_odd' ? null : document.getElementById('discValue').value;
       const distractors = discMode === 'find_odd' ? null : document.getElementById('discDistractors').value;
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('discDistractorValue')?.value || 'random');
+      const allowedValues = discAllowedNeeded('disc') ? getDiscAllowedValues('disc', criterion) : null;
       const sensor = document.getElementById('discSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('discProxThresh');
-      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, allowedValues, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6219,37 +6302,88 @@
     }
 
     // ── Content-type helpers ──────────────────────────────────────────────
-    function updateStimValueOptions(catId, valId, colorRowId) {
+    // Pools canónicos -- una única fuente de verdad para qué valores existen
+    // en cada categoría. Antes cada ejercicio tenía su propia lista copiada a
+    // mano (Flash solo tenía 3 formas y números 1-9, Discriminación tenía 5
+    // formas y números 0-9) -- unificado aquí para que "aleatorio" signifique
+    // lo mismo en todos lados.
+    const STIM_POOLS = {
+      color:  ['green','red','blue','yellow','white','cyan'],
+      shape:  ['circle','square_filled','plus','triangle','x'],
+      arrow:  ['up','down','left','right','up_left','up_right','down_left','down_right'],
+      number: Array.from({length:10}, (_,i) => String(i)),
+    };
+    const STIM_LABELS = {
+      color:  { green:'Verde', red:'Rojo', blue:'Azul', yellow:'Amarillo', white:'Blanco', cyan:'Cian' },
+      shape:  { circle:'Círculo', square_filled:'Cuadrado', plus:'Cruz', triangle:'Triángulo', x:'X' },
+      arrow:  { up:'↑', down:'↓', left:'←', right:'→', up_left:'↖', up_right:'↗', down_left:'↙', down_right:'↘' },
+      number: Object.fromEntries(STIM_POOLS.number.map(n => [n, n])),
+    };
+    // "Se Busca" admite además ring/square como formas (no usadas en Flash ni
+    // Discriminación) -- pool propio para que checkboxes y runtime coincidan.
+    const PD_SHAPE_POOL = ['circle','square_filled','plus','triangle','x','ring','square'];
+    STIM_LABELS.shape.ring = 'Anillo';
+    STIM_LABELS.shape.square = 'Cuadrado (borde)';
+
+    // Rejilla de casillas para restringir qué valores puede sacar "aleatorio"
+    // dentro de una categoría. `checked` son los valores ya guardados (si los
+    // hay); por defecto se marcan todos.
+    function renderAllowedValuesCheckboxes(boxId, category, checked, customPool) {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+      const pool = customPool || STIM_POOLS[category] || [];
+      const sel = checked && checked.length ? checked : pool;
+      box.innerHTML = pool.map(v => {
+        const label = STIM_LABELS[category]?.[v] ?? v;
+        return `<label class="allowed-val-chip"><input type="checkbox" value="${v}" ${sel.includes(v) ? 'checked' : ''}/> ${label}</label>`;
+      }).join('');
+    }
+    function getAllowedValues(boxId, category, customPool) {
+      const box = document.getElementById(boxId);
+      const pool = customPool || STIM_POOLS[category] || [];
+      if (!box) return pool;
+      const checked = [...box.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.value);
+      return checked.length ? checked : pool; // si se desmarcan todas, no bloquear el ejercicio
+    }
+    function toggleAllowedRow(valId, rowId) {
+      const valSel = document.getElementById(valId);
+      const row = document.getElementById(rowId);
+      if (!valSel || !row) return;
+      row.style.display = valSel.value === 'random' ? '' : 'none';
+    }
+
+    function updateStimValueOptions(catId, valId, colorRowId, allowedBoxId, allowedRowId) {
       const cat = document.getElementById(catId)?.value;
       const valSel = document.getElementById(valId);
       const colorRow = document.getElementById(colorRowId);
       if (!cat || !valSel) return;
-      const shapeOpts = '<option value="random">Aleatorio</option><option value="circle">Círculo</option><option value="square_filled">Cuadrado</option><option value="plus">Cruz</option>';
-      const colorOpts = '<option value="random">Aleatorio</option><option value="green">Verde</option><option value="red">Rojo</option><option value="blue">Azul</option><option value="yellow">Amarillo</option><option value="white">Blanco</option><option value="cyan">Cian</option>';
-      const numOpts = '<option value="random">Aleatorio</option>' + [1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">${n}</option>`).join('');
-      const arrowOpts = '<option value="random">Aleatorio</option><option value="up">↑ Arriba</option><option value="down">↓ Abajo</option><option value="left">← Izquierda</option><option value="right">→ Derecha</option><option value="up_left">↖ Arriba izq.</option><option value="up_right">↗ Arriba der.</option><option value="down_left">↙ Abajo izq.</option><option value="down_right">↘ Abajo der.</option>';
-      if (cat === 'shape')  { valSel.innerHTML = shapeOpts; if (colorRow) colorRow.style.display = ''; }
-      else if (cat === 'color')  { valSel.innerHTML = colorOpts; if (colorRow) colorRow.style.display = 'none'; }
-      else if (cat === 'number') { valSel.innerHTML = numOpts;   if (colorRow) colorRow.style.display = ''; }
-      else if (cat === 'arrow')  { valSel.innerHTML = arrowOpts; if (colorRow) colorRow.style.display = ''; }
+      const buildOpts = c => '<option value="random">Aleatorio</option>' +
+        STIM_POOLS[c].map(v => `<option value="${v}">${STIM_LABELS[c][v]}</option>`).join('');
+      if (cat === 'shape')  { valSel.innerHTML = buildOpts('shape');  if (colorRow) colorRow.style.display = ''; }
+      else if (cat === 'color')  { valSel.innerHTML = buildOpts('color');  if (colorRow) colorRow.style.display = 'none'; }
+      else if (cat === 'number') { valSel.innerHTML = buildOpts('number'); if (colorRow) colorRow.style.display = ''; }
+      else if (cat === 'arrow')  { valSel.innerHTML = buildOpts('arrow');  if (colorRow) colorRow.style.display = ''; }
+      if (allowedBoxId) {
+        renderAllowedValuesCheckboxes(allowedBoxId, cat, null);
+        if (allowedRowId) {
+          valSel.onchange = () => toggleAllowedRow(valId, allowedRowId);
+          toggleAllowedRow(valId, allowedRowId);
+        }
+      }
     }
 
-    function resolveStimContent(category, value, displayColor) {
-      const pools = {
-        color: ['green','red','blue','yellow','white','cyan'],
-        shape: ['circle','square_filled','plus'],
-        arrow: ['up','down','left','right','up_left','up_right','down_left','down_right'],
-      };
+    function resolveStimContent(category, value, displayColor, allowedValues) {
       const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      const poolFor = cat => (allowedValues && allowedValues.length ? allowedValues : STIM_POOLS[cat]);
       if (category === 'color') {
-        return { shape: 'circle', color: value === 'random' ? pick(pools.color) : value };
+        return { shape: 'circle', color: value === 'random' ? pick(poolFor('color')) : value };
       }
       if (category === 'number') {
-        const n = value === 'random' ? String(Math.floor(Math.random() * 9) + 1) : value;
+        const n = value === 'random' ? pick(poolFor('number')) : value;
         return { shape: n, color: displayColor || 'white' };
       }
-      if (pools[category]) {
-        return { shape: value === 'random' ? pick(pools[category]) : value, color: displayColor || 'white' };
+      if (STIM_POOLS[category]) {
+        return { shape: value === 'random' ? pick(poolFor(category)) : value, color: displayColor || 'white' };
       }
       return { shape: value, color: displayColor || 'white' };
     }
@@ -6270,7 +6404,7 @@
         cfg.order === 'sequential' ? flashIds[i % flashIds.length] : flashIds[Math.floor(Math.random() * flashIds.length)]
       );
       sendBLE({ cmd:'buzzer', state: cfg.sound === false ? 'off' : 'on' });
-      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, category:cfg.category, value:cfg.value, displayColor:cfg.displayColor, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
+      state.session = { active:true, type:'flash', exerciseMode, timeLimit: cfg.timeLimit || 0, startTime: Date.now(), history:[], current:0, total, sequence, timeoutId:null, countdownId:null, waiting:false, config:{nodes:cfg.numNodes, reps:cfg.reps, order:cfg.order, category:cfg.category, value:cfg.value, allowedValues:cfg.allowedValues, displayColor:cfg.displayColor, interval:cfg.interval, duration:cfg.duration, timeout:cfg.timeout, sensor:cfg.sensor || 'vibration', proximityThreshold:cfg.proximityThreshold || 30} };
       showPage('exercises');
       showActiveSession();
       setTimeout(nextStimulus, 600);
@@ -6312,7 +6446,7 @@
       const sequence = [];
       for (let i = 0; i < total; i++) {
         const correctNode = discMode === 'find_odd' ? null : discNodeIds3[Math.floor(Math.random() * discNodeIds3.length)];
-        sequence.push({ nodes: discNodeIds3, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
+        sequence.push({ nodes: discNodeIds3, correct_node: correctNode, disc_mode: discMode, criterion: cfg.criterion, correct_value: cfg.correctValue || null, distractors: cfg.distractors || null, distractor_value: cfg.distractorValue || 'random', allowed_values: cfg.allowedValues || null, timeout: cfg.timeout, delay: cfg.delay, sensor: cfg.sensor || 'vibration' });
       }
       state.session = { active:true, type:'discrimination', exerciseMode, timeLimit:cfg.timeLimit||0, startTime:Date.now(), history:[], current:0, total, sequence, timeoutId:null, waiting:false, config:cfg, nodeValues:{} };
       showPage('exercises');
@@ -6338,6 +6472,7 @@
       const order = document.getElementById('exStimOrder').value;
       const category = document.getElementById('exStimCategory').value;
       const value = document.getElementById('exStimValue').value;
+      const allowedValues = value === 'random' ? getAllowedValues('exStimAllowedBox', category) : null;
       const displayColor = category !== 'color' ? document.getElementById('exStimColor').value : 'white';
       const isRandIvEx = document.getElementById('exIntervalRandom')?.checked;
       const interval = isRandIvEx
@@ -6350,7 +6485,7 @@
       const sound = document.getElementById('exStimSound').checked;
       const exerciseMode = document.getElementById('exTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exTimeLimit').value) * 1000 : 0;
-      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, allowedValues, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6412,9 +6547,10 @@
       const correctValue = discMode === 'find_odd' ? null : document.getElementById('exDiscValue').value;
       const distractors = discMode === 'find_odd' ? null : document.getElementById('exDiscDistractors').value;
       const distractorValue = discMode === 'find_odd' ? null : (document.getElementById('exDiscDistractorValue')?.value || 'random');
+      const allowedValues = discAllowedNeeded('exDisc') ? getDiscAllowedValues('exDisc', criterion) : null;
       const sensor = document.getElementById('exDiscSensor')?.value || 'vibration';
       const proximityThreshold = readProxThresh('exDiscProxThresh');
-      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, sensor, proximityThreshold };
+      const cfg = { exerciseMode, nodes, reps, timeLimit, timeout, duration, delay, discMode, criterion, correctValue, distractors, distractorValue, allowedValues, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Discriminación · ${criterion}`, steps: JSON.stringify({ _type: 'discrimination', config: cfg }), professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
@@ -6471,6 +6607,7 @@
       const order = document.getElementById('stimOrder').value;
       const category = document.getElementById('stimCategory').value;
       const value = document.getElementById('stimValue').value;
+      const allowedValues = value === 'random' ? getAllowedValues('stimAllowedBox', category) : null;
       const displayColor = category !== 'color' ? document.getElementById('stimColor').value : 'white';
       const isRandIvStim = document.getElementById('stimIntervalRandom')?.checked;
       const interval = isRandIvStim
@@ -6483,7 +6620,7 @@
       const sound = document.getElementById('stimSound').checked;
       const exerciseMode = document.getElementById('stimTimeRow').style.display !== 'none' ? 'time' : 'reps';
       const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('stimTimeLimit').value) * 1000 : 0;
-      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
+      const cfg = { exerciseMode, numNodes, reps, timeLimit, order, category, value, allowedValues, displayColor, interval, duration, timeout, sensor, sound, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Reacción Flash · ${getCategoryLabel(category)}`, steps: JSON.stringify({ _type: 'flash', config: cfg }), professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
