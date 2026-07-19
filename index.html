@@ -854,6 +854,17 @@
             </div>
             <span class="ex-card-arrow">›</span>
           </div>
+          <!-- Polígrafo: check/cruz = verdadero/falso sobre una comparación en pantalla -->
+          <div class="ex-card" onclick="openExerciseConfig('polygraph')">
+            <div class="ex-card-icon" style="background:rgba(244,114,182,0.12);color:#f472b6;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="ex-card-body">
+              <div class="ex-card-title">Polígrafo</div>
+              <div class="ex-card-desc">Verdadero o falso · Comparación en pantalla · 2 nodos</div>
+            </div>
+            <span class="ex-card-arrow">›</span>
+          </div>
         </div>
 
         <!-- Mis ejercicios -->
@@ -1154,6 +1165,114 @@
                 <input type="text" id="exPiSaveName" placeholder="Par/Impar — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
               </div>
               <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="saveParImparExConfig()">Guardar como ejercicio</button>
+            </div>
+          </div>
+        </div>
+        <div id="exPolygraphConfig" style="display:none;">
+          <div class="card">
+            <div class="form-header">
+              <button class="form-header-back" onclick="closePresetConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div>
+                <div class="form-header-title">Polígrafo</div>
+                <div class="form-header-sub">Verdadero o falso con 2 nodos</div>
+              </div>
+            </div>
+            <div style="background:var(--bg3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;line-height:1.7;border:1px solid var(--border);">
+              En pantalla aparece una comparación (ej. <strong>57 &lt; 16</strong>). Un nodo muestra <strong>✓</strong> (verdadero), el otro <strong>✗</strong> (falso) — toca el que corresponda.
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Modo</label>
+                <div style="display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border2);">
+                  <button type="button" id="exPgModeRepsBtn" onclick="setFlashMode('reps','exPg')" style="flex:1;padding:9px 6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Repeticiones</button>
+                  <button type="button" id="exPgModeTimeBtn" onclick="setFlashMode('time','exPg')" style="flex:1;padding:9px 6px;background:transparent;color:var(--muted);font-size:0.82rem;font-weight:500;border:none;cursor:pointer;">Tiempo</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Duración del estímulo (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgDuration',-0.1,0.1,10)">−</button>
+                  <input type="number" min="0.1" max="10" step="0.1" value="3" id="exPgDuration" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgDuration',0.1,0.1,10)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div id="exPgRepsRow" class="field">
+                <label>Repeticiones</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgReps',-1,1,50)">−</button>
+                  <input type="number" min="1" max="50" value="10" id="exPgReps" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgReps',1,1,50)">+</button>
+                </div>
+              </div>
+              <div id="exPgTimeRow" class="field" style="display:none;">
+                <label>Duración total (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgTimeLimit',-10,10,600)">−</button>
+                  <input type="number" min="10" max="600" step="10" value="60" id="exPgTimeLimit" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgTimeLimit',10,10,600)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Intervalo entre rondas (s)</label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgInterval',-0.1,0,5)">−</button>
+                  <input type="number" min="0" max="5" step="0.1" value="0.8" id="exPgInterval" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgInterval',0.1,0,5)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Timeout (s) <span style="font-size:0.75rem;color:var(--muted);font-weight:400;">— 0 = sin límite</span></label>
+                <div class="stepper">
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgTimeout',-0.5,0,30)">−</button>
+                  <input type="number" min="0" max="30" step="0.5" value="0" id="exPgTimeout" />
+                  <button type="button" class="stepper-btn" onclick="adjustCount('exPgTimeout',0.5,0,30)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Detección</label>
+                <select id="exPgSensor" onchange="toggleProxThresh(this,'exPgProxThreshRow')">
+                  <option value="vibration">Vibración (toque)</option>
+                  <option value="proximity">Proximidad</option>
+                  <option value="both">Ambos</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+                <input type="checkbox" id="exPgSound" style="width:18px;height:18px;accent-color:var(--accent);" />
+                <label for="exPgSound" style="margin:0;cursor:pointer;">Buzzer</label>
+              </div>
+            </div>
+            <div id="exPgProxThreshRow" style="display:none;" class="field">
+              <label>Umbral proximidad (cm)</label>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPgProxThresh',-5,10,100)">−</button>
+                <input type="number" min="10" max="100" step="5" value="30" id="exPgProxThresh" />
+                <button type="button" class="stepper-btn" onclick="adjustCount('exPgProxThresh',5,10,100)">+</button>
+              </div>
+            </div>
+            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+              <input type="checkbox" id="exPgOperations" style="width:16px;height:16px;accent-color:var(--accent);" />
+              <label for="exPgOperations" style="margin:0;cursor:pointer;">Con operaciones — ej. "21 + 8 &lt; 13 + 6" en vez de solo números sueltos</label>
+            </div>
+            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+              <input type="checkbox" id="exPgIndependentColors" style="width:16px;height:16px;accent-color:var(--accent);" />
+              <label for="exPgIndependentColors" style="margin:0;cursor:pointer;">Colores independientes — ✓ y ✗ pueden ser de cualquier color, incluso el mismo (hay que fijarse en la forma, no en el color)</label>
+            </div>
+            <div class="field" style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+              <input type="checkbox" id="exPgRandomPosition" style="width:16px;height:16px;accent-color:var(--accent);" checked />
+              <label for="exPgRandomPosition" style="margin:0;cursor:pointer;">Posición aleatoria — el ✓ y el ✗ cambian de nodo en cada ronda (si no, se quedan siempre en el mismo)</label>
+            </div>
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+              <div class="field" style="margin-bottom:10px;">
+                <label>Nombre del ejercicio</label>
+                <input type="text" id="exPgSaveName" placeholder="Polígrafo — mis ajustes" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:0.9rem;" />
+              </div>
+              <button class="btn-primary btn-save" style="width:100%;margin-bottom:10px;" onclick="savePolygraphExConfig()">Guardar como ejercicio</button>
             </div>
           </div>
         </div>
@@ -1772,6 +1891,7 @@
         <div id="liveHint" style="text-align:center;font-size:0.9rem;font-weight:600;color:var(--muted);letter-spacing:0.04em;margin-bottom:18px;">Preparando...</div>
         <div id="screenProgress" style="display:none;text-align:center;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:18px;font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;letter-spacing:0.06em;"></div>
         <div class="stroop-stimulus" id="stroopScreen"></div>
+        <div class="stroop-stimulus" id="polygraphScreen" style="font-size:2.3rem;text-transform:none;letter-spacing:0.02em;"></div>
 
         <!-- Fila 1: Media + Mejor — 2 tiles grandes -->
         <div id="statsRow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
@@ -3733,6 +3853,9 @@
         }
       } else if (state.session.type === 'simon') {
         if (state.session.simonPhase === 'respond') handleSimonReaction(data);
+      } else if (state.session.type === 'polygraph') {
+        const correct = data.reaction_ms >= 0 && data.node_id === state.session.correctNode;
+        completePolygraph(correct, data.reaction_ms >= 0 ? data.reaction_ms : null);
       } else {
         completeStimulus(data.reaction_ms >= 0 ? data.reaction_ms : null, data.reaction_ms >= 0);
       }
@@ -3992,6 +4115,18 @@
       }
     }
 
+    function updatePolygraphScreen(text) {
+      const el = document.getElementById('polygraphScreen');
+      if (!el) return;
+      if (text) {
+        el.textContent = text;
+        el.style.display = 'flex';
+      } else {
+        el.textContent = '';
+        el.style.display = 'none';
+      }
+    }
+
     function startStroop() {
       if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
       const exerciseMode = document.getElementById('stroopTimeRow').style.display !== 'none' ? 'time' : 'reps';
@@ -4162,6 +4297,132 @@
       }
     }
 
+    // POLÍGRAFO
+    function generatePolygraphStatement(useOperations) {
+      function operand() {
+        if (!useOperations) {
+          const n = Math.floor(Math.random() * 90) + 10; // 10-99
+          return { display: String(n), value: n };
+        }
+        const a = Math.floor(Math.random() * 40) + 5;
+        const b = Math.floor(Math.random() * 20) + 1;
+        const op = Math.random() < 0.5 ? '+' : '-';
+        const value = op === '+' ? a + b : a - b;
+        return { display: `${a} ${op} ${b}`, value };
+      }
+      let left, right;
+      do {
+        left = operand();
+        right = operand();
+      } while (left.value === right.value); // evita ambigüedad ni-mayor-ni-menor
+      const symbol = Math.random() < 0.5 ? '<' : '>';
+      const isTrue = symbol === '<' ? left.value < right.value : left.value > right.value;
+      return { text: `${left.display} ${symbol} ${right.display}`, isTrue };
+    }
+
+    function startPolygraphEx() {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
+      const exerciseMode = document.getElementById('exPgTimeRow').style.display !== 'none' ? 'time' : 'reps';
+      const reps      = parseInt(document.getElementById('exPgReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exPgTimeLimit').value) * 1000 : 0;
+      const duration  = Math.round(parseFloat(document.getElementById('exPgDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('exPgInterval').value) * 1000);
+      const timeout   = readTimeout('exPgTimeout');
+      const operations = document.getElementById('exPgOperations').checked;
+      const independentColors = document.getElementById('exPgIndependentColors').checked;
+      const randomPosition = document.getElementById('exPgRandomPosition').checked;
+      const sensor    = document.getElementById('exPgSensor').value;
+      const proximityThreshold = readProxThresh('exPgProxThresh');
+      const sound     = document.getElementById('exPgSound').checked;
+      const total     = exerciseMode === 'reps' ? reps : 999;
+      sendBLE({ cmd:'buzzer', state: sound ? 'on' : 'off' });
+      window._lastCfg = { _type: 'polygraph', config: { exerciseMode, reps, timeLimit, duration, interval, timeout, operations, independentColors, randomPosition, sensor, sound, proximityThreshold } };
+      const pgNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
+      state.session = { active:true, type:'polygraph', exerciseMode, timeLimit, startTime:Date.now(), history:[], current:0, total, timeoutId:null, waiting:false, config:{reps,duration,interval,timeout,operations,independentColors,randomPosition,sensor,proximityThreshold}, correctNode:null, nodeIds:pgNodeIds };
+      closePresetConfig();
+      showActiveSession();
+      setTimeout(nextPolygraph, 600);
+    }
+
+    function startPolygraphWithConfig(cfg) {
+      if (state.bleNodes.length === 0) { toast('Conecta un nodo primero', 'error'); return; }
+      if (state.bleNodes.length < 2) { toast('Necesitas 2 nodos conectados', 'error'); return; }
+      const exerciseMode = cfg.exerciseMode || 'reps';
+      const total = exerciseMode === 'reps' ? cfg.reps : 999;
+      window._lastCfg = { _type: 'polygraph', config: cfg };
+      const pgNodeIds = state.bleNodes.map(n => n.nodeId).filter(Boolean).sort((a,b)=>a-b).slice(0, 2);
+      state.session = { active:true, type:'polygraph', exerciseMode, timeLimit:cfg.timeLimit||0, startTime:Date.now(), history:[], current:0, total, timeoutId:null, waiting:false, config:{reps:cfg.reps, duration:cfg.duration, interval:cfg.interval, timeout:cfg.timeout, operations:!!cfg.operations, independentColors:!!cfg.independentColors, randomPosition:cfg.randomPosition !== false, sensor:cfg.sensor||'vibration', proximityThreshold:cfg.proximityThreshold||30}, correctNode:null, nodeIds:pgNodeIds };
+      showPage('exercises');
+      showActiveSession();
+      setTimeout(nextPolygraph, 600);
+    }
+
+    function nextPolygraph() {
+      if (!state.session.active || state.session.paused) return;
+      const { config, current, total } = state.session;
+      document.getElementById('statProgress').textContent = `${current+1}/${total}`;
+      document.getElementById('screenProgress').textContent = `${current+1} / ${total}`;
+      const dur = config.duration;
+      const [nid1, nid2] = state.session.nodeIds || [1, 2];
+
+      const { text, isTrue } = generatePolygraphStatement(config.operations);
+      state.session.lastStatement = text;
+      updatePolygraphScreen(text);
+      setLiveNode('');
+      document.getElementById('liveHint').textContent = 'Toca ✓ si es verdadero, ✗ si es falso';
+
+      // qué nodo tiene el check vs la cruz esta ronda
+      const node1HasCheck = config.randomPosition ? Math.random() < 0.5 : true;
+      const checkNode = node1HasCheck ? nid1 : nid2;
+      const crossNode = node1HasCheck ? nid2 : nid1;
+      state.session.correctNode = isTrue ? checkNode : crossNode;
+
+      // colores: por defecto check=verde/cruz=rojo; con dificultad "independiente" se sortean por separado
+      let checkColor = 'green', crossColor = 'red';
+      if (config.independentColors) {
+        checkColor = Math.random() < 0.5 ? 'green' : 'red';
+        crossColor = Math.random() < 0.5 ? 'green' : 'red';
+      }
+
+      sendBLE({ cmd:'show', node_id:checkNode, shape:'check', color:checkColor, duration:dur, sensor:config.sensor||'vibration' });
+      const _pgRound = state.session.current;
+      state.session.showNode2Id = setTimeout(() => {
+        if (!state.session.active || state.session.current !== _pgRound) return;
+        sendBLE({ cmd:'show', node_id:crossNode, shape:'x', color:crossColor, duration:dur, sensor:config.sensor||'vibration' });
+      }, 80);
+
+      state.session.waiting = true;
+      const waitMs = config.timeout > 0 && config.timeout < config.duration ? config.timeout : config.duration + 1500;
+      state.session.timeoutId = setTimeout(() => {
+        if (!state.session.waiting) return;
+        completePolygraph(false, null);
+      }, waitMs);
+    }
+
+    function completePolygraph(correct, reactionMs) {
+      state.session.waiting = false;
+      clearTimeout(state.session.timeoutId);
+      clearTimeout(state.session.showNode2Id);
+      sendBLE({ cmd:'off' });
+      state.session.history.push({ repetition:state.session.current+1, statement_text:state.session.lastStatement, reaction_ms:reactionMs, result:correct?'ok':'miss' });
+      document.getElementById('liveTime').textContent = reactionMs !== null ? msToS(reactionMs)+' s' : '—';
+      document.getElementById('liveHint').textContent = correct ? '✓ Correcto' : '✗ Error o sin respuesta';
+      updateLiveStats();
+      state.session.current++;
+      if (state.session.exerciseMode === 'time') {
+        const el = document.getElementById('statComplete');
+        if (el) el.textContent = state.session.current;
+      }
+      const timeUp = state.session.exerciseMode === 'time' && (Date.now() - state.session.startTime) >= state.session.timeLimit;
+      const repsUp = state.session.exerciseMode !== 'time' && state.session.current >= state.session.total;
+      if (timeUp || repsUp) {
+        setTimeout(endSession, 800);
+      } else {
+        setTimeout(nextPolygraph, state.session.config.interval || 700);
+      }
+    }
+
     // SESIÓN
     function showActiveSession() {
       clearStarter();
@@ -4170,7 +4431,7 @@
       document.getElementById('activeSession').style.display  = 'block';
       document.getElementById('exerciseList').style.display   = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
-      const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar');
+      const isScreenExercise = state.session && (state.session.type === 'stroop' || state.session.type === 'parimpar' || state.session.type === 'polygraph');
       const isTimeMode = state.session && state.session.exerciseMode === 'time';
       document.getElementById('statsRow').style.display        = isScreenExercise ? 'none' : 'grid';
       document.getElementById('statsRowBottom').style.display  = isScreenExercise ? 'none' : 'grid';
@@ -4184,6 +4445,7 @@
       } else {
         updateStroopScreen(null);
       }
+      updatePolygraphScreen(null);
       // minilog: visible solo en ejercicios sin pantalla
       const showLog = !isScreenExercise;
       document.getElementById('miniLogWrap').style.display = showLog ? 'block' : 'none';
@@ -4291,7 +4553,7 @@
         const nextFns = {
           flash: nextStimulus, parimpar: nextParImpar, stroop: nextStroop,
           discrimination: nextDiscrimination, custom: nextCustomStep,
-          chrono: nextChrono, patterndisc: nextPatternDisc,
+          chrono: nextChrono, patterndisc: nextPatternDisc, polygraph: nextPolygraph,
           simon: () => { state.session.simonPtr = 0; simonShowStep(0); }
         };
         const fn = nextFns[state.session.type];
@@ -4443,14 +4705,14 @@
           chartEl.style.display = 'none';
         }
       }
-      const showStimCol = state.session.type === 'flash';
+      const showStimCol = state.session.type === 'flash' || state.session.type === 'polygraph';
       document.getElementById('summaryTable').innerHTML = `
         <table class="history">
           <thead><tr><th>#</th>${showStimCol ? '<th>Estímulo</th>' : ''}<th>Inicio</th><th>Final</th><th>Resultado</th><th>Tiempo</th></tr></thead>
           <tbody>${h.map(r=>{
             const time = r.sprint_ms != null ? r.sprint_ms : (r.end_reaction_ms != null ? r.end_reaction_ms : (r.reaction_ms != null ? r.reaction_ms : null));
             const rowBg = r.result==='ok' ? 'rgba(34,211,160,0.05)' : 'rgba(239,68,68,0.05)';
-            const stimCell = showStimCol ? `<td>${stimDisplayLabel(state.session.config.category, r.shape, r.color)}</td>` : '';
+            const stimCell = showStimCol ? `<td>${state.session.type === 'polygraph' ? (r.statement_text || '—') : stimDisplayLabel(state.session.config.category, r.shape, r.color)}</td>` : '';
             return `<tr style="background:${rowBg}"><td>${r.repetition}</td>${stimCell}<td>${r.start_node||'—'}</td><td>${r.end_node||r.node_id||'—'}</td><td><span class="badge ${r.result}">${r.result==='ok'?'OK':'Miss'}</span></td><td>${time !== null ? msToS(time)+' s' : '—'}</td></tr>`;
           }).join('')}</tbody>
         </table>`;
@@ -4551,7 +4813,8 @@
 
     function getExerciseName(type) {
       return { flash:'Reacción Flash', parimpar:'Par / Impar', stroop:'Stroop',
-               discrimination:'Discriminación', chrono:'Chrono', custom:'Personalizado' }[type] || type;
+               discrimination:'Discriminación', chrono:'Chrono', custom:'Personalizado',
+               polygraph:'Polígrafo' }[type] || type;
     }
 
     async function loadDataPage() {
@@ -4620,7 +4883,7 @@
         const tStr = t != null && t > 0 ? msToS(t) + ' s' : '—';
         return `<tr>
           <td>${r.repetition}</td>
-          <td style="color:var(--muted);">${stimDisplayLabel(null, r.shape, r.color)}</td>
+          <td style="color:var(--muted);">${r.statement_text || stimDisplayLabel(null, r.shape, r.color)}</td>
           <td style="font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;">${tStr}</td>
           <td><span class="badge ${r.result}" style="font-size:0.7rem;padding:2px 8px;">${r.result==='ok'?'OK':'Miss'}</span></td>
         </tr>`;
@@ -5181,11 +5444,12 @@
         document.getElementById('exChronoConfig').style.display = type === 'chrono' ? 'block' : 'none';
         document.getElementById('exPatternDiscConfig').style.display = type === 'patterndisc' ? 'block' : 'none';
         document.getElementById('exSimonConfig').style.display = type === 'simon' ? 'block' : 'none';
+        document.getElementById('exPolygraphConfig').style.display = type === 'polygraph' ? 'block' : 'none';
         if (type === 'patterndisc') {
           const crit = document.getElementById('exPdCriterion').value;
           renderAllowedValuesCheckboxes('exPdAllowedBox', crit, null, crit === 'shape' ? PD_SHAPE_POOL : null);
         }
-        const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx, patterndisc: startPatternDisc, simon: startSimon };
+        const fns = { flash: startFlashEx, parimpar: startParImparEx, stroop: startStroopEx, discrimination: startDiscrimination, chrono: startChronoEx, patterndisc: startPatternDisc, simon: startSimon, polygraph: startPolygraphEx };
         setStarter(fns[type]);
       }
     }
@@ -5199,6 +5463,7 @@
       document.getElementById('exChronoConfig').style.display = 'none';
       document.getElementById('exPatternDiscConfig').style.display = 'none';
       document.getElementById('exSimonConfig').style.display = 'none';
+      document.getElementById('exPolygraphConfig').style.display = 'none';
       document.getElementById('exerciseList').style.display = 'block';
       showExCategory(state.exCategory || null);
       clearStarter();
@@ -6146,6 +6411,7 @@
         if (stepsData._type === 'stroop')         { startStroopWithConfig(cfg); return; }
         if (stepsData._type === 'discrimination') { startDiscriminationWithConfig(cfg); return; }
         if (stepsData._type === 'chrono')         { startChronoWithConfig(cfg); return; }
+        if (stepsData._type === 'polygraph')      { startPolygraphWithConfig(cfg); return; }
       }
 
       const steps = Array.isArray(stepsData) ? stepsData : [];
@@ -6259,7 +6525,7 @@
       document.getElementById('activeSession').style.display = 'none';
       document.getElementById('sessionSummary').style.display = 'none';
       document.getElementById('exercisePresetConfig').style.display = 'none';
-      ['exFlashConfig','exParImparConfig','exStroopConfig','exDiscriminationConfig','exChronoConfig','exPatternDiscConfig','exSimonConfig']
+      ['exFlashConfig','exParImparConfig','exStroopConfig','exDiscriminationConfig','exChronoConfig','exPatternDiscConfig','exSimonConfig','exPolygraphConfig']
         .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
       document.getElementById('exerciseList').style.display = 'block';
       showExCategory(null);
@@ -6525,6 +6791,27 @@
       const cfg = { exerciseMode, reps, timeLimit, duration, interval, timeout, piMode, colorDiff, sensor, proximityThreshold };
       try {
         await db.post('exercises', { name, description: `Par/Impar · ${piMode === 'shapes' ? 'figuras' : 'números'}`, steps: JSON.stringify({ _type: 'parimpar', config: cfg }), professional_id: currentProfessionalId });
+        toast('Ejercicio guardado ✓');
+        await loadExercises();
+      } catch(err) { toast('Error: ' + err.message); }
+    }
+
+    async function savePolygraphExConfig() {
+      const name = document.getElementById('exPgSaveName').value.trim() || `Polígrafo · ${new Date().toLocaleDateString()}`;
+      const exerciseMode = document.getElementById('exPgTimeRow').style.display !== 'none' ? 'time' : 'reps';
+      const reps      = parseInt(document.getElementById('exPgReps').value);
+      const timeLimit = exerciseMode === 'time' ? parseInt(document.getElementById('exPgTimeLimit').value) * 1000 : 0;
+      const duration  = Math.round(parseFloat(document.getElementById('exPgDuration').value) * 1000);
+      const interval  = Math.round(parseFloat(document.getElementById('exPgInterval').value) * 1000);
+      const timeout   = readTimeout('exPgTimeout');
+      const operations = document.getElementById('exPgOperations').checked;
+      const independentColors = document.getElementById('exPgIndependentColors').checked;
+      const randomPosition = document.getElementById('exPgRandomPosition').checked;
+      const sensor    = document.getElementById('exPgSensor').value;
+      const proximityThreshold = readProxThresh('exPgProxThresh');
+      const cfg = { exerciseMode, reps, timeLimit, duration, interval, timeout, operations, independentColors, randomPosition, sensor, proximityThreshold };
+      try {
+        await db.post('exercises', { name, description: `Polígrafo · ${operations ? 'con operaciones' : 'números'}`, steps: JSON.stringify({ _type: 'polygraph', config: cfg }), professional_id: currentProfessionalId });
         toast('Ejercicio guardado ✓');
         await loadExercises();
       } catch(err) { toast('Error: ' + err.message); }
