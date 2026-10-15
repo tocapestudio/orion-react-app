@@ -3363,6 +3363,7 @@
       list:     '<path d="M4 6h16M4 12h16M4 18h16"/>',
       lightning:'<path d="M13 10V3L4 14h7v7l9-11h-7z"/>',
       note:     '<path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/>',
+      error:    '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
     };
     function emptyState(icon, text) {
       return `<div class="empty-state" style="grid-column:1/-1;">
@@ -4996,14 +4997,37 @@
     }
 
     // DEPORTISTAS
+    // Contador de generacion (mismo patron que _bleGen/cancelBLEQueue, lineas
+    // ~3644-3646): cada llamada a loadAthletes() toma un numero propio: si al
+    // resolver ya no es la mas reciente, su resultado se descarta sin tocar
+    // el estado - evita que una respuesta antigua pero lenta sobrescriba una
+    // mas nueva que ya llego antes.
+    let _athletesLoadGen = 0;
+    // true si el ULTIMO intento de carga termino en error - permite
+    // distinguir "la lista esta realmente vacia" de "no se pudo cargar",
+    // que hasta ahora se veian identicos en pantalla.
+    let _athletesLoadFailed = false;
+
     async function loadAthletes() {
       if (!currentProfessionalId) return;
+      const gen = ++_athletesLoadGen;
       try {
-        state.athletes = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&order=full_name`);
+        const rows = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&order=full_name`);
+        if (gen !== _athletesLoadGen) return; // respuesta obsoleta - descartada
+        state.athletes = rows;
+        _athletesLoadFailed = false;
         renderAthletes();
         renderDataAthletes(state.athletes);
         updateAthleteFilter();
-      } catch(e) { console.error('loadAthletes', e); }
+      } catch(e) {
+        console.error('loadAthletes', e);
+        if (gen !== _athletesLoadGen) return; // ya hay un intento mas reciente en curso/resuelto
+        // No se toca state.athletes: se conservan los jugadores ya cargados
+        // (si los hubiera) en vez de convertir el fallo en una lista vacia.
+        _athletesLoadFailed = true;
+        renderAthletes();
+        renderDataAthletes(state.athletes);
+      }
     }
 
     async function loadClubs() {
@@ -5017,7 +5041,9 @@
       const list = document.getElementById('athletesList');
       if (!list) return;
       const html = !state.athletes.length
-        ? emptyState('person', 'Sin jugadores añadidos.')
+        ? (_athletesLoadFailed
+            ? emptyState('error', 'No se pudo cargar la lista de jugadores. Comprueba tu conexión e inténtalo de nuevo.')
+            : emptyState('person', 'Sin jugadores añadidos.'))
         : state.athletes.map(a => {
             const club = state.clubs.find(c => c.id === a.club_id);
             const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
@@ -5049,7 +5075,9 @@
             </div>
             <button class="btn-danger" style="padding:6px 10px;font-size:0.75rem;" onclick="deleteAthlete('${a.id}')">×</button>
           </div>`;
-      }).join('') || emptyState('person', 'No hay jugadores');
+      }).join('') || (_athletesLoadFailed
+        ? emptyState('error', 'No se pudo cargar la lista de jugadores. Comprueba tu conexión e inténtalo de nuevo.')
+        : emptyState('person', 'No hay jugadores'));
     }
 
     async function addAthlete() {
