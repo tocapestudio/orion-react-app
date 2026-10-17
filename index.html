@@ -68,6 +68,16 @@
     .logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .logo-icon { height: 26px; width: auto; display: block; }
     .logo span { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.15em; letter-spacing: 0.02em; color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .portal-return {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+      color: var(--muted); text-decoration: none; font-size: 1rem;
+      border: 1px solid var(--border2); background: var(--bg2);
+      transition: all .2s;
+    }
+    .portal-return:hover { border-color: var(--accent); color: var(--text); }
+    .portal-return:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .bt-status {
       display: flex; align-items: center; gap: 8px; padding: 8px 14px;
       border-radius: 999px; border: 1px solid var(--border2); background: var(--bg2);
@@ -722,10 +732,15 @@
 
   <header class="topbar">
     <button type="button" class="logo" data-page="home" aria-label="Ir a Inicio"><img src="assets/logo/orion-icon.png" alt="Orion" class="logo-icon"> <span>REACT</span></button>
-    <button class="bt-status" id="btBtn">
-      <span class="bt-dot" id="btDot"></span>
-      <span id="btText">Conectar nodo</span>
-    </button>
+    <div class="topbar-right">
+      <a href="https://portal.orionvisuallab.com" target="orion-portal" rel="noopener noreferrer" class="portal-return" title="Volver a ORION Portal" aria-label="Volver a ORION Portal" onclick="return goToPortal(event)">
+        <span aria-hidden="true">↩</span>
+      </a>
+      <button class="bt-status" id="btBtn">
+        <span class="bt-dot" id="btDot"></span>
+        <span id="btText">Conectar nodo</span>
+      </button>
+    </div>
   </header>
 
   <nav class="nav">
@@ -743,7 +758,7 @@
         <img src="assets/logo/orion-full.png" alt="Orion Visual Lab" style="height:56px;width:auto;max-width:80%;opacity:0.85;" />
         <span style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
           <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.4rem;color:var(--accent);opacity:0.65;" aria-hidden="true">×</span>
-          <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:0.02em;color:var(--text);">REACT</span>
+          <span style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:3.51rem;letter-spacing:0.02em;color:#83B9D2;">REACT</span>
         </span>
       </div>
       <div class="home-grid home-grid-main">
@@ -4607,6 +4622,20 @@
       } else {
         try { (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen || (() => {})).call(document); } catch(e) {}
       }
+    }
+
+    // Navegacion pura (sin SSO ni sesion compartida): intenta reutilizar
+    // y enfocar una ventana con nombre estable "orion-portal" via script;
+    // si window.open es bloqueado (devuelve null, p.ej. por el bloqueador
+    // de popups) no se cancela el click, y el propio <a target="orion-portal">
+    // sirve de alternativa normal y accesible para abrir el Portal.
+    function goToPortal(e) {
+      let win = null;
+      try { win = window.open('https://portal.orionvisuallab.com', 'orion-portal'); } catch (err) { win = null; }
+      if (!win) return true;
+      try { win.focus(); } catch (err) {}
+      e.preventDefault();
+      return false;
     }
 
     function exportSessionCSV() {
