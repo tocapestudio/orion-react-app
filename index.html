@@ -68,16 +68,20 @@
     .logo:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .logo-icon { height: 26px; width: auto; display: block; }
     .logo span { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.15em; letter-spacing: 0.02em; color: var(--muted); }
+    .topbar-left { display: flex; align-items: center; gap: 18px; flex: 1; min-width: 0; }
     .btn-portal-return {
+      display: none;
       position: absolute; right: 16px; bottom: 16px;
-      display: inline-flex; align-items: center; gap: 5px;
+      align-items: center; gap: 5px;
       padding: 7px 12px; border-radius: 10px;
       background: var(--bg2); border: 1px solid var(--border2);
-      color: #83B9D2; font-size: 0.74rem;
+      color: #83B9D2; font-size: 0.74rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.03em;
       text-decoration: none; transition: all .2s;
     }
     .btn-portal-return:hover { border-color: var(--accent); color: var(--text); }
     .btn-portal-return:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .main:has(#page-home.active) .btn-portal-return { display: inline-flex; }
     .bt-status {
       display: flex; align-items: center; gap: 8px; padding: 8px 14px;
       border-radius: 999px; border: 1px solid var(--border2); background: var(--bg2);
@@ -92,9 +96,7 @@
 
     /* NAV */
     .nav {
-      display: flex; gap: 4px; padding: 10px 16px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(8,12,18,0.7); backdrop-filter: blur(12px);
+      display: flex; gap: 4px; min-width: 0;
       overflow-x: auto; scrollbar-width: none;
     }
     .nav::-webkit-scrollbar { display: none; }
@@ -112,7 +114,7 @@
     .nav-btn.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
 
     /* MAIN */
-    .main { flex: 1; padding: 20px 16px 20px; max-width: 680px; margin: 0 auto; width: 100%; }
+    .main { flex: 1; padding: 20px 16px 20px; max-width: 680px; margin: 0 auto; width: 100%; position: relative; }
 
     /* PAGES */
     .page { display: none; }
@@ -453,10 +455,10 @@
     }
     .home-button svg { width: 40px; height: 40px; stroke: currentColor; }
     .home-button span { display: block; font-size: 1.05rem; font-weight: 600; }
-    #page-home.active { display: flex; flex-direction: column; justify-content: center; position: relative; min-height: 100%; }
+    #page-home.active { display: flex; flex-direction: column; justify-content: center; min-height: 100%; }
     .home-grid-main { grid-template-columns: 1fr; }
     .home-grid-main .home-button { min-height: 90px; flex-direction: row; justify-content: flex-start; gap: 18px; padding: 20px 24px; }
-    .home-grid-main .home-button span { font-size: 1.1rem; }
+    .home-grid-main .home-button span { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
     .home-btn-exercises { border-color: #00D9FF !important; }
     .home-btn-exercises:hover { border-color: #00D9FF !important; box-shadow: 0 0 18px rgba(0,217,255,0.25) !important; }
     .home-btn-data { border-color: rgba(59,130,246,0.5) !important; color: #60a5fa !important; }
@@ -731,18 +733,19 @@
 <body>
 
   <header class="topbar">
-    <button type="button" class="logo" data-page="home" aria-label="Ir a Inicio"><img src="assets/logo/orion-icon.png" alt="Orion" class="logo-icon"> <span>REACT</span></button>
+    <div class="topbar-left">
+      <button type="button" class="logo" data-page="home" aria-label="Ir a Inicio"><img src="assets/logo/orion-icon.png" alt="Orion" class="logo-icon"> <span>REACT</span></button>
+      <nav class="nav">
+        <button class="nav-btn" data-page="exercises">Ejercicios</button>
+        <button class="nav-btn" data-page="data">Datos</button>
+        <button class="nav-btn" data-page="config">Configuración</button>
+      </nav>
+    </div>
     <button class="bt-status" id="btBtn">
       <span class="bt-dot" id="btDot"></span>
       <span id="btText">Conectar nodo</span>
     </button>
   </header>
-
-  <nav class="nav">
-    <button class="nav-btn" data-page="exercises">Ejercicios</button>
-    <button class="nav-btn" data-page="data">Datos</button>
-    <button class="nav-btn" data-page="config">Configuración</button>
-  </nav>
 
   <main class="main">
     <section class="page" id="page-home">
@@ -771,10 +774,6 @@
           <span>Configuración</span>
         </button>
       </div>
-
-      <a href="https://portal.orionvisuallab.com" target="orion-portal" rel="noopener noreferrer" class="btn-portal-return" title="Volver a ORION Portal" aria-label="Volver a ORION Portal" onclick="return goToPortal(event)">
-        <span aria-hidden="true">←</span> Volver al Portal
-      </a>
     </section>
 
     <!-- EJERCICIOS -->
@@ -3023,6 +3022,9 @@
       <!-- 'Deportistas' card removed: functionality available on the Datos page -->
     </section>
 
+    <a href="https://portal.orionvisuallab.com" target="orion-portal" rel="noopener noreferrer" class="btn-portal-return" title="Volver a ORION Portal" aria-label="Volver a ORION Portal" onclick="return goToPortal(event)">
+      <span aria-hidden="true">←</span> Volver al Portal
+    </a>
   </main>
 
   <nav class="bottom-nav">
