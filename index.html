@@ -71,7 +71,7 @@
     .topbar-left { display: flex; align-items: center; gap: 18px; flex: 1; min-width: 0; }
     .btn-portal-return {
       display: none;
-      position: absolute; right: 16px; bottom: 16px;
+      position: fixed; right: 16px; bottom: 16px; z-index: 10;
       align-items: center; gap: 5px;
       padding: 7px 12px; border-radius: 10px;
       background: var(--bg2); border: 1px solid var(--border2);
@@ -107,14 +107,15 @@
     * { scrollbar-width: thin; scrollbar-color: var(--border2) var(--bg2); }
     .nav-btn {
       padding: 8px 16px; border-radius: 10px; background: transparent;
-      color: var(--muted); font-size: 0.85rem; font-weight: 500;
+      color: var(--muted); font-size: 0.85rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.02em;
       white-space: nowrap; transition: all .2s; border: 1px solid transparent;
     }
     .nav-btn:hover { color: var(--text); background: var(--bg3); }
     .nav-btn.active { background: var(--bg3); color: var(--text); border-color: var(--border2); }
 
     /* MAIN */
-    .main { flex: 1; padding: 20px 16px 20px; max-width: 680px; margin: 0 auto; width: 100%; position: relative; }
+    .main { flex: 1; padding: 20px 16px 20px; max-width: 680px; margin: 0 auto; width: 100%; }
 
     /* PAGES */
     .page { display: none; }
