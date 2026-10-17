@@ -3360,6 +3360,14 @@
     const PROFESSIONAL_EMAIL = 'paulamlv.pl@gmail.com';
     let currentProfessional = null;
     let currentProfessionalId = null; // puede diferir de currentProfessional.id si Track usa tabla professionals separada
+    // Dos fallos distintos de identidad, nunca confundidos entre si ni con
+    // "sin atletas": _identityResolveFailed = la llamada RPC en si misma
+    // fallo (red/servidor) - no se sabe si hay vinculo o no. _noLegacyProfessional
+    // = la RPC respondio correctamente pero no hay fila en public.users para
+    // esta cuenta (null legitimo, no un error). Ambos se recalculan de cero en
+    // cada resolucion de identidad, nunca se quedan con un valor de un intento anterior.
+    let _identityResolveFailed = false;
+    let _noLegacyProfessional = false;
 
     const db = {
       async query(table, method='GET', body=null, filters='') {
@@ -4949,23 +4957,30 @@
     }
 
     // AUTH
-    function resolveProfessionalId(user) {
-      const candidates = [
-        user?.user_metadata?.professional_id,
-        user?.user_metadata?.professionalId,
-        user?.app_metadata?.professional_id,
-        user?.app_metadata?.professionalId,
-        user?.id
-      ];
-      const resolved = candidates.find(v => v != null && v !== '');
-      return resolved || null;
+    // Resuelve el id legacy real (public.users.id) reutilizando la misma
+    // funcion SECURITY DEFINER en la que ya confia el servidor (Portal),
+    // en vez del UUID de Auth (que no coincide con professional_id en
+    // player_profiles). La RPC no recibe parametros: usa auth.uid() del
+    // lado del servidor. data=null es una respuesta legitima ("esta cuenta
+    // no tiene fila en public.users"), nunca se confunde con error!=null
+    // ("la llamada en si fallo" - red/servidor, estado de identidad desconocido).
+    async function resolveProfessionalId() {
+      const { data, error } = await _sb.rpc('current_legacy_professional_id');
+      if (error) {
+        console.error('resolveProfessionalId', error);
+        return { id: null, failed: true };
+      }
+      return { id: data || null, failed: false };
     }
 
     async function initAuth() {
       const { data: { session } } = await _sb.auth.getSession();
       if (session) {
         currentProfessional = session.user;
-        currentProfessionalId = resolveProfessionalId(session.user);
+        const resolved = await resolveProfessionalId();
+        currentProfessionalId = resolved.id;
+        _identityResolveFailed = resolved.failed;
+        _noLegacyProfessional = !resolved.failed && !resolved.id;
         document.getElementById('loginOverlay').style.display = 'none';
         await loadInitialData();
       } else {
@@ -4984,7 +4999,10 @@
         return;
       }
       currentProfessional = data.user;
-      currentProfessionalId = resolveProfessionalId(data.user);
+      const resolved = await resolveProfessionalId();
+      currentProfessionalId = resolved.id;
+      _identityResolveFailed = resolved.failed;
+      _noLegacyProfessional = !resolved.failed && !resolved.id;
       document.getElementById('loginOverlay').style.display = 'none';
       await loadInitialData();
     }
@@ -5054,7 +5072,16 @@
     let _athletesLoadFailed = false;
 
     async function loadAthletes() {
-      if (!currentProfessionalId) return;
+      if (!currentProfessionalId) {
+        // Sin identidad resuelta (fallo de RPC o cuenta sin vinculo legacy):
+        // hay que renderizar igualmente para que se vea el mensaje correcto
+        // en vez de dejar la pantalla como estaba (p.ej. "Cargando...").
+        state.athletes = [];
+        renderAthletes();
+        renderDataAthletes(state.athletes);
+        updateAthleteFilter();
+        return;
+      }
       const gen = ++_athletesLoadGen;
       try {
         const rows = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&order=full_name`);
@@ -5086,9 +5113,13 @@
       const list = document.getElementById('athletesList');
       if (!list) return;
       const html = !state.athletes.length
-        ? (_athletesLoadFailed
-            ? emptyState('error', 'No se pudo cargar la lista de jugadores. Comprueba tu conexión e inténtalo de nuevo.')
-            : emptyState('person', 'Sin jugadores añadidos.'))
+        ? (_identityResolveFailed
+            ? emptyState('error', 'No se pudo comprobar tu identidad de profesional. Comprueba tu conexión e inténtalo de nuevo.')
+            : _noLegacyProfessional
+              ? emptyState('error', 'Esta cuenta no está vinculada a ningún profesional del sistema. Contacta con soporte.')
+              : _athletesLoadFailed
+                ? emptyState('error', 'No se pudo cargar la lista de jugadores. Comprueba tu conexión e inténtalo de nuevo.')
+                : emptyState('person', 'Sin jugadores añadidos.'))
         : state.athletes.map(a => {
             const club = state.clubs.find(c => c.id === a.club_id);
             const sub  = [club?.name, a.position].filter(Boolean).join(' · ');
