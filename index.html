@@ -5084,7 +5084,12 @@
       }
       const gen = ++_athletesLoadGen;
       try {
-        const rows = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&order=full_name`);
+        // archived_at=is.null excluye las fichas que el Portal marco como
+        // archivadas al terminar la relacion profesional-atleta (no se
+        // borran, solo dejan de aparecer aqui) - ver columna anadida en
+        // ORION-MainDatabase/supabase/migrations/20261002100000_orion_core_
+        // public_player_profiles_archived_at.sql
+        const rows = await db.get('player_profiles', `?professional_id=eq.${currentProfessionalId}&archived_at=is.null&order=full_name`);
         if (gen !== _athletesLoadGen) return; // respuesta obsoleta - descartada
         state.athletes = rows;
         _athletesLoadFailed = false;
