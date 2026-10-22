@@ -3,7 +3,7 @@
  * Proporciona funcionalidad offline y cacheo de recursos
  */
 
-const CACHE_NAME = 'orion-app-v4';
+const CACHE_NAME = 'orion-app-v5';
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
